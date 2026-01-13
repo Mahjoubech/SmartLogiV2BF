@@ -1,0 +1,3356 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Clients et Destinataires",
+            "description": "Gestion des utilisateurs (Expéditeurs, Destinataires) pour la logistique."
+        },
+        {
+            "name": "Gestion des Livreurs",
+            "description": "Opérations CRUD, recherche et affectation des colis aux livreurs."
+        },
+        {
+            "name": "Gestion des Colis",
+            "description": "Opérations de création, suivi et logistique avancée des colis."
+        },
+        {
+            "name": "Gestion des Données Logistiques (Admin)",
+            "description": "Opérations CRUD sur les Zones, Catalogue des Produits et Rapports d'optimisation."
+        }
+    ],
+    "paths": {
+        "/api/v4/gestion/zone/{zoneId}": {
+            "get": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Consulter les détails d'une zone par ID",
+                "operationId": "getZone",
+                "parameters": [
+                    {
+                        "name": "zoneId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZoneResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Mettre à jour les détails d'une zone",
+                "description": "Permet de modifier le nom ou le code postal d'une zone existante.",
+                "operationId": "updateZone",
+                "parameters": [
+                    {
+                        "name": "zoneId",
+                        "in": "path",
+                        "description": "ID de la zone à mettre à jour",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ZoneRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mise à jour réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZoneResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Zone non trouvée",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZoneResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Supprimer une zone de distribution",
+                "description": "Supprime une zone par son ID. Bloqué si la zone est encore assignée à des colis ou livreurs.",
+                "operationId": "deleteZone",
+                "parameters": [
+                    {
+                        "name": "zoneId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Zone supprimée",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Zone non trouvée",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflit: Zone encore liée",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v4/gestion/produit/{produitId}": {
+            "get": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Consulter un produit par ID",
+                "operationId": "getProduitById",
+                "parameters": [
+                    {
+                        "name": "produitId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProduitResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Mettre à jour un produit existant",
+                "description": "Corrige le prix, le poids ou la catégorie d'un produit.",
+                "operationId": "updateProduit",
+                "parameters": [
+                    {
+                        "name": "produitId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProduitRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProduitResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v3/clients/{clientId}": {
+            "get": {
+                "tags": [
+                    "Clients et Destinataires"
+                ],
+                "summary": "Consulter les détails d'un client/destinataire",
+                "description": "Recherche un utilisateur par son ID unique et affiche son rôle (Expéditeur ou Destinataire).",
+                "operationId": "getColisById",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de l'utilisateur trouvés",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Clients et Destinataires"
+                ],
+                "summary": "Mettre à jour les informations d'un client/destinataire",
+                "description": "Permet de corriger l'adresse, le nom ou le téléphone d'un utilisateur existant (L'email ne peut pas être modifié).",
+                "operationId": "updateClient",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientDestinataireRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mise à jour réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Clients et Destinataires"
+                ],
+                "summary": "Supprimer un client ou destinataire",
+                "description": "Supprime un utilisateur par son ID. Opération bloquée si l'utilisateur est lié à des Colis existants.",
+                "operationId": "deleteClient",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suppression réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflit: Lié à des colis existants",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis/{colisId}": {
+            "get": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Consulter les détails complets d'un colis",
+                "description": "Retourne l'ensemble des informations du colis, y compris les détails des clients et les produits.",
+                "operationId": "getColisById_1",
+                "parameters": [
+                    {
+                        "name": "colisId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Colis trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Colis non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Corriger les détails d'un colis",
+                "description": "Permet au gestionnaire de mettre à jour les informations de base (Poids, Description, Clients) d'un colis non encore en transit (Statut CREE).",
+                "operationId": "updateColis",
+                "parameters": [
+                    {
+                        "name": "colisId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ColisRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mise à jour réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Colis déjà en cours de traitement",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Colis non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Supprimer définitivement un colis",
+                "description": "Supprime un colis. L'opération n'est autorisée que si le colis est au statut CREE.",
+                "operationId": "deleteColis",
+                "parameters": [
+                    {
+                        "name": "colisId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suppression réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Statut ne permettant pas la suppression",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Colis non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis/{colisId}/status": {
+            "put": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Mettre à jour le statut du colis",
+                "description": "Met à jour le statut (COLLECTE, EN_TRANSIT, LIVRE). Déclenche les notifications Email.",
+                "operationId": "updateColisStatus",
+                "parameters": [
+                    {
+                        "name": "colisId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/HistoriqueLivraisonRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Statut mis à jour (et notifications envoyées)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Statut invalide ou colis déjà terminé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis/gestionner/livreur/{colisId}/assign": {
+            "put": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Assigner un colis à un livreur",
+                "description": "Opération Gestionnaire: Permet d'affecter un colis à un Livreur. Déclenche le statut COLLECTE si le colis est au statut CREE.",
+                "operationId": "assignColisToLivreur",
+                "parameters": [
+                    {
+                        "name": "colisId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "livreurId",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Affectation réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Colis ou Livreur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La zone du colis ne correspond pas à la zone du livreur.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/gestionner/livreur/{livreur_id}": {
+            "get": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Consulter les détails d'un livreur par ID",
+                "description": "Recherche un livreur par son ID unique.",
+                "operationId": "getLivreurById",
+                "parameters": [
+                    {
+                        "name": "livreur_id",
+                        "in": "path",
+                        "description": "ID unique du livreur",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails du livreur trouvés",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LivreurResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livreur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LivreurResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Mettre à jour les informations d'un livreur",
+                "description": "Permet de corriger les informations du livreur (Nom, Prénom, Véhicule, Zone Assignée).",
+                "operationId": "updateLivreur",
+                "parameters": [
+                    {
+                        "name": "livreur_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LivreurRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mise à jour réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LivreurResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livreur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LivreurResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Supprimer un livreur",
+                "description": "Supprime un livreur par ID. Opération bloquée si le livreur est lié à des colis (Contrainte FK).",
+                "operationId": "deleteLivreur",
+                "parameters": [
+                    {
+                        "name": "livreur_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suppression réussie",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livreur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflit: Livreur lié à des colis",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v4/gestion/zone": {
+            "get": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Afficher toutes les zones",
+                "description": "Retourne la liste paginée de toutes les zones de distribution.",
+                "operationId": "getAllZones",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageZoneResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Créer une nouvelle zone de distribution",
+                "description": "Ajoute une zone de distribution pour la planification des tournées.",
+                "operationId": "createZone",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ZoneRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Zone créée",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZoneResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v4/gestion/produit": {
+            "get": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Afficher le catalogue complet des produits",
+                "operationId": "findAllProduits",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageProduitResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Créer un produit pour le catalogue",
+                "description": "Ajoute un nouveau produit au catalogue général de SmartLogi.",
+                "operationId": "createProduit",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProduitRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produit créé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProduitResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v4/gestion/produit/cleanup/duplicates": {
+            "post": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Nettoyage des produits dupliqués",
+                "description": "Tâche d'administration: Supprime les produits qui partagent le même nom mais ont des ID différents (corrige les problèmes de base de données).",
+                "operationId": "deleteDuplicateProducts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v3/clients/register/destinataire": {
+            "post": {
+                "tags": [
+                    "Clients et Destinataires"
+                ],
+                "summary": "Enregistrer un nouveau destinataire",
+                "description": "Crée un nouveau destinataire. Utilisé par le gestionnaire.",
+                "operationId": "createDestinataire",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientDestinataireRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Destinataire créé avec succès",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflit: Email déjà utilisé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis": {
+            "get": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Afficher la liste paginée de tous les colis (Vue Basique)",
+                "description": "Retourne une liste allégée des colis, principalement pour les gestionnaires.",
+                "operationId": "getAllColis",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "dateCreation"
+                        }
+                    },
+                    {
+                        "name": "sortDir",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginée des colis",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageColisResponseBasic"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Créer une nouvelle demande de livraison",
+                "description": "Permet d'enregistrer un colis. La méthode gère l'upsert des produits et la validation des clients/zones.",
+                "operationId": "createColis",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ColisRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Colis créé avec succès",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Données invalides ou statut de priorité incorrect",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Client/Destinataire/Zone non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/auth/register": {
+            "post": {
+                "tags": [
+                    "auth-controller"
+                ],
+                "operationId": "register",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/auth/refrech": {
+            "post": {
+                "tags": [
+                    "auth-controller"
+                ],
+                "operationId": "refreshToken",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/auth/logout": {
+            "post": {
+                "tags": [
+                    "auth-controller"
+                ],
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/auth/login": {
+            "post": {
+                "tags": [
+                    "auth-controller"
+                ],
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/gestionner/livreur": {
+            "get": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Afficher la liste paginée de tous les livreurs",
+                "description": "Retourne la liste complète des livreurs avec des options de tri et de pagination.",
+                "operationId": "getAllLivreurs",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "id"
+                        }
+                    },
+                    {
+                        "name": "sortDir",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginée des livreurs retournée",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageLivreurResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Enregistrer un nouveau livreur",
+                "description": "Ajoute un nouveau livreur au système et lui assigne une zone par défaut (à des fins de planification).",
+                "operationId": "createLivreur",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LivreurRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Livreur créé avec succès",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LivreurResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de validation des champs",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LivreurResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/permission/create": {
+            "post": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "createPermission",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PermissionResponseDetail"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/manager/create": {
+            "post": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "createMannager",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GestionnerRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GestionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/Roles/AssignPermission": {
+            "post": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "assignPermissionToRole",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v4/gestion/detailed-summary": {
+            "get": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Rapport détaillé du poids et du nombre de colis par livreur ou zone",
+                "description": "Opération Gestionnaire: Calcule le poids total (SUM) et le nombre total (COUNT) des colis regroupés par Livreur ou par Zone.",
+                "operationId": "getDetailedColisSummary",
+                "parameters": [
+                    {
+                        "name": "groupByField",
+                        "in": "query",
+                        "description": "Champ de regroupement: 'livreur' ou 'zone'",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des totaux par groupe",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "additionalProperties": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v4/gestion/colis/summary": {
+            "get": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Rapport de synthèse des colis par statut ou zone",
+                "description": "Opération Gestionnaire: Calcule le nombre total de colis regroupés par le champ spécifié (statut ou zoneId).",
+                "operationId": "getColisSummary",
+                "parameters": [
+                    {
+                        "name": "groupByField",
+                        "in": "query",
+                        "description": "Champ de regroupement: 'statut' ou 'zone'",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v3/clients": {
+            "get": {
+                "tags": [
+                    "Clients et Destinataires"
+                ],
+                "summary": "Afficher la liste paginée de tous les clients et destinataires",
+                "description": "Utilisé par le gestionnaire pour visualiser toute la base clients avec pagination et tri.",
+                "operationId": "getAllClients",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "dateCreation"
+                        }
+                    },
+                    {
+                        "name": "sortDir",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginée des utilisateurs retournée",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v3/clients/search": {
+            "get": {
+                "tags": [
+                    "Clients et Destinataires"
+                ],
+                "summary": "Rechercher des clients ou destinataires par mot-clé",
+                "description": "Permet de rechercher des utilisateurs par Nom, Email, ou Téléphone (recherche unifiée).",
+                "operationId": "searchClients",
+                "parameters": [
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Résultats de la recherche paginés",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageClientDestinataireResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis/{colisId}/history": {
+            "get": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Consulter l'historique complet d'un colis",
+                "description": "Utilisé pour la traçabilité: retourne toutes les étapes (statuts et commentaires) d'un colis donné.",
+                "operationId": "getColisHistory",
+                "parameters": [
+                    {
+                        "name": "colisId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Historique retourné",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageHistoriqueLivraisonResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis/summary": {
+            "get": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Rapport de synthèse des colis par regroupement",
+                "description": "Opération Gestionnaire: Calcule le nombre total de colis regroupés par statut ou par zone.",
+                "operationId": "getColisSummary_1",
+                "parameters": [
+                    {
+                        "name": "groupByField",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Synthèse des colis par groupe",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis/search": {
+            "get": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Filtrage et Recherche avancée",
+                "description": "Recherche et pagine les colis par Statut, Zone, Ville ou Priorité.",
+                "operationId": "findColisByCriteria",
+                "parameters": [
+                    {
+                        "name": "statut",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "zoneId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ville",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "priorite",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Résultats du filtre paginés",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/colis/expediteur/{expediteurId}": {
+            "get": {
+                "tags": [
+                    "Gestion des Colis"
+                ],
+                "summary": "Consulter les colis d'un expéditeur",
+                "description": "Utilisé par le client pour suivre l'état de ses envois.",
+                "operationId": "getColisByExpediteur",
+                "parameters": [
+                    {
+                        "name": "expediteurId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des colis de l'expéditeur",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/gestionner/livreur/{livreurId}/colis": {
+            "get": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Afficher les colis assignés à un livreur spécifique",
+                "description": "Utilisé par l'application livreur pour visualiser sa tournée (Colis à collecter ou livrer).",
+                "operationId": "getAssignedColis",
+                "parameters": [
+                    {
+                        "name": "livreurId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginée des colis assignés",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageColisResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livreur non trouvé",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/gestionner/livreur/search": {
+            "get": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Rechercher des livreurs par mot-clé",
+                "description": "Recherche des livreurs par Nom, Prénom, ou Téléphone (recherche unifiée).",
+                "operationId": "searchLivreurs",
+                "parameters": [
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "description": "Mot-clé pour la recherche par Nom, Prénom, ou Téléphone.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Résultats de la recherche paginés",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageLivreurResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/gestionner/livreur/counts": {
+            "get": {
+                "tags": [
+                    "Gestion des Livreurs"
+                ],
+                "summary": "Consulter le nombre de colis assignés par livreur",
+                "description": "Opération Gestionnaire: Retourne la liste des livreurs avec le compte des colis qui leur sont affectés (utile pour l'équilibrage des tournées).",
+                "operationId": "getLivreurColisCounts",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des livreurs avec leurs comptes de colis",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageLivreurColisResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/roles/all": {
+            "get": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "getAllRoles",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "dateCreation"
+                        }
+                    },
+                    {
+                        "name": "sortDir",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageRolesResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/permission/all": {
+            "get": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "getAllPermission",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "dateCreation"
+                        }
+                    },
+                    {
+                        "name": "sortDir",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PagePermissionResponseDetail"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/manager/all": {
+            "get": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "getAllManagers",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "dateCreation"
+                        }
+                    },
+                    {
+                        "name": "sortDir",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageGestionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v4/gestion/produit{produitId}": {
+            "delete": {
+                "tags": [
+                    "Gestion des Données Logistiques (Admin)"
+                ],
+                "summary": "Supprimer un produit du catalogue",
+                "description": "Supprime un produit. Bloqué si le produit est lié à un colis existant.",
+                "operationId": "deleteProduit",
+                "parameters": [
+                    {
+                        "name": "produitId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Produit supprimé"
+                    }
+                }
+            }
+        },
+        "/api/admin/permission/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "deletePermission",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/manager/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "admin-controller"
+                ],
+                "operationId": "deleteManager",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ZoneRequest": {
+                "type": "object",
+                "properties": {
+                    "nom": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 0
+                    },
+                    "codePostal": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "codePostal"
+                ]
+            },
+            "ZoneResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nom": {
+                        "type": "string"
+                    },
+                    "codePostal": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ColisProduitRequest": {
+                "type": "object",
+                "properties": {
+                    "quantite": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 20,
+                        "minimum": 1
+                    }
+                },
+                "required": [
+                    "quantite"
+                ]
+            },
+            "ProduitRequest": {
+                "type": "object",
+                "properties": {
+                    "nom": {
+                        "type": "string"
+                    },
+                    "categorie": {
+                        "type": "string"
+                    },
+                    "poids": {
+                        "type": "number",
+                        "format": "double",
+                        "maximum": 70.5,
+                        "minimum": 0.5
+                    },
+                    "prix": {
+                        "type": "number",
+                        "minimum": 0
+                    },
+                    "colisProduit": {
+                        "$ref": "#/components/schemas/ColisProduitRequest"
+                    }
+                },
+                "required": [
+                    "categorie",
+                    "nom",
+                    "poids",
+                    "prix"
+                ]
+            },
+            "ProduitResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nom": {
+                        "type": "string"
+                    },
+                    "categorie": {
+                        "type": "string"
+                    },
+                    "poids": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "prix": {
+                        "type": "number"
+                    }
+                }
+            },
+            "ClientDestinataireRequest": {
+                "type": "object",
+                "properties": {
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "adresse": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "adresse",
+                    "nom",
+                    "prenom",
+                    "telephone"
+                ]
+            },
+            "ClientDestinataireResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "adresse": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ColisRequest": {
+                "type": "object",
+                "properties": {
+                    "poids": {
+                        "type": "number",
+                        "format": "double",
+                        "minimum": 0
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "priorite": {
+                        "type": "string",
+                        "pattern": "URGENT|NORMAL|BASIQUE"
+                    },
+                    "villeDestination": {
+                        "type": "string"
+                    },
+                    "clientExpediteurEmail": {
+                        "type": "string"
+                    },
+                    "destinataireEmail": {
+                        "type": "string"
+                    },
+                    "codePostal": {
+                        "type": "string"
+                    },
+                    "produits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProduitRequest"
+                        }
+                    }
+                },
+                "required": [
+                    "clientExpediteurEmail",
+                    "codePostal",
+                    "description",
+                    "destinataireEmail",
+                    "poids",
+                    "priorite",
+                    "produits",
+                    "villeDestination"
+                ]
+            },
+            "ColisProduitResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "produit": {
+                        "$ref": "#/components/schemas/ProduitResponse"
+                    },
+                    "quantite": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "prixUnitaire": {
+                        "type": "number"
+                    }
+                }
+            },
+            "ColisResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "poids": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "statut": {
+                        "type": "string"
+                    },
+                    "priorite": {
+                        "type": "string"
+                    },
+                    "villeDestination": {
+                        "type": "string"
+                    },
+                    "dateCreation": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "clientExpediteur": {
+                        "$ref": "#/components/schemas/ClientDestinataireResponse"
+                    },
+                    "destinataire": {
+                        "$ref": "#/components/schemas/ClientDestinataireResponse"
+                    },
+                    "zone": {
+                        "$ref": "#/components/schemas/ZoneResponse"
+                    },
+                    "livreur": {
+                        "$ref": "#/components/schemas/LivreurResponse"
+                    },
+                    "historique": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistoriqueLivraisonResponse"
+                        }
+                    },
+                    "produits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ColisProduitResponse"
+                        }
+                    }
+                }
+            },
+            "HistoriqueLivraisonResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "statut": {
+                        "type": "string"
+                    },
+                    "commentaire": {
+                        "type": "string"
+                    },
+                    "dateChangement": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "LivreurResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "vehicule": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/RolesEntity"
+                    },
+                    "zoneAssignee": {
+                        "$ref": "#/components/schemas/ZoneResponse"
+                    }
+                }
+            },
+            "Permission": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "dateCreation": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "dateModification": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "createdBy": {
+                        "type": "string"
+                    },
+                    "modifiedBy": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RolesEntity": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "dateCreation": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "dateModification": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "createdBy": {
+                        "type": "string"
+                    },
+                    "modifiedBy": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "ADMIN",
+                            "CLIENT",
+                            "LIVREUR",
+                            "MANAGER"
+                        ]
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        },
+                        "uniqueItems": true
+                    }
+                }
+            },
+            "HistoriqueLivraisonRequest": {
+                "type": "object",
+                "properties": {
+                    "statut": {
+                        "type": "string"
+                    },
+                    "commentaire": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "statut"
+                ]
+            },
+            "LivreurRequest": {
+                "type": "object",
+                "properties": {
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "confirmPassword": {
+                        "type": "string"
+                    },
+                    "vehicule": {
+                        "type": "string"
+                    },
+                    "zoneAssigneeId": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "confirmPassword",
+                    "nom",
+                    "password",
+                    "prenom",
+                    "telephone",
+                    "vehicule",
+                    "zoneAssigneeId"
+                ]
+            },
+            "RegisterRequest": {
+                "type": "object",
+                "properties": {
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "confirmPassword": {
+                        "type": "string"
+                    },
+                    "adresse": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "adresse",
+                    "confirmPassword",
+                    "nom",
+                    "password",
+                    "prenom",
+                    "telephone"
+                ]
+            },
+            "AuthResponse": {
+                "type": "object",
+                "properties": {
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/RolesEntity"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "PermissionRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "PermissionResponseDetail": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "dateCreation": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "createdBy": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GestionnerRequest": {
+                "type": "object",
+                "properties": {
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "confirmPassword": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "confirmPassword",
+                    "nom",
+                    "password",
+                    "prenom",
+                    "telephone"
+                ]
+            },
+            "GestionResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenom": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/RolesEntity"
+                    }
+                }
+            },
+            "AssignRequest": {
+                "type": "object",
+                "properties": {
+                    "roleId": {
+                        "type": "string"
+                    },
+                    "permissionId": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "permissionId",
+                    "roleId"
+                ]
+            },
+            "AssignResponse": {
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "$ref": "#/components/schemas/RolesResponse"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionResponseDetail"
+                        },
+                        "uniqueItems": true
+                    }
+                }
+            },
+            "RolesResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Pageable": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                    },
+                    "sort": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "PageZoneResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ZoneResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "Pageablenull": {
+                "type": "object",
+                "properties": {
+                    "offset": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageNumber": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "paged": {
+                        "type": "boolean"
+                    },
+                    "unpaged": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "Sortnull": {
+                "type": "object",
+                "properties": {
+                    "empty": {
+                        "type": "boolean"
+                    },
+                    "sorted": {
+                        "type": "boolean"
+                    },
+                    "unsorted": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageProduitResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProduitResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageClientDestinataireResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ClientDestinataireResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ClientDestinataireResponseBasic": {
+                "type": "object",
+                "properties": {
+                    "nom_complet": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ColisResponseBasic": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "poids": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "statut": {
+                        "type": "string"
+                    },
+                    "priorite": {
+                        "type": "string"
+                    },
+                    "villeDestination": {
+                        "type": "string"
+                    },
+                    "dateCreation": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "clientExpediteur": {
+                        "$ref": "#/components/schemas/ClientDestinataireResponseBasic"
+                    },
+                    "destinataire": {
+                        "$ref": "#/components/schemas/ClientDestinataireResponseBasic"
+                    },
+                    "zone": {
+                        "$ref": "#/components/schemas/ZoneResponse"
+                    }
+                }
+            },
+            "PageColisResponseBasic": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ColisResponseBasic"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageHistoriqueLivraisonResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistoriqueLivraisonResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageColisResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ColisResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageLivreurResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LivreurResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "LivreurColisResponse": {
+                "type": "object",
+                "properties": {
+                    "nomComplet": {
+                        "type": "string"
+                    },
+                    "colisCont": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "PageLivreurColisResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LivreurColisResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageRolesResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RolesResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PagePermissionResponseDetail": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionResponseDetail"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageGestionResponse": {
+                "type": "object",
+                "properties": {
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GestionResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/Sortnull"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/Pageablenull"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    }
+}
