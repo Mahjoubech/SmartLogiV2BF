@@ -1,0 +1,359 @@
+<div class="dashboard-root">
+    <!-- Top Navigation Bar -->
+    <nav class="mc-nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-terminal">
+                    <app-smartlogi-logo [scale]="0.6"></app-smartlogi-logo>
+                </div>
+            </div>
+
+            <div class="nav-center">
+                <div class="mc-tabs">
+                    <button [class.active]="activeTab === 'MANIFEST'" (click)="setTab('MANIFEST')" class="tab-btn">
+                        <span class="icon">📦</span> Shipments
+                    </button>
+                    <button [class.active]="activeTab === 'NEW_MISSION'" (click)="setTab('NEW_MISSION')" class="tab-btn highlight">
+                        <span class="icon">➕</span> New
+                    </button>
+                    <button [class.active]="activeTab === 'DELIVERED'" (click)="setTab('DELIVERED')" class="tab-btn">
+                        <span class="icon">✅</span> History
+                    </button>
+                    <button [class.active]="activeTab === 'STATISTICS'" (click)="setTab('STATISTICS')" class="tab-btn">
+                         <span class="icon">📊</span> Stats
+                    </button>
+                </div>
+            </div>
+
+            <div class="nav-right">
+                <!-- User Profile Component with simple click handler or custom event if extended further -->
+                <div class="cursor-pointer" (click)="setTab('PROFILE')">
+                    <app-user-profile [user]="currentUser$ | async" (logout)="logout()"></app-user-profile>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-content">
+        <!-- Content Header / Stats Summary -->
+        <header class="content-header" *ngIf="activeTab === 'MANIFEST' || activeTab === 'DELIVERED'">
+            <div class="flex justify-between items-end w-full">
+                <div class="header-info">
+                    <h1>My Dashboard</h1>
+                    <p class="subtitle" *ngIf="activeTab === 'MANIFEST'">Active Shipments Monitor</p>
+                    <p class="subtitle" *ngIf="activeTab === 'DELIVERED'">Historical Archives</p>
+                </div>
+                
+                <div class="search-glass mb-2">
+                    <span class="mr-2 opacity-50">🔍</span>
+                    <input type="text" [(ngModel)]="searchText" placeholder="Search shipments...">
+                </div>
+            </div>
+        </header>
+
+        <div class="tab-viewport">
+            <!-- Missions Grid (Pinterest Style) -->
+            <div class="mission-masonry" *ngIf="activeTab === 'MANIFEST' || activeTab === 'DELIVERED'">
+                <ng-container *ngIf="colis$ | async as items; else loading">
+                    
+                    <ng-container *ngIf="(items | colisSearch:searchText) as filteredItems">
+                        
+                         <!-- Empty State -->
+                        <div *ngIf="filteredItems.length === 0" class="empty-state-luxury text-center py-20">
+                            <div class="opacity-20 text-6xl mb-4">📂</div>
+                            <h2 class="text-xl font-bold">No data available</h2>
+                            <button class="btn-primary mt-6 text-cyan-400 border border-cyan-400 px-6 py-2 rounded-lg hover:bg-cyan-400 hover:text-black transition" (click)="setTab('NEW_MISSION')">Initialize Shipment</button>
+                        </div>
+
+                        <!-- Data Grid -->
+                        <div class="masonry-grid mb-8" *ngIf="filteredItems.length > 0">
+                            <!-- Use PaginatePipe ONLY for MANIFEST tab -->
+                            <ng-container *ngFor="let item of (activeTab === 'MANIFEST' ? (filteredItems | paginate:currentPage:itemsPerPage) : filteredItems)">
+                                <app-colis-card 
+                                    *ngIf="shouldShowItem(item, activeTab)"
+                                    [item]="item"
+                                    (viewDetails)="viewDetails($event)"
+                                    class="masonry-item">
+                                </app-colis-card>
+                            </ng-container>
+                        </div>
+
+                        <!-- Pagination Controls (Hidden for History/DELIVERED) -->
+                        <div class="flex justify-center items-center gap-4 mt-8" *ngIf="activeTab === 'MANIFEST' && filteredItems.length > itemsPerPage">
+                            <button 
+                                class="px-4 py-2 rounded-lg border border-white/10 bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition text-sm font-bold"
+                                [disabled]="currentPage === 1"
+                                (click)="changePage(currentPage - 1)">
+                                Previous
+                            </button>
+                            
+                            <span class="text-sm font-mono text-slate-400">
+                                Page <span class="text-cyan-400 font-bold">{{ currentPage }}</span> of {{ getMathCeil(filteredItems.length, itemsPerPage) }}
+                            </span>
+
+                            <button 
+                                class="px-4 py-2 rounded-lg border border-white/10 bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition text-sm font-bold"
+                                [disabled]="currentPage >= getMathCeil(filteredItems.length, itemsPerPage)"
+                                (click)="changePage(currentPage + 1)">
+                                Next
+                            </button>
+                        </div>
+
+                    </ng-container>
+                
+                </ng-container>
+            </div>
+
+            <!-- Creation Wizard -->
+            <div class="wizard-container-overlay" *ngIf="activeTab === 'NEW_MISSION'">
+                <div class="glass-wizard-card">
+                    <app-create-colis-wizard 
+                        [userEmail]="(currentUser$ | async)?.email || ''"
+                        (completed)="onColisCompleted()"
+                        (canceled)="activeTab = 'MANIFEST'">
+                    </app-create-colis-wizard>
+                </div>
+            </div>
+            
+            <!-- Statistics Tab -->
+            <div class="stats-glass-container" *ngIf="activeTab === 'STATISTICS'">
+                <header class="content-header">
+                    <div class="header-info">
+                        <h1>Analytics</h1>
+                        <p class="subtitle">Performance & Volume Metrics</p>
+                    </div>
+                </header>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Total -->
+                    <div class="p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/10 transition group">
+                        <span class="text-4xl mb-2 group-hover:scale-110 transition duration-300">📦</span>
+                        <h3 class="text-3xl font-black text-white">{{ stats.total }}</h3>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest mt-1">Total Shipments</p>
+                    </div>
+
+                    <!-- Delivered -->
+                    <div class="p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/10 transition group">
+                        <span class="text-4xl mb-2 group-hover:scale-110 transition duration-300">✅</span>
+                        <h3 class="text-3xl font-black text-green-400">{{ stats.delivered }}</h3>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest mt-1">Delivered</p>
+                    </div>
+
+                    <!-- Transit -->
+                    <div class="p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/10 transition group">
+                        <span class="text-4xl mb-2 group-hover:scale-110 transition duration-300">🚚</span>
+                        <h3 class="text-3xl font-black text-blue-400">{{ stats.transit }}</h3>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest mt-1">In Transit</p>
+                    </div>
+                    
+                    <!-- Weight -->
+                    <div class="p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/10 transition group">
+                        <span class="text-4xl mb-2 group-hover:scale-110 transition duration-300">⚖️</span>
+                        <h3 class="text-3xl font-black text-cyan-400">{{ stats.weight | number:'1.0-2' }} <small class="text-lg">kg</small></h3>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest mt-1">Total Volume</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="profile-container flex justify-center mt-10 pb-10" *ngIf="activeTab === 'PROFILE'">
+                <div class="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-4xl w-full shadow-2xl relative overflow-hidden flex flex-col md:flex-row gap-8">
+                     
+                     <!-- Left Panel: User Info -->
+                     <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-20 h-20 rounded-full bg-slate-900 border-2 border-cyan-400/30 flex items-center justify-center text-3xl shadow-lg text-cyan-400 font-bold">
+                                {{ (currentUser$ | async)?.prenom?.charAt(0) }}{{ (currentUser$ | async)?.nom?.charAt(0) }}
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-white mb-1" *ngIf="currentUser$ | async as u">{{ u.prenom }} {{ u.nom }}</h2>
+                                <span class="px-2 py-0.5 bg-white/10 rounded text-xs text-cyan-400 font-mono" *ngIf="currentUser$ | async as u">{{ u.role?.name }}</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4" *ngIf="currentUser$ | async as u">
+                            <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                                <label class="block text-[10px] uppercase text-slate-500 tracking-widest mb-1">Email Address</label>
+                                <div class="text-white">{{ u.email }}</div>
+                            </div>
+                             <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                                <label class="block text-[10px] uppercase text-slate-500 tracking-widest mb-1">Phone Number</label>
+                                <div class="text-white">{{ u.email }}</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                                    <label class="block text-[10px] uppercase text-slate-500 tracking-widest mb-1">Role</label>
+                                    <div class="text-white font-bold">{{ u.role?.name }}</div>
+                                </div>
+                                <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                                    <label class="block text-[10px] uppercase text-slate-500 tracking-widest mb-1">Lifetime Shipments</label>
+                                    <div class="text-white font-bold text-xl">{{ stats.total }}</div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+
+                     <!-- Right Panel: Change Password -->
+                     <div class="flex-1 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-8">
+                        <h3 class="text-lg font-bold text-white mb-6">Security Settings</h3>
+                        
+                        <form (ngSubmit)="onChangePassword()" #pwForm="ngForm">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs text-slate-400 mb-1">Current Password</label>
+                                    <input type="password" [(ngModel)]="passwordData.current" name="current" required class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-cyan-400 outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-400 mb-1">New Password</label>
+                                    <input type="password" [(ngModel)]="passwordData.new" name="new" required minlength="6" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-cyan-400 outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-400 mb-1">Confirm New Password</label>
+                                    <input type="password" [(ngModel)]="passwordData.confirm" name="confirm" required class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-cyan-400 outline-none transition">
+                                </div>
+                            </div>
+
+                            <div class="mt-6 flex justify-end">
+                                <button type="submit" [disabled]="pwForm.invalid || passwordData.new !== passwordData.confirm || isUpdatingPassword" 
+                                    class="px-6 py-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-lg hover:bg-cyan-500/20 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {{ isUpdatingPassword ? 'Updating...' : 'Update Password' }}
+                                </button>
+                            </div>
+                            
+                            <p class="mt-4 text-xs text-center" [class.text-green-400]="pwMsgType === 'success'" [class.text-red-400]="pwMsgType === 'error'" *ngIf="pwMessage">
+                                {{ pwMessage }}
+                            </p>
+                        </form>
+
+                        <div class="mt-12 pt-8 border-t border-white/10">
+                             <button class="w-full py-3 rounded-xl bg-red-500/10 text-red-400 font-bold border border-red-500/20 hover:bg-red-500/20 transition flex items-center justify-center gap-2" (click)="logout()">
+                                <span class="text-lg">🚪</span> Sign Out
+                             </button>
+                        </div>
+                     </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <ng-template #loading>
+            <div class="loading-overlay">
+                <div class="spinner"></div>
+                <span>Syncing Data...</span>
+            </div>
+        </ng-template>
+    </main>
+
+    <!-- NEW REDESIGNED DETAIL MODAL -->
+    <div class="modal-backdrop" *ngIf="isDetailOpen" (click)="closeDetails()" @fadeIn>
+        <div class="glass-modal" (click)="$event.stopPropagation()" *ngIf="selectedColis">
+            
+            <div class="modal-header">
+                <div>
+                     <!-- EDITED: Removed ID display -->
+                     <h2 class="text-2xl font-black tracking-tight text-white mb-2">Shipment Details</h2>
+                     <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold uppercase tracking-widest inline-block"
+                           [class.text-green-400]="selectedColis.statut === 'LIVRE'"
+                           [class.text-cyan-400]="selectedColis.statut !== 'LIVRE'">
+                         {{ selectedColis.statut }}
+                     </span>
+                </div>
+                <button class="btn-close" (click)="closeDetails()">×</button>
+            </div>
+            
+            <div class="modal-content">
+                <!-- Visual Tracker -->
+                <div class="status-tracker-container">
+                    <div class="tracker-timeline">
+                        <div class="timeline-point completed">
+                             <div class="point-dot">✓</div>
+                             <span class="timeline-label text-cyan-400">Created</span>
+                        </div>
+                        <div class="timeline-point" [class.completed]="selectedColis.statut !== 'CREE' && selectedColis.statut !== 'ATTENTE'">
+                             <div class="point-dot">📦</div>
+                             <span class="timeline-label" [class.text-cyan-400]="selectedColis.statut !== 'CREE' && selectedColis.statut !== 'ATTENTE'">Transit</span>
+                        </div>
+                        <div class="timeline-point" [class.completed]="selectedColis.statut === 'LIVRE'">
+                             <div class="point-dot">🏠</div>
+                             <span class="timeline-label" [class.text-cyan-400]="selectedColis.statut === 'LIVRE'">Delivered</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-cards-grid">
+                    <!-- Sender & Recipient Card -->
+                    <div class="info-card">
+                        <h4>Stakeholders</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[10px] uppercase text-slate-500 tracking-widest mb-1 block">From (Sender)</label>
+                                <div class="text-white font-bold">{{ selectedColis.clientExpediteur?.nom }} {{ selectedColis.clientExpediteur?.prenom }}</div>
+                                <div class="text-sm text-slate-400">{{ selectedColis.clientExpediteur?.email }}</div>
+                            </div>
+                            <div class="w-full h-px bg-white/5"></div>
+                            <div>
+                                <label class="text-[10px] uppercase text-slate-500 tracking-widest mb-1 block">To (Recipient)</label>
+                                <div class="text-white font-bold">{{ selectedColis.destinataire?.nom }} {{ selectedColis.destinataire?.prenom }}</div>
+                                <div class="text-sm text-slate-400">{{ selectedColis.destinataire?.email }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipment Details Card -->
+                    <div class="info-card">
+                        <h4>Logistics Data</h4>
+                         <div class="detail-row">
+                            <span class="detail-label">Destination</span>
+                            <span class="detail-value text-white">{{ selectedColis.villeDestination }}</span>
+                        </div>
+                         <div class="detail-row">
+                            <span class="detail-label">Weight</span>
+                            <span class="detail-value text-white">{{ selectedColis.poids }} KG</span>
+                        </div>
+                         <div class="detail-row">
+                            <span class="detail-label">Priority</span>
+                            <span class="detail-value" 
+                                  [class.text-red-400]="selectedColis.priorite === 'URGENT' || selectedColis.priorite === 'HAUTE'"
+                                  [class.text-blue-400]="selectedColis.priorite === 'NORMAL'"
+                                  [class.text-cyan-400]="selectedColis.priorite === 'BASIQUE' || selectedColis.priorite === 'FAIBLE'">
+                                {{ selectedColis.priorite }}
+                            </span>
+                        </div>
+                         <div class="detail-row border-t border-white/5 pt-2 mt-2">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value text-slate-400 text-xs">{{ selectedColis.dateCreation | date:'medium' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADDED: Product List Table with Scrolling -->
+                <div class="mt-8 bg-white/5 rounded-xl border border-white/10 overflow-hidden" *ngIf="selectedColis.produits && selectedColis.produits.length > 0">
+                    <div class="px-6 py-3 bg-white/5 border-b border-white/10 flex justify-between items-center">
+                        <h4 class="text-sm font-bold uppercase tracking-widest text-slate-400">Cargo Manifest</h4>
+                        <span class="text-xs text-slate-500">{{ selectedColis.produits.length }} Item(s)</span>
+                    </div>
+                    
+                    <!-- Added max-height and overflow-y-auto for scrolling, and replaced custom-scrollbar with no-scrollbar -->
+                    <div class="w-full max-h-60 overflow-y-auto no-scrollbar">
+                        <!-- Sticky Header -->
+                        <div class="grid grid-cols-[1fr_80px_100px] gap-4 px-6 py-2 text-[10px] uppercase font-bold text-slate-600 border-b border-white/5 sticky top-0 bg-[#0f172a] z-10 shadow-lg">
+                            <span>Product</span>
+                            <span class="text-right">Qty</span>
+                            <span class="text-right">Weight/Unit</span>
+                        </div>
+                        
+                        <!-- Scrollable Content -->
+                        <div class="grid grid-cols-[1fr_80px_100px] gap-4 px-6 py-4 border-b border-white/5 items-center last:border-0 hover:bg-white/5 transition" *ngFor="let p of selectedColis.produits">
+                            <span class="text-white font-medium">{{ p.produit?.nom }}</span>
+                            <span class="text-right text-cyan-400 font-bold">x{{ p.quantite }}</span>
+                            <span class="text-right text-slate-400">{{ p.produit?.poids }} kg</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
