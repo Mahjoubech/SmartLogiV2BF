@@ -1,0 +1,117 @@
+<div class="min-h-screen bg-slate-950 flex flex-col lg:flex-row">
+    
+    <!-- Left Panel: Security Visuals -->
+    <div class="lg:w-1/2 bg-[#050b14] relative overflow-hidden flex flex-col justify-between p-12 border-b lg:border-b-0 lg:border-r border-white/5">
+        
+        <!-- Background Grid -->
+        <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px;"></div>
+        
+        <div class="relative z-10">
+            <app-smartlogi-logo [scale]="0.8"></app-smartlogi-logo>
+            <div class="mt-8">
+                <h1 class="text-4xl lg:text-5xl font-black text-white tracking-tighter mb-4">
+                    RESTRICTED <br>
+                    <span class="text-red-500">OPERATIONS</span>
+                </h1>
+                <p class="text-slate-400 max-w-md text-sm leading-relaxed">
+                    This terminal is monitored. Access is limited to authorized personnel with Level 3 clearance or higher.
+                </p>
+            </div>
+        </div>
+
+        <div class="relative z-10 mt-12 lg:mt-0">
+            <div class="flex items-center gap-4 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                <span class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Secure Connection
+                </span>
+                <span>|</span>
+                <span>Encryption: AES-256</span>
+                <span>|</span>
+                <span>IP: 192.168.x.x</span>
+            </div>
+        </div>
+
+        <!-- Decorative Circle -->
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full border-[30px] border-white/5 opacity-50"></div>
+    </div>
+
+    <!-- Right Panel: Login Form -->
+    <div class="lg:w-1/2 flex items-center justify-center p-8 lg:p-16 relative">
+        <div class="w-full max-w-md">
+            
+            <div class="mb-10">
+                <h2 class="text-xl font-bold text-white mb-1">Staff Authentication</h2>
+                <p class="text-slate-500 text-sm">Please identify your role to proceed.</p>
+            </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+                
+                <!-- Role Selector (Cards) -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <label class="cursor-pointer group relative">
+                        <input type="radio" formControlName="role" value="MANAGER" class="peer sr-only">
+                        <div class="p-5 rounded-2xl border border-white/10 bg-white/5 peer-checked:border-cyan-500 peer-checked:bg-cyan-500/10 hover:bg-white/10 transition-all duration-300 h-full flex flex-col items-center justify-center text-center">
+                            <span class="text-3xl mb-3 grayscale group-hover:grayscale-0 transition duration-300">👔</span>
+                            <span class="text-xs font-bold text-slate-400 peer-checked:text-cyan-400 tracking-wider">MANAGER</span>
+                        </div>
+                        <div class="absolute top-3 right-3 w-2 h-2 rounded-full bg-cyan-500 opacity-0 peer-checked:opacity-100 transition-opacity shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div>
+                    </label>
+                    
+                    <label class="cursor-pointer group relative">
+                        <input type="radio" formControlName="role" value="LIVREUR" class="peer sr-only">
+                        <div class="p-5 rounded-2xl border border-white/10 bg-white/5 peer-checked:border-green-500 peer-checked:bg-green-500/10 hover:bg-white/10 transition-all duration-300 h-full flex flex-col items-center justify-center text-center">
+                            <span class="text-3xl mb-3 grayscale group-hover:grayscale-0 transition duration-300">🚚</span>
+                            <span class="text-xs font-bold text-slate-400 peer-checked:text-green-400 tracking-wider">LIVREUR</span>
+                        </div>
+                        <div class="absolute top-3 right-3 w-2 h-2 rounded-full bg-green-500 opacity-0 peer-checked:opacity-100 transition-opacity shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>
+                    </label>
+                </div>
+
+                <!-- Inputs -->
+                <div class="space-y-4">
+                    <div class="group">
+                        <label class="block text-[10px] uppercase text-slate-500 font-bold mb-2 tracking-widest group-focus-within:text-cyan-400 transition-colors">Internal ID</label>
+                        <input 
+                            type="email" 
+                            formControlName="email" 
+                            class="w-full bg-[#0f172a] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-700 focus:border-cyan-400/50 focus:bg-[#0f172a] outline-none transition-all duration-300"
+                            placeholder="staff@smartlogi.network"
+                        >
+                    </div>
+
+                    <div class="group">
+                        <label class="block text-[10px] uppercase text-slate-500 font-bold mb-2 tracking-widest group-focus-within:text-cyan-400 transition-colors">Access Key</label>
+                        <input 
+                            type="password" 
+                            formControlName="password" 
+                            class="w-full bg-[#0f172a] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-700 focus:border-cyan-400/50 focus:bg-[#0f172a] outline-none transition-all duration-300"
+                            placeholder="••••••••••••"
+                        >
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div *ngIf="errorMessage" class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3">
+                    <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span class="text-red-400 text-xs leading-relaxed">{{ errorMessage }}</span>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    [disabled]="isLoading || loginForm.invalid"
+                    class="w-full bg-red-600 text-white font-black py-4 rounded-xl hover:bg-red-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-4 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-red-500/25"
+                >
+                    <span *ngIf="!isLoading">INITIATE SESSION</span>
+                    <span *ngIf="isLoading">VERIFYING CREDENTIALS...</span>
+                </button>
+                
+                <div class="text-center mt-8">
+                    <a routerLink="/" class="text-xs text-slate-600 hover:text-slate-400 transition no-underline">Return to Home Command</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
