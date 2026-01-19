@@ -1,4 +1,105 @@
-<div class="p-10 text-white">
-    <h1 class="text-3xl font-bold mb-4">Livreur Dashboard</h1>
-    <p>Welcome, Livreur. Delivery routes coming soon.</p>
+<div class="min-h-screen bg-slate-950 text-white flex flex-col md:flex-row">
+    
+    <!-- Sidebar / Navigation (Simulated for now, could be a real drawer) -->
+    <div class="w-full md:w-64 bg-[#050b14] border-r border-white/10 p-6 flex flex-col gap-8">
+        <div>
+            <h1 class="text-2xl font-black tracking-tighter">SMART<span class="text-cyan-500">LOGI</span></h1>
+            <p class="text-slate-500 text-xs mt-1">My Deliveries & Alerts</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-cyan-500/10 border border-cyan-500/20 p-4 rounded-xl">
+                <span class="block text-xs text-cyan-400 font-bold uppercase mb-1">Status</span>
+                <span class="text-white font-bold flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Online
+                </span>
+            </div>
+            
+            <div class="bg-white/5 border border-white/10 p-4 rounded-xl">
+                 <span class="block text-xs text-slate-400 font-bold uppercase mb-1">Today's Load</span>
+                 <span class="text-2xl font-black">{{ assignedColis.length }}</span>
+                 <span class="text-xs text-slate-500">Parcels</span>
+            </div>
+        <div class="mt-auto border-t border-white/10 pt-6 space-y-2">
+            <button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition group">
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-cyan-500 group-hover:text-black transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <span class="font-bold text-sm">My Profile</span>
+            </button>
+            <button (click)="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-500 transition group">
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-red-500 group-hover:text-white transition">
+                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                </div>
+                <span class="font-bold text-sm">Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6 md:p-10 overflow-y-auto">
+        
+        <!-- Notifications Check -->
+        <div *ngIf="notifications.length > 0" class="mb-10">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                Notifications
+            </h2>
+            <div class="space-y-3 max-w-2xl">
+                <div *ngFor="let notif of notifications" 
+                     [class.opacity-50]="notif.read"
+                     class="bg-[#0f172a] border border-white/10 p-4 rounded-xl flex justify-between items-start">
+                    <div>
+                        <p class="text-sm text-white">{{ notif.message }}</p>
+                        <span class="text-xs text-slate-500 mt-1 block">{{ notif.dateCreation | date:'short' }}</span>
+                    </div>
+                    <button *ngIf="!notif.read" (click)="markAsRead(notif.id)" class="text-xs text-cyan-400 hover:text-cyan-300 font-bold">Mark Read</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assigned Colis -->
+        <div>
+            <h2 class="text-xl font-bold mb-6">My Assigned Parcels</h2>
+
+            <div *ngIf="isLoading" class="flex justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+            </div>
+
+            <div *ngIf="!isLoading && assignedColis.length === 0" class="text-center py-20 border border-dashed border-white/10 rounded-2xl text-slate-500">
+                You have no active parcels assigned yet.
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div *ngFor="let colis of assignedColis" class="bg-[#0f172a] border border-white/5 rounded-2xl p-6 relative group hover:border-cyan-500/30 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="bg-cyan-500/10 text-cyan-400 text-xs font-bold px-2 py-1 rounded">{{ colis.status }}</span>
+                        <span class="text-slate-500 text-xs font-mono">#{{ colis.id.substring(0,8) }}</span>
+                    </div>
+                    
+                    <h3 class="text-white font-bold text-lg mb-1">{{ colis.villeDestination }}</h3>
+                    <p class="text-slate-400 text-sm mb-4">{{ colis.description || 'No description' }}</p>
+
+                    <div class="pt-4 border-t border-white/5 flex flex-col gap-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold" [ngClass]="{'text-red-500': colis.prioriteStatus === 'URGENT', 'text-blue-500': colis.prioriteStatus === 'NORMAL'}">
+                                {{ colis.prioriteStatus }}
+                            </span>
+                            <span class="text-xs text-slate-500">{{colis.dateCreation | date}}</span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-2 mt-2">
+                           <button *ngFor="let status of getAvailableStatuses(colis.status)"
+                                   (click)="updateStatusColis(colis, status)"
+                                   class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold py-2 px-3 rounded transition-colors duration-200">
+                               {{ status.replace('_', ' ') }}
+                           </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
