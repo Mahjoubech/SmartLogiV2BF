@@ -11,7 +11,7 @@ import { AuthResponse } from '../../models/auth-response';
 import { RegisterRequest } from '../../models/register-request';
 
 export interface Register$Params {
-      body: RegisterRequest
+  body: RegisterRequest
 }
 
 export function register(http: HttpClient, rootUrl: string, params: Register$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthResponse>> {
@@ -21,7 +21,7 @@ export function register(http: HttpClient, rootUrl: string, params: Register$Par
   }
 
   return http.request(
-    rb.build({ responseType: 'blob', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
