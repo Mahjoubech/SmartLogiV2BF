@@ -11,7 +11,7 @@ import { ColisRequest } from '../../models/colis-request';
 import { ColisResponse } from '../../models/colis-response';
 
 export interface CreateColis$Params {
-      body: ColisRequest
+  body: ColisRequest
 }
 
 export function createColis(http: HttpClient, rootUrl: string, params: CreateColis$Params, context?: HttpContext): Observable<StrictHttpResponse<ColisResponse>> {
@@ -21,7 +21,7 @@ export function createColis(http: HttpClient, rootUrl: string, params: CreateCol
   }
 
   return http.request(
-    rb.build({ responseType: 'blob', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {

@@ -7,27 +7,27 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ClientDestinataireRequest } from '../../models/client-destinataire-request';
 import { ClientDestinataireResponse } from '../../models/client-destinataire-response';
+import { ClientDestinataireRequest } from '../../models/client-destinataire-request';
 
 export interface CreateDestinataire$Params {
-      body: ClientDestinataireRequest
+    body: ClientDestinataireRequest
 }
 
 export function createDestinataire(http: HttpClient, rootUrl: string, params: CreateDestinataire$Params, context?: HttpContext): Observable<StrictHttpResponse<ClientDestinataireResponse>> {
-  const rb = new RequestBuilder(rootUrl, createDestinataire.PATH, 'post');
-  if (params) {
-    rb.body(params.body, 'application/json');
-  }
+    const rb = new RequestBuilder(rootUrl, createDestinataire.PATH, 'post');
+    if (params) {
+        rb.body(params.body, 'application/json');
+    }
 
-  return http.request(
-    rb.build({ responseType: 'blob', accept: '*/*', context })
-  ).pipe(
-    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-    map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<ClientDestinataireResponse>;
-    })
-  );
+    return http.request(
+        rb.build({ responseType: 'json', accept: 'application/json', context })
+    ).pipe(
+        filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+        map((r: HttpResponse<any>) => {
+            return r as StrictHttpResponse<ClientDestinataireResponse>;
+        })
+    );
 }
 
 createDestinataire.PATH = '/api/v3/clients/register/destinataire';
