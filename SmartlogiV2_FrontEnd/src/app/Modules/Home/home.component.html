@@ -1,0 +1,165 @@
+<nav class="mc-nav">
+  <div class="flex items-center justify-between w-full max-w-7xl mx-auto px-4">
+    <div class="flex items-center">
+        <div class="cursor-pointer mr-8" routerLink="/">
+            <app-smartlogi-logo [scale]="0.8"></app-smartlogi-logo>
+        </div>
+        
+        <div class="search-bar-container hidden lg:block">
+            <input type="text" class="mc-search-bar" placeholder="SYSTEM SEARCH: Tracking, Analytics, Fleet...">
+        </div>
+    </div>
+
+    <div class="flex items-center space-x-2">
+        <a routerLink="/tracking-concept" class="mc-nav-link">Tracking</a>
+        <a routerLink="/" class="mc-nav-link active">Intelligence</a>
+        <a routerLink="/login" class="mc-nav-link">Gateway</a>
+        <a routerLink="/register" class="px-6 py-2 bg-cyan-500/20 border border-cyan-400/50 text-cyan-400 rounded-lg font-bold hover:bg-cyan-500/40 transition-all text-xs uppercase tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.2)] ml-4">Initialize unit</a>
+    </div>
+  </div>
+</nav>
+
+<main class="mission-control-container">
+  <!-- Status Dashboard Header -->
+  <div class="status-header mb-12">
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Mission <span class="text-cyan-400">Intelligence</span></h1>
+            <p class="text-slate-400 text-xs font-mono uppercase tracking-widest">System Status: <span class="text-green-400">Optimal</span> // Global Network: <span class="text-cyan-400">Active</span></p>
+        </div>
+        <div class="flex space-x-8 hidden md:flex">
+            <div class="text-right">
+                <p class="text-[10px] text-slate-500 uppercase font-bold">Total Operations</p>
+                <p class="text-xl font-mono text-white">42,891</p>
+            </div>
+            <div class="text-right border-l border-slate-800 pl-8">
+                <p class="text-[10px] text-slate-500 uppercase font-bold">Network Load</p>
+                <div class="flex items-center space-x-2">
+                    <div class="w-16 bg-slate-800 h-1 rounded-full overflow-hidden">
+                        <div class="bg-cyan-500 h-full w-2/3"></div>
+                    </div>
+                    <p class="text-xs font-mono text-cyan-400">67%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="masonry-grid" style="cursor: pointer;">
+    <!-- Feature 1: AI Warehouse -->
+    <div class="service-card group" [routerLink]="['/concept', 'warehouse']">
+        <div class="service-image-box">
+            <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=600" class="service-image" alt="Smart Warehouse">
+            <div class="service-tag">AI OPTIMIZED</div>
+        </div>
+        <div class="service-content">
+            <h3 class="service-name">Warehouse Neural Network</h3>
+            <p class="service-desc text-slate-400 text-xs">Dynamic storage allocation with robotic swarm synchronization.</p>
+            <div class="mt-4 flex justify-between items-center">
+                <span class="status-indicator live">LIVE FLOW</span>
+                <svg class="w-5 h-5 text-cyan-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature 2: Global Reach -->
+    <div class="service-card group" [routerLink]="['/concept', 'global-net']">
+        <div class="service-image-box">
+            <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=600" class="service-image" alt="Global Delivery">
+            <div class="service-tag">GLOBAL NET</div>
+        </div>
+        <div class="service-content">
+            <h3 class="service-name">Intercontinental Pipeline</h3>
+            <p class="service-desc text-slate-400 text-xs">Next-gen air and sea cargo integration with real-time telemetry.</p>
+            <div class="mt-4 flex justify-between items-center">
+                <span class="status-indicator">99.8% ETA ACCURACY</span>
+                <svg class="w-5 h-5 text-cyan-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Insight Card -->
+    <div class="service-card tech-stat-card" [routerLink]="['/tracking-concept']">
+        <div class="p-6">
+            <div class="text-cyan-400 mb-6">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Efficiency Index</h3>
+            <p class="text-slate-500 text-xs leading-relaxed mb-6">Our system processes over 1M logistics data points per second to ensure zero-latency delivery.</p>
+            <div class="space-y-4">
+                <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+                    <span>PROCESSING LOAD</span>
+                    <span>89%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                    <div class="bg-gradient-to-r from-cyan-600 to-cyan-400 h-full w-[89%]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature: Security/Staff Access -->
+    <div class="service-card group" [routerLink]="['/concept', 'security']">
+        <div class="service-image-box">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600" class="service-image" alt="Security Ops">
+            <div class="service-tag text-red-400">SECURE OPS</div>
+        </div>
+        <div class="service-content">
+            <h3 class="service-name">Central Command Access</h3>
+            <p class="service-desc text-slate-400 text-xs">Restricted operations gateway for authorized personnel clearance.</p>
+            <div class="mt-4 flex justify-between items-center">
+                <span class="status-indicator text-red-500">RESTRICTED</span>
+                <svg class="w-5 h-5 text-red-500 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature 3: Smart Tracking -->
+    <div class="service-card group" [routerLink]="['/concept', 'tracking']">
+        <div class="service-image-box">
+            <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=600" class="service-image" alt="Tracking">
+            <div class="service-tag">TELEMETRY</div>
+        </div>
+        <div class="service-content">
+            <h3 class="service-name">Live Telemetry Hub</h3>
+            <p class="service-desc text-slate-400 text-xs">Sub-meter accuracy for every shipment across all terrain types.</p>
+            <div class="mt-4 flex justify-between items-center">
+                <span class="status-indicator live">SYNCED</span>
+                <svg class="w-5 h-5 text-cyan-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- More Service Cards... -->
+    <div class="service-card group" [routerLink]="['/concept', 'fleet']">
+        <div class="service-image-box">
+            <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=600" class="service-image" alt="Fleet">
+            <div class="service-tag">FLEET OPS</div>
+        </div>
+        <div class="service-content">
+            <h3 class="service-name">Autonomous Convoy Control</h3>
+            <p class="service-desc text-slate-400 text-xs">Self-adjusting routes based on weather and traffic neural patterns.</p>
+            <div class="mt-4 flex justify-between items-center">
+                <span class="status-indicator">ROUTING...</span>
+                <svg class="w-5 h-5 text-cyan-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </div>
+        </div>
+    </div>
+
+
+
+  </div>
+</main>
+
+<footer class="footer-mission">
+  <div class="flex justify-between items-center max-w-7xl mx-auto px-8">
+    <div class="flex space-x-6 text-[10px] uppercase tracking-widest font-mono text-slate-500">
+        <span>SECURITY: AES-256</span>
+        <span>LATENCY: 12ms</span>
+        <span>UPTIME: 99.99%</span>
+    </div>
+    <div class="text-[10px] text-slate-500 font-mono">
+        &copy; 2026 SMARTLOGI MISSION CONTROL INFRASTRUCTURE
+    </div>
+  </div>
+</footer>
