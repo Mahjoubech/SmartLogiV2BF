@@ -1,0 +1,70 @@
+<nav class="mc-nav">
+    <div class="flex items-center justify-between w-full max-w-7xl mx-auto px-4">
+        <div class="cursor-pointer flex items-center" routerLink="/">
+            <app-smartlogi-logo [scale]="0.7"></app-smartlogi-logo>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+            <a routerLink="/tracking-concept" class="mc-nav-link">Tracking</a>
+            <a routerLink="/" class="mc-nav-link active">Intelligence</a>
+            <button class="mc-btn-back ml-4" routerLink="/">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                GO BACK
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="detail-container" *ngIf="concept">
+    <div class="content-grid">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="image-wrapper">
+                <img [src]="concept.image" [alt]="concept.title" class="hero-image">
+                <div class="image-overlay"></div>
+                <div class="concept-tag">{{ concept.tag }}</div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="header-box">
+                <p class="subtitle">{{ concept.subtitle }}</p>
+                <h1 class="title">{{ concept.title }}</h1>
+            </div>
+
+            <p class="description">{{ concept.description }}</p>
+
+            <div class="specs-grid">
+                <div class="spec-card" *ngFor="let spec of concept.specs">
+                    <span class="spec-label">{{ spec.label }}</span>
+                    <span class="spec-value">{{ spec.value }}</span>
+                </div>
+            </div>
+
+            <div class="technical-list">
+                <h3 class="tech-header">Technical Protocols</h3>
+                <ul>
+                    <li *ngFor="let detail of concept.technicalDetails">
+                        <span class="bullet"></span>
+                        {{ detail }}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="actions">
+                <button class="primary-btn bg-red-500 text-black border-red-500 hover:bg-red-400" *ngIf="concept.id === 'security'" routerLink="/staff-login">
+                    PROCEED TO STAFF LOGIN
+                </button>
+                <button class="primary-btn" *ngIf="concept.id !== 'security'" routerLink="/register">INITIALIZE SYSTEM ACCESS</button>
+                <button class="secondary-btn" routerLink="/">RETURN TO CONTROL</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="error-state" *ngIf="!concept">
+    <h2 class="text-white text-2xl font-bold">404: CONCEPT NOT FOUND</h2>
+    <p class="text-slate-400 mt-4">The requested intelligence module is currently offline or unauthorized.</p>
+    <button class="secondary-btn mt-8" routerLink="/">BACK TO MISSION CONTROL</button>
+</div>
