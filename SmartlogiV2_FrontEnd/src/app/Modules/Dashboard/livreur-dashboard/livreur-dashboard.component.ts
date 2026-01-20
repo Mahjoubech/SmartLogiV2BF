@@ -7,10 +7,12 @@ import { LivreurService } from '../../../Core/services/livreur.service';
 
 import { Router } from '@angular/router';
 
+import { FormsModule } from '@angular/forms'; // Add Import
+
 @Component({
     selector: 'app-livreur-dashboard',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule], // Add FormsModule
     templateUrl: './livreur-dashboard.component.html',
     styleUrl: './livreur-dashboard.component.css'
 })
@@ -19,6 +21,10 @@ export class LivreurDashboardComponent implements OnInit {
     assignedColis: any[] = [];
     livreurId: string = '';
     isLoading = false;
+    isNotificationsModalOpen = false;
+
+    // UI State
+    currentFilter: 'ALL' | 'TO_COLLECT' | 'TO_DELIVER' | 'HISTORY' = 'ALL';
 
     constructor(
         private notificationService: NotificationService,
@@ -28,6 +34,52 @@ export class LivreurDashboardComponent implements OnInit {
         private router: Router
     ) { }
 
+    // --- Computed Properties ---
+
+    get currentDate(): Date {
+        return new Date();
+    }
+
+    get stats() {
+        return {
+            total: this.assignedColis.length,
+            toCollect: this.assignedColis.filter(c => c.status === 'COLLECTE' || c.status === 'CREE').length,
+            toDeliver: this.assignedColis.filter(c => c.status === 'EN_TRANSIT' || c.status === 'EN_STOCK').length,
+            completed: this.assignedColis.filter(c => c.status === 'LIVRE').length
+        };
+    }
+
+    get filteredColis() {
+        switch (this.currentFilter) {
+            case 'TO_COLLECT':
+                return this.assignedColis.filter(c => c.status === 'COLLECTE' || c.status === 'CREE');
+            case 'TO_DELIVER':
+                return this.assignedColis.filter(c => c.status === 'EN_TRANSIT' || c.status === 'EN_STOCK');
+            case 'HISTORY':
+                return this.assignedColis.filter(c => c.status === 'LIVRE' || c.status === 'ANNULE');
+            default:
+                return this.assignedColis; // ALL includes active only? or everything? adjusting to show active by default if needed, but ALL is fine.
+        }
+    }
+
+    // --- Actions ---
+
+    setFilter(filter: 'ALL' | 'TO_COLLECT' | 'TO_DELIVER' | 'HISTORY') {
+        this.currentFilter = filter;
+    }
+
+    openNotificationsModal() {
+        this.isNotificationsModalOpen = true;
+    }
+
+    closeNotificationsModal() {
+        this.isNotificationsModalOpen = false;
+    }
+
+    toggleNotificationsModal() {
+        this.isNotificationsModalOpen = !this.isNotificationsModalOpen;
+    }
+
     logout() {
         this.authService.logout();
         this.router.navigate(['/login']);
@@ -36,11 +88,6 @@ export class LivreurDashboardComponent implements OnInit {
     ngOnInit(): void {
         const token = this.authService.token;
         if (token) {
-            // Decoding token basic way or assuming we store user info.
-            // Ideally TokenService has a method to get user ID or we fetch /me.
-            // For now, assuming the token payload has the ID or we fetch it from a 'UserContextService'.
-            // If TokenService doesn't expose ID easily, we might need to hit a /me endpoint or similar.
-            // Let's assume we can get it from the token payload helper or similar.
             this.livreurId = this.extractUserId(token);
             this.loadNotifications();
             this.loadAssignedColis();
@@ -50,7 +97,7 @@ export class LivreurDashboardComponent implements OnInit {
     private extractUserId(token: string): string {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
-            return payload.userId || payload.sub; // Adjust based on your JWT structure
+            return payload.userId || payload.sub;
         } catch (e) {
             console.error('Error decoding token', e);
             return '';
@@ -69,7 +116,9 @@ export class LivreurDashboardComponent implements OnInit {
         this.isLoading = true;
         this.colisService.getMyAssignedColis(0, 100).subscribe({
             next: (data) => {
-                this.assignedColis = data.content;
+                this.assignedColis = data.content || [];
+                // Sort by date desc
+                this.assignedColis.sort((a, b) => new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime());
                 this.isLoading = false;
             },
             error: (err) => {
@@ -93,17 +142,28 @@ export class LivreurDashboardComponent implements OnInit {
         this.colisService.updateStatus(colis.id, newStatus).subscribe({
             next: (updated) => {
                 this.loadAssignedColis(); // Reload list
-                // Optionally show toast
             },
             error: (err) => console.error('Error updating status', err)
         });
     }
 
     getAvailableStatuses(currentStatus: string): string[] {
-        // Logic for allowed transitions
         if (currentStatus === 'COLLECTE') return ['EN_STOCK'];
-        if (currentStatus === 'EN_STOCK') return ['EN_TRANSIT'];
+        // EN_STOCK is now handled by Manager assignment to switch to EN_TRANSIT, but we keep it empty as per requirement
+        if (currentStatus === 'EN_STOCK') return [];
         if (currentStatus === 'EN_TRANSIT') return ['LIVRE', 'ANNULE', 'EN_STOCK'];
         return [];
+    }
+
+    getStatusColor(status: string): string {
+        switch (status) {
+            case 'CREE': return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20';
+            case 'COLLECTE': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
+            case 'EN_STOCK': return 'text-slate-300 bg-slate-500/10 border-slate-500/20';
+            case 'EN_TRANSIT': return 'text-purple-400 bg-purple-400/10 border-purple-400/20';
+            case 'LIVRE': return 'text-green-400 bg-green-400/10 border-green-400/20';
+            case 'ANNULE': return 'text-red-400 bg-red-400/10 border-red-400/20';
+            default: return 'text-slate-400 bg-slate-400/10 border-slate-400/20';
+        }
     }
 }

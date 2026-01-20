@@ -58,4 +58,8 @@ export class ColisService {
             dateChangement: new Date().toISOString()
         });
     }
+
+    getColisHistory(colisId: string): Observable<any> {
+        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/${colisId}/history`);
+    }
 }

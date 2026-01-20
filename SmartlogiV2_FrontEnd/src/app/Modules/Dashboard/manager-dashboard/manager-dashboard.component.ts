@@ -219,6 +219,30 @@ export class ManagerDashboardComponent implements OnInit {
         });
     }
 
+    // --- Tracking Logic ---
+    isTrackingModalOpen = false;
+    trackingHistory: any[] = [];
+    trackingColisId: string = '';
+
+    trackColis(colis: any) {
+        this.trackingColisId = colis.id;
+        this.isTrackingModalOpen = true;
+        this.trackingHistory = [];
+
+        this.colisService.getColisHistory(colis.id).subscribe({
+            next: (data: any) => {
+                // Assuming data is Page or List. Endpoint returns Page<HistoriqueLivraisonResponse>
+                this.trackingHistory = data.content ? data.content : data;
+            },
+            error: (err) => console.error('Error loading history', err)
+        });
+    }
+
+    closeTrackingModal() {
+        this.isTrackingModalOpen = false;
+        this.trackingHistory = [];
+    }
+
     // --- Helpers ---
     getPrioriteClass(priorite: string): string {
         switch (priorite) {
@@ -233,7 +257,10 @@ export class ManagerDashboardComponent implements OnInit {
         switch (status) {
             case 'CREE': return 'bg-yellow-500/20 text-yellow-500 border-yellow-500/50';
             case 'COLLECTE': return 'bg-blue-500/20 text-blue-500 border-blue-500/50';
+            case 'EN_STOCK': return 'bg-white/20 text-white border-white/50';
+            case 'EN_TRANSIT': return 'bg-purple-500/20 text-purple-500 border-purple-500/50';
             case 'LIVRE': return 'bg-green-500/20 text-green-500 border-green-500/50';
+            case 'ANNULE': return 'bg-red-500/20 text-red-500 border-red-500/50';
             default: return 'bg-slate-500/20 text-slate-500 border-slate-500/50';
         }
     }
