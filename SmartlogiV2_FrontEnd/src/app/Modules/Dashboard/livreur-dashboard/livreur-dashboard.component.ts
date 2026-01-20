@@ -49,6 +49,10 @@ export class LivreurDashboardComponent implements OnInit {
         };
     }
 
+    get unreadCount(): number {
+        return this.notifications.filter(n => !n.read).length;
+    }
+
     get filteredColis() {
         switch (this.currentFilter) {
             case 'TO_COLLECT':
@@ -58,11 +62,42 @@ export class LivreurDashboardComponent implements OnInit {
             case 'HISTORY':
                 return this.assignedColis.filter(c => c.status === 'LIVRE' || c.status === 'ANNULE');
             default:
-                return this.assignedColis; // ALL includes active only? or everything? adjusting to show active by default if needed, but ALL is fine.
+                return this.assignedColis;
         }
     }
 
     // --- Actions ---
+
+    selectedColis: any = null;
+    updateComment: string = '';
+    newStatus: string = '';
+
+    selectColis(colis: any) {
+        this.selectedColis = colis;
+        this.newStatus = colis.status; // Default to current
+        this.updateComment = '';
+    }
+
+    closeColisDetails() {
+        this.selectedColis = null;
+        this.updateComment = '';
+        this.newStatus = '';
+    }
+
+    submitStatusUpdate() {
+        if (!this.selectedColis || !this.newStatus) return;
+        if (this.newStatus === this.selectedColis.status) return; // No change
+
+        if (!confirm(`Confirmer le changement de statut vers ${this.newStatus} ?`)) return;
+
+        this.colisService.updateStatus(this.selectedColis.id, this.newStatus, this.updateComment).subscribe({
+            next: (updated) => {
+                this.loadAssignedColis(); // Reload list
+                this.closeColisDetails();
+            },
+            error: (err) => console.error('Error updating status', err)
+        });
+    }
 
     setFilter(filter: 'ALL' | 'TO_COLLECT' | 'TO_DELIVER' | 'HISTORY') {
         this.currentFilter = filter;
@@ -116,7 +151,12 @@ export class LivreurDashboardComponent implements OnInit {
         this.isLoading = true;
         this.colisService.getMyAssignedColis(0, 100).subscribe({
             next: (data) => {
-                this.assignedColis = data.content || [];
+                const content = data.content || [];
+                // Map backend 'statut' (French) to frontend 'status' (English convention in this component)
+                this.assignedColis = content.map((c: any) => ({
+                    ...c,
+                    status: c.status || c.statut // Handle both cases
+                }));
                 // Sort by date desc
                 this.assignedColis.sort((a, b) => new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime());
                 this.isLoading = false;
@@ -148,15 +188,20 @@ export class LivreurDashboardComponent implements OnInit {
     }
 
     getAvailableStatuses(currentStatus: string): string[] {
-        if (currentStatus === 'COLLECTE') return ['EN_STOCK'];
-        // EN_STOCK is now handled by Manager assignment to switch to EN_TRANSIT, but we keep it empty as per requirement
-        if (currentStatus === 'EN_STOCK') return [];
-        if (currentStatus === 'EN_TRANSIT') return ['LIVRE', 'ANNULE', 'EN_STOCK'];
+        if (!currentStatus) return [];
+        const status = currentStatus.toUpperCase();
+
+        if (status === 'CREE') return ['COLLECTE']; // Allow picking up new assignments
+        if (status === 'COLLECTE') return ['EN_STOCK'];
+        if (status === 'EN_STOCK') return ['EN_TRANSIT']; // Allow manual pick up from stock
+        if (status === 'EN_TRANSIT') return ['LIVRE', 'ANNULE', 'EN_STOCK'];
+
         return [];
     }
 
     getStatusColor(status: string): string {
-        switch (status) {
+        const s = status ? status.toUpperCase() : '';
+        switch (s) {
             case 'CREE': return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20';
             case 'COLLECTE': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
             case 'EN_STOCK': return 'text-slate-300 bg-slate-500/10 border-slate-500/20';
