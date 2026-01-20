@@ -9,19 +9,45 @@
 
         <div class="flex items-center gap-4">
             <!-- Tab Navigation -->
-            <div class="flex bg-white/5 p-1 rounded-xl border border-white/10">
-                <button (click)="switchTab('shipments')" 
-                        [class.bg-cyan-600]="activeTab === 'shipments'"
-                        [class.text-white]="activeTab === 'shipments'"
-                        class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
-                    Shipments
-                </button>
-                <button (click)="switchTab('personnel')" 
-                        [class.bg-cyan-600]="activeTab === 'personnel'"
-                        [class.text-white]="activeTab === 'personnel'"
-                        class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
-                    Personnel
-                </button>
+            <div class="flex items-center gap-4">
+                <div class="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                    <button (click)="switchTab('shipments')" 
+                            [class.bg-cyan-600]="activeTab === 'shipments'"
+                            [class.text-white]="activeTab === 'shipments'"
+                            class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
+                        Shipments
+                    </button>
+                    <button (click)="switchTab('personnel')" 
+                            [class.bg-cyan-600]="activeTab === 'personnel'"
+                            [class.text-white]="activeTab === 'personnel'"
+                            class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
+                        Personnel
+                    </button>
+                </div>
+
+                <!-- Shipment Filter (Only visible when shipments tab is active) -->
+                <div *ngIf="activeTab === 'shipments'" class="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                    <button (click)="setFilterMode('ALL')" 
+                            [class.bg-slate-700]="filterMode === 'ALL'"
+                            [class.text-white]="filterMode === 'ALL'"
+                            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+                        All
+                    </button>
+                    <button (click)="setFilterMode('AVAILABLE')" 
+                            [class.bg-green-600]="filterMode === 'AVAILABLE'"
+                            [class.text-white]="filterMode === 'AVAILABLE'"
+                            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-300"></span>
+                        Ready
+                    </button>
+                    <button (click)="setFilterMode('ASSIGNED')" 
+                            [class.bg-cyan-600]="filterMode === 'ASSIGNED'"
+                            [class.text-white]="filterMode === 'ASSIGNED'"
+                            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        Assigned
+                    </button>
+                </div>
             </div>
 
             <!-- User Actions -->
@@ -62,8 +88,25 @@
                 <div>
                     <h3 class="text-white font-bold text-lg leading-tight">{{ colis.villeDestination }}</h3>
                     <p class="text-slate-500 text-xs mt-1">Zone: <span class="text-cyan-400">{{ colis.zone?.nom }}</span></p>
-                    <p *ngIf="colis.livreur" class="text-slate-500 text-xs mt-1">Agent: <span class="text-white font-bold">{{ colis.livreur.prenom }} {{ colis.livreur.nom }}</span></p>
-                    <p *ngIf="!colis.livreur" class="text-yellow-500/70 text-xs mt-1 italic">Unassigned</p>
+                    <div *ngIf="colis.livreur" class="mt-2 bg-white/5 border border-white/5 rounded-lg p-2 flex items-center gap-3 hover:bg-white/10 transition cursor-pointer" title="Click to view agent details" (click)="$event.stopPropagation()">
+                        <div class="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 font-bold text-xs">
+                            {{ colis.livreur.prenom.charAt(0) }}{{ colis.livreur.nom.charAt(0) }}
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Assigned Agent</p>
+                            <p class="text-xs text-white font-bold flex items-center gap-1">
+                                {{ colis.livreur.prenom }} {{ colis.livreur.nom }}
+                                <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div *ngIf="!colis.livreur" class="mt-2">
+                        <span class="inline-flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                            Ready to Assign
+                        </span>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-between pt-4 border-t border-white/5">

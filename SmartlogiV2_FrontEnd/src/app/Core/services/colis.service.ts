@@ -59,6 +59,10 @@ export class ColisService {
         });
     }
 
+    getAllAssignedColis(page: number = 0, size: number = 10): Observable<any> {
+        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/assigned?page=${page}&size=${size}`);
+    }
+
     getColisHistory(colisId: string): Observable<any> {
         return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/${colisId}/history`);
     }

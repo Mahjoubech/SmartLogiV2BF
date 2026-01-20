@@ -80,19 +80,28 @@ export class ManagerDashboardComponent implements OnInit {
 
     // --- Colis Logic ---
     // --- Colis Logic ---
+    // --- Colis Logic ---
+    filterMode: 'ALL' | 'AVAILABLE' | 'ASSIGNED' = 'ALL';
+
+    setFilterMode(mode: 'ALL' | 'AVAILABLE' | 'ASSIGNED') {
+        this.filterMode = mode;
+        this.currentPage = 0; // Reset page
+        this.loadColis();
+    }
+
     loadColis() {
         this.isLoading = true;
-        // If we want to show 'Assigned' specifically, we might need a different endpoint or filter.
-        // For 'shipments' tab, let's show 'Available' (unassigned) by default, 
-        // but maybe we add a sub-tab or toggle for 'All'/'Assigned'.
-        // For this step, I will stick to 'Available' as per previous instruction, 
-        // BUT the user asked to "Afficher colis assigner".
-        // So I'll fetch ALL colis instead of just available, OR add a toggle.
-        // Let's change behavior: Load ALL colis, and let UI filter or show status.
-        // actually, getAvailableColis only returns unassigned. 
-        // getAllColis returns everything.
 
-        this.colisService.getAllColis(this.currentPage, this.pageSize).subscribe({
+        let request$;
+        if (this.filterMode === 'AVAILABLE') {
+            request$ = this.colisService.getAvailableColis(this.currentPage, this.pageSize);
+        } else if (this.filterMode === 'ASSIGNED') {
+            request$ = this.colisService.getAllAssignedColis(this.currentPage, this.pageSize);
+        } else {
+            request$ = this.colisService.getAllColis(this.currentPage, this.pageSize);
+        }
+
+        request$.subscribe({
             next: (response) => {
                 this.colisList = response.content;
                 this.totalPages = response.totalPages;
