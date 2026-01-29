@@ -66,4 +66,12 @@ export class ColisService {
     getColisHistory(colisId: string): Observable<any> {
         return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/${colisId}/history`);
     }
+
+    getDashboardStats(): Observable<any> {
+        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/dashboard-stats`);
+    }
+
+    trackColisPublic(colisId: string): Observable<any> {
+        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/public/${colisId}`);
+    }
 }
