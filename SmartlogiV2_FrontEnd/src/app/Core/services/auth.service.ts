@@ -22,7 +22,6 @@ export class AuthService {
     ) {
         let savedUser = null;
         try {
-            // Check if localStorage is available and not blocked
             if (typeof window !== 'undefined' && window.localStorage) {
                 savedUser = localStorage.getItem(this.tokenKey);
             }
@@ -49,7 +48,6 @@ export class AuthService {
                 localStorage.removeItem(key);
             }
         } catch (e) {
-            // Silently fail if storage is blocked
         }
     }
 
@@ -60,7 +58,6 @@ export class AuthService {
     public get token(): string | undefined {
         const t = this.currentUserValue?.token;
         if (t) {
-            // console.log('[AuthService] Token getter: present');
         } else {
             console.warn('[AuthService] Token getter: EMPTY');
         }
