@@ -1,0 +1,631 @@
+<div class="flex h-screen bg-slate-950 text-white overflow-hidden">
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
+    <!-- Logo Area -->
+    <div class="p-6 border-b border-slate-800">
+      <h1 class="text-2xl font-black tracking-tighter">
+        SMART<span class="text-cyan-500">LOGI</span>
+        <span
+          class="block text-xs text-slate-500 font-medium tracking-normal mt-1"
+          >SUPER ADMIN</span
+        >
+      </h1>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+      <button
+        (click)="activeTab = 'stats'"
+        [class.bg-cyan-500_10]="activeTab === 'stats'"
+        [class.text-cyan-400]="activeTab === 'stats'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
+          />
+        </svg>
+        Overview
+      </button>
+
+      <div
+        class="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-wider"
+      >
+        User Management
+      </div>
+
+      <button
+        (click)="activeTab = 'clients'"
+        [class.bg-cyan-500_10]="activeTab === 'clients'"
+        [class.text-cyan-400]="activeTab === 'clients'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+          />
+        </svg>
+        Clients
+      </button>
+
+      <button
+        (click)="activeTab = 'managers'"
+        [class.bg-cyan-500_10]="activeTab === 'managers'"
+        [class.text-cyan-400]="activeTab === 'managers'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
+        </svg>
+        Managers
+      </button>
+
+      <div
+        class="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-wider"
+      >
+        System
+      </div>
+
+      <button
+        (click)="activeTab = 'roles'"
+        [class.bg-cyan-500_10]="activeTab === 'roles'"
+        [class.text-cyan-400]="activeTab === 'roles'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+          />
+        </svg>
+        Roles & Permissions
+      </button>
+    </nav>
+
+    <!-- User & Logout -->
+    <div class="p-4 border-t border-slate-800">
+      <button
+        (click)="logout()"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-colors"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 flex flex-col overflow-hidden bg-slate-950">
+    <!-- Topbar (Optional if strictly separate profiles, keeping simple) -->
+
+    <div class="flex-1 overflow-y-auto p-8">
+      <!-- STATS OVERVIEW -->
+      <div *ngIf="activeTab === 'stats'" class="space-y-6">
+        <h2 class="text-3xl font-black text-white mb-6">Overview</h2>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+            <div class="text-slate-400 text-xs font-bold uppercase mb-2">
+              Total Users
+            </div>
+            <div class="text-4xl font-black text-white">
+              {{ stats.totalUsers }}
+            </div>
+          </div>
+          <div
+            class="bg-slate-900 border border-slate-800 p-6 rounded-2xl border-l-4 border-l-cyan-500"
+          >
+            <div class="text-slate-400 text-xs font-bold uppercase mb-2">
+              Total Clients
+            </div>
+            <div class="text-4xl font-black text-cyan-400">
+              {{ stats.totalClients }}
+            </div>
+          </div>
+          <div
+            class="bg-slate-900 border border-slate-800 p-6 rounded-2xl border-l-4 border-l-purple-500"
+          >
+            <div class="text-slate-400 text-xs font-bold uppercase mb-2">
+              Active Managers
+            </div>
+            <div class="text-4xl font-black text-purple-400">
+              {{ stats.activeManagers }}
+            </div>
+          </div>
+          <div
+            class="bg-slate-900 border border-slate-800 p-6 rounded-2xl border-l-4 border-l-red-500"
+          >
+            <div class="text-slate-400 text-xs font-bold uppercase mb-2">
+              Blocked Users
+            </div>
+            <div class="text-4xl font-black text-red-500">
+              {{ stats.blockedUsers }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <h3 class="text-lg font-bold text-white mb-6">User Distribution</h3>
+            <div class="chart-container">
+              <canvas id="userChart"></canvas>
+            </div>
+          </div>
+          <!-- Placeholder for future chart -->
+          <div
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-center items-center text-slate-500"
+          >
+            <svg
+              class="w-16 h-16 mb-4 opacity-20"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
+              ></path>
+            </svg>
+            <span class="font-bold text-sm"
+              >Traffic Analytics (Coming Soon)</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENTS TAB -->
+      <div *ngIf="activeTab === 'clients'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h2 class="text-3xl font-black text-white">Clients Directory</h2>
+          <!-- Search placeholder -->
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Search clients..."
+              class="bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none w-64"
+            />
+            <svg
+              class="w-4 h-4 text-slate-500 absolute left-3 top-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div
+          class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl"
+        >
+          <table class="w-full text-left text-sm">
+            <thead
+              class="bg-slate-950 text-slate-400 font-bold uppercase text-xs"
+            >
+              <tr>
+                <th class="px-6 py-4">Client Name</th>
+                <th class="px-6 py-4">Email Address</th>
+                <th class="px-6 py-4">Joined Date</th>
+                <th class="px-6 py-4 text-center">Status</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <tr
+                *ngFor="let client of clientsList"
+                class="hover:bg-slate-800/50 transition-colors"
+              >
+                <td
+                  class="px-6 py-4 font-bold text-white flex items-center gap-3"
+                >
+                  <div
+                    class="w-8 h-8 rounded-full bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold text-xs"
+                  >
+                    {{ client.prenom?.charAt(0) }}{{ client.nom?.charAt(0) }}
+                  </div>
+                  {{ client.prenom }} {{ client.nom }}
+                </td>
+                <td class="px-6 py-4 text-slate-400 font-mono text-xs">
+                  {{ client.email }}
+                </td>
+                <td class="px-6 py-4 text-slate-400">
+                  {{ client.dateCreation | date: "mediumDate" }}
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <span
+                    *ngIf="client.accountNonLocked"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/20"
+                    >Active</span
+                  >
+                  <span
+                    *ngIf="!client.accountNonLocked"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20"
+                    >Blocked</span
+                  >
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button
+                    *ngIf="client.accountNonLocked"
+                    (click)="toggleBlockUser(client, true)"
+                    class="text-slate-400 hover:text-red-400 transition-colors font-bold text-xs"
+                  >
+                    Block Access
+                  </button>
+                  <button
+                    *ngIf="!client.accountNonLocked"
+                    (click)="toggleBlockUser(client, false)"
+                    class="text-slate-400 hover:text-green-400 transition-colors font-bold text-xs"
+                  >
+                    Unblock
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="clientsList.length === 0">
+                <td colspan="5" class="px-6 py-8 text-center text-slate-500">
+                  No clients found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MANAGERS TAB -->
+      <div *ngIf="activeTab === 'managers'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h2 class="text-3xl font-black text-white">Managers Directory</h2>
+          <button
+            (click)="openManagerModal()"
+            class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-cyan-900/20 flex items-center gap-2 transition-all hover:scale-105"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            Add New Manager
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div
+            *ngFor="let manager of managersList"
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-6 group hover:border-cyan-500/50 transition-all hover:bg-slate-800/50"
+          >
+            <div class="flex justify-between items-start mb-6">
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-900/50"
+              >
+                {{ manager.prenom?.charAt(0) }}{{ manager.nom?.charAt(0) }}
+              </div>
+              <div
+                class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <button
+                  (click)="editManager(manager)"
+                  class="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-cyan-400 transition-colors"
+                  title="Edit Profile"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  (click)="deleteManager(manager)"
+                  class="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-red-400 transition-colors"
+                  title="Delete Manager"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-1">
+              {{ manager.prenom }} {{ manager.nom }}
+            </h3>
+            <p class="text-slate-400 text-sm mb-6">{{ manager.email }}</p>
+
+            <div class="space-y-3 pt-6 border-t border-slate-800">
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-500">Privileges</span>
+                <span
+                  class="text-cyan-400 font-bold bg-cyan-400/10 px-2 py-0.5 rounded text-xs border border-cyan-400/20"
+                  >MANAGER</span
+                >
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-500">Contact</span>
+                <span class="text-slate-300 font-mono text-xs">{{
+                  manager.telephone
+                }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROLES & PERMISSIONS TAB -->
+      <div *ngIf="activeTab === 'roles'" class="space-y-6">
+        <h2 class="text-3xl font-black text-white mb-6">Roles & Permissions</h2>
+
+        <div
+          class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center"
+        >
+          <div
+            class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6"
+          >
+            <svg
+              class="w-10 h-10 text-slate-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">
+            Role Management Module
+          </h3>
+          <p class="text-slate-400 max-w-md mx-auto mb-8">
+            Advanced permission assignment and role creation features are
+            currently under development. You will be able to granularly control
+            what each Manager can access.
+          </p>
+          <button
+            class="px-6 py-3 bg-slate-800 text-slate-400 rounded-xl font-bold cursor-not-allowed border border-slate-700"
+          >
+            Coming Soon
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Manager Modal -->
+  <div
+    *ngIf="isManagerModalOpen"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+    (click)="closeManagerModal()"
+  >
+    <div
+      class="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900"
+      >
+        <h2 class="text-xl font-bold text-white">
+          {{ isEditing ? "Edit Manager Profile" : "Create New Manager" }}
+        </h2>
+        <button
+          (click)="closeManagerModal()"
+          class="text-slate-400 hover:text-white transition-colors"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <form
+        [formGroup]="managerForm"
+        (ngSubmit)="submitManager()"
+        class="p-8 space-y-6"
+      >
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label
+              for="prenom"
+              class="text-xs font-bold text-slate-500 uppercase tracking-wider"
+              >First Name</label
+            >
+            <input
+              id="prenom"
+              formControlName="prenom"
+              type="text"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all placeholder:text-slate-600"
+            />
+          </div>
+          <div class="space-y-2">
+            <label
+              for="nom"
+              class="text-xs font-bold text-slate-500 uppercase tracking-wider"
+              >Last Name</label
+            >
+            <input
+              id="nom"
+              formControlName="nom"
+              type="text"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all placeholder:text-slate-600"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label
+            for="email"
+            class="text-xs font-bold text-slate-500 uppercase tracking-wider"
+            >Email Address</label
+          >
+          <input
+            id="email"
+            formControlName="email"
+            type="email"
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all placeholder:text-slate-600"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <label
+            for="telephone"
+            class="text-xs font-bold text-slate-500 uppercase tracking-wider"
+            >Phone Number</label
+          >
+          <input
+            id="telephone"
+            formControlName="telephone"
+            type="tel"
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all placeholder:text-slate-600"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 pt-2">
+          <div class="space-y-2">
+            <label
+              for="password"
+              class="text-xs font-bold text-slate-500 uppercase tracking-wider"
+              >Password</label
+            >
+            <input
+              id="password"
+              formControlName="password"
+              type="password"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+            />
+          </div>
+          <div class="space-y-2">
+            <label
+              for="confirmPassword"
+              class="text-xs font-bold text-slate-500 uppercase tracking-wider"
+              >Confirm</label
+            >
+            <input
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              type="password"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        <div class="pt-6 flex justify-end gap-4 border-t border-slate-800 mt-4">
+          <button
+            type="button"
+            (click)="closeManagerModal()"
+            class="px-5 py-2.5 text-slate-400 hover:text-white font-bold text-sm transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="managerForm.invalid || isLoading"
+            class="px-6 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-cyan-900/30 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {{
+              isLoading
+                ? "Processing..."
+                : isEditing
+                  ? "Save Changes"
+                  : "Create Account"
+            }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
