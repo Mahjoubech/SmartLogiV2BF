@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { environment } from '../../../../environments/environment';
+import { FormsModule } from '@angular/forms';
+import { ColisService } from '../../../Core/services/colis.service';
 import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-logo/smartlogi-logo.component';
 
 @Component({
   selector: 'app-tracking-concept',
   standalone: true,
-  imports: [CommonModule, RouterModule, SmartLogiLogoComponent],
+  imports: [CommonModule, RouterModule, FormsModule, SmartLogiLogoComponent],
   template: `
     <div class="tracking-container">
       <!-- Fixed Navigation -->
@@ -24,36 +25,71 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
       </nav>
 
       <div class="map-overlay">
-        <!-- Main Panel -->
+        <!-- Search & Status Panel -->
         <div class="status-panel mb-6">
           <div class="panel-header">
             <span class="pulse-dot"></span>
             LIVE NETWORK MONITOR
           </div>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="label">ACTIVE FREIGHT</span>
-              <span class="value">1,284</span>
-            </div>
-            <div class="stat-item">
-              <span class="label">AVG SPEED</span>
-              <span class="value text-cyan-400">84 km/h</span>
-            </div>
-          </div>
-          <div class="shipment-list">
-            <div class="shipment-item" *ngFor="let s of shipments">
-              <div class="flex justify-between items-center mb-1">
-                <span class="id text-cyan-400 font-mono text-[10px]">{{ s.id }}</span>
-                <span class="status text-[9px] px-2 bg-green-500/20 text-green-400 rounded">IN TRANSIT</span>
+
+          <!-- Tracking Input -->
+          <div class="search-box mb-6">
+              <div class="flex gap-2">
+                  <input type="text" [(ngModel)]="trackingId" (keyup.enter)="trackPackage()" placeholder="ENTER SHIPMENT ID (e.g. 550e84...)" class="mc-input flex-1">
+                  <button (click)="trackPackage()" [disabled]="isLoading" class="mc-btn-action">
+                      {{ isLoading ? 'SCANNING...' : 'TRACK' }}
+                  </button>
               </div>
-              <div class="progress-bar">
-                <div class="fill" [style.width.%]="s.progress"></div>
+              <div *ngIf="error" class="text-red-400 text-[10px] mt-2 font-mono uppercase tracking-wider">
+                  ⚠ {{ error }}
               </div>
-            </div>
           </div>
+
+          <!-- Result Display -->
+          <div *ngIf="foundColis" class="result-details animate-fade-in">
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <span class="label">STATUS</span>
+                  <span class="value" [ngClass]="getStatusColor(foundColis.statut)">
+                      {{ foundColis.statut }}
+                  </span>
+                </div>
+                <div class="stat-item">
+                  <span class="label">DESTINATION</span>
+                  <span class="value">{{ foundColis.villeDestination }}</span>
+                </div>
+              </div>
+
+              <div class="shipment-list">
+                <div class="shipment-item">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="id text-cyan-400 font-mono text-[10px]">WEIGHT</span>
+                    <span class="text-white text-xs font-bold">{{ foundColis.poids }} KG</span>
+                  </div>
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="id text-cyan-400 font-mono text-[10px]">PRIORITY</span>
+                    <span class="text-white text-xs font-bold">{{ foundColis.priorite }}</span>
+                  </div>
+                  <div class="flex justify-between items-center mb-1 mt-2 border-t border-white/5 pt-2">
+                    <span class="id text-cyan-400 font-mono text-[10px]">SENDER</span>
+                    <span class="text-white text-xs">{{ foundColis.clientExpediteur?.nom }} {{ foundColis.clientExpediteur?.prenom }}</span>
+                  </div>
+                   <div class="flex justify-between items-center mb-1">
+                    <span class="id text-cyan-400 font-mono text-[10px]">RECIPIENT</span>
+                    <span class="text-white text-xs">{{ foundColis.destinataire?.nom }} {{ foundColis.destinataire?.prenom }}</span>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <!-- Empty State / Instructions -->
+          <div *ngIf="!foundColis && !isLoading && !error" class="text-slate-500 text-xs font-mono text-center py-4">
+              ENTER A VALID ID TO INITIALIZE SATELLITE TRACKING.
+          </div>
+          
         </div>
 
-        <!-- Tracking Intelligence Panel -->
+        <!-- Tracking Intelligence Panel (Decorational) -->
         <div class="status-panel secondary-panel">
           <div class="panel-header text-amber-400">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -69,20 +105,11 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
                     <div class="bg-amber-500 h-full w-[92%]"></div>
                 </div>
             </div>
-            <div class="intel-item">
-                <div class="flex justify-between text-[10px] mb-1">
-                    <span class="text-slate-300 uppercase font-bold">Unit Load Avg</span>
-                    <span class="text-white">78%</span>
-                </div>
-                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
-                    <div class="bg-amber-500 h-full w-[78%]"></div>
-                </div>
-            </div>
             <div class="mt-6 border-t border-slate-800 pt-4">
                 <p class="text-[9px] text-slate-400 font-mono leading-relaxed">
-                    TRACK_UNIT [TN-442]: ROUTE_FIXED <br>
-                    TRACK_UNIT [TN-109]: DELAY_RECALC <br>
-                    TRACK_UNIT [TN-772]: ACTIVE_SYNC
+                    SYSTEM_READY: WAITING_FOR_INPUT...<br>
+                    SECURE_LINK: ESTABLISHED<br>
+                    NODE: PUBLIC_ACCESS_GATEWAY
                 </p>
             </div>
           </div>
@@ -125,10 +152,10 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
 
     .map-overlay {
       position: absolute;
-      top: 120px;
+      top: 100px; /* moved up slightly */
       left: 40px;
       z-index: 10;
-      width: 340px;
+      width: 380px; /* slightly wider */
     }
 
     .status-panel {
@@ -139,6 +166,41 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
       padding: 30px;
       border-radius: 4px;
       box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    }
+    
+    .mc-input {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: white;
+        padding: 8px 12px;
+        font-family: monospace;
+        font-size: 11px;
+        border-radius: 4px;
+        outline: none;
+        transition: all 0.2s;
+    }
+    .mc-input:focus {
+        border-color: #22d3ee;
+        background: rgba(34, 211, 238, 0.05);
+    }
+    
+    .mc-btn-action {
+        background: #22d3ee;
+        color: #000;
+        font-weight: 800;
+        font-size: 10px;
+        padding: 0 16px;
+        border-radius: 4px;
+        letter-spacing: 0.1em;
+        transition: all 0.2s;
+    }
+    .mc-btn-action:hover {
+        background: #67e8f9;
+        box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+    }
+    .mc-btn-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     .secondary-panel {
@@ -153,7 +215,7 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
       letter-spacing: 0.2em;
       display: flex;
       align-items: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .pulse-dot {
@@ -187,7 +249,7 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
 
     .stat-item .value {
       color: #fff;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 900;
       font-family: 'Courier New', Courier, monospace;
     }
@@ -201,19 +263,6 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
     .shipment-item {
       padding-top: 16px;
       border-top: 1px solid rgba(255, 255, 255, 0.03);
-    }
-
-    .progress-bar {
-      height: 1px;
-      background: #161b22;
-      border-radius: 1px;
-      overflow: hidden;
-    }
-
-    .progress-bar .fill {
-      height: 100%;
-      background: #22d3ee;
-      box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
     }
 
     .mock-map {
@@ -291,16 +340,53 @@ import { SmartLogiLogoComponent } from '../../../Shared/components/smartlogi-log
       50% { transform: scale(1.4); opacity: 0.4; }
       100% { transform: scale(1); opacity: 1; }
     }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
   `]
 })
 export class TrackingConceptComponent implements OnInit {
-  shipments = [
-    { id: 'FR-UNIT 9218', progress: 78 },
-    { id: 'US-UNIT 0012', progress: 41 },
-    { id: 'JP-UNIT 4421', progress: 92 }
-  ]
+  trackingId: string = '';
+  foundColis: any = null;
+  isLoading: boolean = false;
+  error: string = '';
+
+  constructor(private colisService: ColisService) { }
 
   ngOnInit() {
-    console.log('Google Maps API Key identified:', environment.googleMapsApiKey);
+  }
+
+  trackPackage() {
+    if (!this.trackingId.trim()) return;
+
+    this.isLoading = true;
+    this.error = '';
+    this.foundColis = null;
+
+    this.colisService.trackColisPublic(this.trackingId).subscribe({
+      next: (colis) => {
+        this.foundColis = colis;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Tracking Error:', err);
+        this.error = 'SHIPMENT NOT FOUND OR SYSTEM OFFLINE';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getStatusColor(status: string): string {
+    const s = (status || '').toUpperCase();
+    if (s === 'LIVRE') return 'text-green-400';
+    if (s === 'EN_TRANSIT' || s === 'EN_STOCK') return 'text-amber-400';
+    if (s === 'CREE' || s === 'COLLECTE') return 'text-blue-400';
+    return 'text-white';
   }
 }
+
