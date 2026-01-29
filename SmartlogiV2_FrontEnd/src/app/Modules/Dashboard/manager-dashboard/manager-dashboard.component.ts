@@ -78,15 +78,34 @@ export class ManagerDashboardComponent implements OnInit {
         }
     }
 
-    // --- Colis Logic ---
-    // --- Colis Logic ---
-    // --- Colis Logic ---
+    // Colis Logic
     filterMode: 'ALL' | 'AVAILABLE' | 'ASSIGNED' = 'ALL';
+    dashboardStats: any = {
+        total: 0,
+        pending: 0,
+        active: 0,
+        completed: 0
+    };
 
     setFilterMode(mode: 'ALL' | 'AVAILABLE' | 'ASSIGNED') {
         this.filterMode = mode;
         this.currentPage = 0; // Reset page
         this.loadColis();
+    }
+
+    loadStats() {
+        this.colisService.getDashboardStats().subscribe({
+            next: (data) => {
+                // Map backend status to our UI keys
+                this.dashboardStats = {
+                    total: data.TOTAL || 0,
+                    pending: (data.CREE || 0) + (data.COLLECTE || 0),
+                    active: (data.EN_TRANSIT || 0) + (data.EN_STOCK || 0),
+                    completed: (data.LIVRE || 0)
+                };
+            },
+            error: (err) => console.error('Error loading stats', err)
+        });
     }
 
     loadColis() {

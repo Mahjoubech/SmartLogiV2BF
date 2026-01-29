@@ -1,329 +1,739 @@
-<div class="p-6 md:p-10 min-h-screen bg-slate-950 text-white relative overflow-hidden">
-    
-    <!-- Header -->
-    <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center z-10 relative gap-4">
+<div
+  class="p-6 md:p-10 min-h-screen bg-slate-950 text-white relative overflow-hidden"
+>
+  <!-- Header -->
+  <div
+    class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center z-10 relative gap-4"
+  >
+    <div>
+      <h1 class="text-3xl font-black tracking-tighter">
+        SMART<span class="text-cyan-500">LOGI</span>
+      </h1>
+      <p class="text-slate-400 text-sm mt-1">Manager Dashboard</p>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Tab Navigation -->
+      <div class="flex items-center gap-4">
+        <div class="flex bg-white/5 p-1 rounded-xl border border-white/10">
+          <button
+            (click)="switchTab('shipments')"
+            [class.bg-cyan-600]="activeTab === 'shipments'"
+            [class.text-white]="activeTab === 'shipments'"
+            class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white"
+          >
+            Shipments
+          </button>
+          <button
+            (click)="switchTab('personnel')"
+            [class.bg-cyan-600]="activeTab === 'personnel'"
+            [class.text-white]="activeTab === 'personnel'"
+            class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white"
+          >
+            Personnel
+          </button>
+        </div>
+
+        <!-- Shipment Filter (Only visible when shipments tab is active) -->
+        <div
+          *ngIf="activeTab === 'shipments'"
+          class="flex bg-white/5 p-1 rounded-xl border border-white/10"
+        >
+          <button
+            (click)="setFilterMode('ALL')"
+            [class.bg-slate-700]="filterMode === 'ALL'"
+            [class.text-white]="filterMode === 'ALL'"
+            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white"
+          >
+            All
+          </button>
+          <button
+            (click)="setFilterMode('AVAILABLE')"
+            [class.bg-green-600]="filterMode === 'AVAILABLE'"
+            [class.text-white]="filterMode === 'AVAILABLE'"
+            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-2"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-green-300"></span>
+            Ready
+          </button>
+          <button
+            (click)="setFilterMode('ASSIGNED')"
+            [class.bg-cyan-600]="filterMode === 'ASSIGNED'"
+            [class.text-white]="filterMode === 'ASSIGNED'"
+            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-2"
+          >
+            <svg
+              class="w-3 h-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
+            </svg>
+            Assigned
+          </button>
+        </div>
+      </div>
+
+      <!-- User Actions -->
+      <div class="flex items-center gap-2 pl-4 border-l border-white/10">
+        <button
+          title="Profile"
+          class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+        </button>
+        <button
+          (click)="logout()"
+          title="Logout"
+          class="w-10 h-10 rounded-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 flex items-center justify-center text-red-500 transition"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Widgets -->
+  <div
+    *ngIf="activeTab === 'shipments'"
+    class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+  >
+    <div
+      class="bg-[#0f172a] border border-white/5 rounded-2xl p-4 flex flex-col justify-between hover:border-cyan-500/30 transition-all"
+    >
+      <span class="text-slate-400 text-xs font-bold uppercase tracking-wider"
+        >Total</span
+      >
+      <div class="flex justify-between items-end">
+        <span class="text-3xl font-black text-white">{{
+          dashboardStats.total
+        }}</span>
+        <span class="text-xs text-slate-500 bg-white/5 px-2 py-1 rounded"
+          >Shipments</span
+        >
+      </div>
+    </div>
+    <div
+      class="bg-[#0f172a] border border-white/5 rounded-2xl p-4 flex flex-col justify-between hover:border-yellow-500/30 transition-all"
+    >
+      <span class="text-slate-400 text-xs font-bold uppercase tracking-wider"
+        >Pending</span
+      >
+      <div class="flex justify-between items-end">
+        <span class="text-3xl font-black text-yellow-500">{{
+          dashboardStats.pending
+        }}</span>
+        <span
+          class="text-xs text-yellow-500/50 bg-yellow-500/10 px-2 py-1 rounded"
+          >Action Req</span
+        >
+      </div>
+    </div>
+    <div
+      class="bg-[#0f172a] border border-white/5 rounded-2xl p-4 flex flex-col justify-between hover:border-purple-500/30 transition-all"
+    >
+      <span class="text-slate-400 text-xs font-bold uppercase tracking-wider"
+        >Active</span
+      >
+      <div class="flex justify-between items-end">
+        <span class="text-3xl font-black text-purple-500">{{
+          dashboardStats.active
+        }}</span>
+        <span
+          class="text-xs text-purple-500/50 bg-purple-500/10 px-2 py-1 rounded"
+          >In Transit</span
+        >
+      </div>
+    </div>
+    <div
+      class="bg-[#0f172a] border border-white/5 rounded-2xl p-4 flex flex-col justify-between hover:border-green-500/30 transition-all"
+    >
+      <span class="text-slate-400 text-xs font-bold uppercase tracking-wider"
+        >Completed</span
+      >
+      <div class="flex justify-between items-end">
+        <span class="text-3xl font-black text-green-500">{{
+          dashboardStats.completed
+        }}</span>
+        <span
+          class="text-xs text-green-500/50 bg-green-500/10 px-2 py-1 rounded"
+          >Delivered</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- SHIPMENTS VIEW -->
+  <div
+    *ngIf="activeTab === 'shipments'"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 z-10 relative"
+  >
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="col-span-full flex justify-center py-20">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"
+      ></div>
+    </div>
+
+    <!-- Colis Card -->
+    <div
+      *ngFor="let colis of colisList"
+      (click)="onSelectColis(colis)"
+      class="group relative bg-[#0f172a] border border-white/5 rounded-2xl p-6 hover:border-cyan-500/50 hover:bg-[#0f172a]/80 transition-all duration-300 cursor-pointer overflow-hidden"
+    >
+      <div
+        class="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      ></div>
+
+      <div class="relative z-10 space-y-4">
+        <div class="flex justify-between items-start">
+          <span
+            class="bg-white/5 text-slate-400 text-[10px] font-mono px-2 py-1 rounded border border-white/10"
+            >{{ colis.id.substring(0, 8) }}...</span
+          >
+          <span
+            [ngClass]="getStatusClass(colis.status)"
+            class="text-[10px] font-bold px-2 py-1 rounded border"
+          >
+            {{ colis.status }}
+          </span>
+        </div>
+
         <div>
-            <h1 class="text-3xl font-black tracking-tighter">SMART<span class="text-cyan-500">LOGI</span></h1>
-            <p class="text-slate-400 text-sm mt-1">Manager Dashboard</p>
-        </div>
-
-        <div class="flex items-center gap-4">
-            <!-- Tab Navigation -->
-            <div class="flex items-center gap-4">
-                <div class="flex bg-white/5 p-1 rounded-xl border border-white/10">
-                    <button (click)="switchTab('shipments')" 
-                            [class.bg-cyan-600]="activeTab === 'shipments'"
-                            [class.text-white]="activeTab === 'shipments'"
-                            class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
-                        Shipments
-                    </button>
-                    <button (click)="switchTab('personnel')" 
-                            [class.bg-cyan-600]="activeTab === 'personnel'"
-                            [class.text-white]="activeTab === 'personnel'"
-                            class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
-                        Personnel
-                    </button>
-                </div>
-
-                <!-- Shipment Filter (Only visible when shipments tab is active) -->
-                <div *ngIf="activeTab === 'shipments'" class="flex bg-white/5 p-1 rounded-xl border border-white/10">
-                    <button (click)="setFilterMode('ALL')" 
-                            [class.bg-slate-700]="filterMode === 'ALL'"
-                            [class.text-white]="filterMode === 'ALL'"
-                            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
-                        All
-                    </button>
-                    <button (click)="setFilterMode('AVAILABLE')" 
-                            [class.bg-green-600]="filterMode === 'AVAILABLE'"
-                            [class.text-white]="filterMode === 'AVAILABLE'"
-                            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-300"></span>
-                        Ready
-                    </button>
-                    <button (click)="setFilterMode('ASSIGNED')" 
-                            [class.bg-cyan-600]="filterMode === 'ASSIGNED'"
-                            [class.text-white]="filterMode === 'ASSIGNED'"
-                            class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-2">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                        Assigned
-                    </button>
-                </div>
+          <h3 class="text-white font-bold text-lg leading-tight">
+            {{ colis.villeDestination }}
+          </h3>
+          <p class="text-slate-500 text-xs mt-1">
+            Zone: <span class="text-cyan-400">{{ colis.zone?.nom }}</span>
+          </p>
+          <div
+            *ngIf="colis.livreur"
+            class="mt-2 bg-white/5 border border-white/5 rounded-lg p-2 flex items-center gap-3 hover:bg-white/10 transition cursor-pointer"
+            title="Click to view agent details"
+            (click)="$event.stopPropagation()"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 font-bold text-xs"
+            >
+              {{ colis.livreur.prenom.charAt(0)
+              }}{{ colis.livreur.nom.charAt(0) }}
             </div>
-
-            <!-- User Actions -->
-            <div class="flex items-center gap-2 pl-4 border-l border-white/10">
-                <button title="Profile" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition">
-                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                </button>
-                <button (click)="logout()" title="Logout" class="w-10 h-10 rounded-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 flex items-center justify-center text-red-500 transition">
-                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                </button>
+            <div>
+              <p class="text-[10px] text-slate-500 uppercase font-bold">
+                Assigned Agent
+              </p>
+              <p class="text-xs text-white font-bold flex items-center gap-1">
+                {{ colis.livreur.prenom }} {{ colis.livreur.nom }}
+                <svg
+                  class="w-3 h-3 text-slate-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </p>
             </div>
-        </div>
-    </div>
+          </div>
 
-    <!-- SHIPMENTS VIEW -->
-    <div *ngIf="activeTab === 'shipments'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 z-10 relative">
-        
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="col-span-full flex justify-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
-        </div>
-
-        <!-- Colis Card -->
-        <div *ngFor="let colis of colisList" 
-             (click)="onSelectColis(colis)"
-             class="group relative bg-[#0f172a] border border-white/5 rounded-2xl p-6 hover:border-cyan-500/50 hover:bg-[#0f172a]/80 transition-all duration-300 cursor-pointer overflow-hidden">
-            
-            <div class="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-            <div class="relative z-10 space-y-4">
-                <div class="flex justify-between items-start">
-                    <span class="bg-white/5 text-slate-400 text-[10px] font-mono px-2 py-1 rounded border border-white/10">{{ colis.id.substring(0,8) }}...</span>
-                    <span [ngClass]="getStatusClass(colis.status)" class="text-[10px] font-bold px-2 py-1 rounded border">
-                        {{ colis.status }}
-                    </span>
-                </div>
-
-                <div>
-                    <h3 class="text-white font-bold text-lg leading-tight">{{ colis.villeDestination }}</h3>
-                    <p class="text-slate-500 text-xs mt-1">Zone: <span class="text-cyan-400">{{ colis.zone?.nom }}</span></p>
-                    <div *ngIf="colis.livreur" class="mt-2 bg-white/5 border border-white/5 rounded-lg p-2 flex items-center gap-3 hover:bg-white/10 transition cursor-pointer" title="Click to view agent details" (click)="$event.stopPropagation()">
-                        <div class="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 font-bold text-xs">
-                            {{ colis.livreur.prenom.charAt(0) }}{{ colis.livreur.nom.charAt(0) }}
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-slate-500 uppercase font-bold">Assigned Agent</p>
-                            <p class="text-xs text-white font-bold flex items-center gap-1">
-                                {{ colis.livreur.prenom }} {{ colis.livreur.nom }}
-                                <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div *ngIf="!colis.livreur" class="mt-2">
-                        <span class="inline-flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
-                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
-                            Ready to Assign
-                        </span>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                     <span [ngClass]="getPrioriteClass(colis.prioriteStatus)" class="text-xs font-bold flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full" [ngClass]="{'bg-red-500': colis.prioriteStatus === 'URGENT', 'bg-blue-500': colis.prioriteStatus === 'NORMAL'}"></span>
-                        {{ colis.prioriteStatus }}
-                    </span>
-                    <div class="flex items-center gap-3">
-                        <button (click)="$event.stopPropagation(); trackColis(colis)" class="text-xs font-bold text-cyan-400 hover:text-white transition-colors">Track</button>
-                        <span class="text-xs text-slate-500">{{ colis.dateCreation | date:'shortDate' }}</span>
-                    </div>
-                </div>
-            </div>
+          <div *ngIf="!colis.livreur" class="mt-2">
+            <span
+              class="inline-flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+            >
+              <span
+                class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"
+              ></span>
+              Ready to Assign
+            </span>
+          </div>
         </div>
 
-        <!-- Empty State -->
-        <div *ngIf="!isLoading && colisList.length === 0" class="col-span-full text-center py-20 text-slate-500">
-            No active shipments found requiring attention.
-        </div>
-    </div>
-
-    <!-- PERSONNEL VIEW -->
-    <div *ngIf="activeTab === 'personnel'" class="z-10 relative">
-        
-        <div class="flex justify-end mb-6">
-            <button (click)="openLivreurModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition-colors flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Add New Agent
+        <div
+          class="flex items-center justify-between pt-4 border-t border-white/5"
+        >
+          <span
+            [ngClass]="getPrioriteClass(colis.prioriteStatus)"
+            class="text-xs font-bold flex items-center gap-2"
+          >
+            <span
+              class="w-2 h-2 rounded-full"
+              [ngClass]="{
+                'bg-red-500': colis.prioriteStatus === 'URGENT',
+                'bg-blue-500': colis.prioriteStatus === 'NORMAL',
+              }"
+            ></span>
+            {{ colis.prioriteStatus }}
+          </span>
+          <div class="flex items-center gap-3">
+            <button
+              (click)="$event.stopPropagation(); trackColis(colis)"
+              class="text-xs font-bold text-cyan-400 hover:text-white transition-colors"
+            >
+              Track
             </button>
+            <span class="text-xs text-slate-500">{{
+              colis.dateCreation | date: "shortDate"
+            }}</span>
+          </div>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-             <!-- Loading State -->
-            <div *ngIf="isLoading" class="col-span-full flex justify-center py-20">
-                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
-            </div>
-
-            <!-- Livreur Card -->
-            <div *ngFor="let livreur of livreurList" class="bg-[#0f172a] border border-white/5 rounded-2xl p-6 relative group hover:border-cyan-500/30 transition-all">
-                 <div class="flex items-start justify-between mb-4">
-                     <div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 font-bold text-lg">
-                        {{ livreur.prenom.charAt(0) }}{{ livreur.nom.charAt(0) }}
-                     </div>
-                     <button (click)="deleteLivreur(livreur.id)" class="text-slate-600 hover:text-red-500 transition-colors p-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                     </button>
-                 </div>
-                 
-                 <h3 class="text-white font-bold text-lg">{{ livreur.prenom }} {{ livreur.nom }}</h3>
-                 <p class="text-slate-400 text-xs mb-4">{{ livreur.email }}</p>
-                 
-                 <div class="space-y-2 pt-4 border-t border-white/5 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">Phone</span>
-                        <span class="text-white">{{ livreur.telephone }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">Vehicle</span>
-                        <span class="text-white">{{ livreur.vehicule || 'N/A' }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">Zone</span>
-                        <span class="text-cyan-400 font-mono">{{ livreur.zoneAssignee?.nom || 'Unassigned' }}</span>
-                    </div>
-                 </div>
-            </div>
-            
-            <!-- Empty State -->
-            <div *ngIf="!isLoading && livreurList.length === 0" class="col-span-full text-center py-20 text-slate-500">
-                No delivery agents found. Create one to get started.
-            </div>
-        </div>
+      </div>
     </div>
 
+    <!-- Empty State -->
+    <div
+      *ngIf="!isLoading && colisList.length === 0"
+      class="col-span-full text-center py-20 text-slate-500"
+    >
+      No active shipments found requiring attention.
+    </div>
+  </div>
 
-    <!-- Assignment Panel (Already implemented, kept same) -->
-    <div *ngIf="selectedColis" class="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm" (click)="closePanel()">
-        <!-- ... existing content ... -->
-        <div class="w-full max-w-lg bg-[#050b14] h-full shadow-2xl border-l border-white/10 p-8 flex flex-col no-click" (click)="$event.stopPropagation()">
-            <!-- ... -->
-             <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-6">
-                 <div>
-                    <h2 class="text-2xl font-bold text-white">Assign Livreur</h2>
-                    <p class="text-slate-400 text-sm mt-1">Select an agent for Shipment #{{ selectedColis.id.substring(0,8) }}</p>
-                 </div>
-                 <button (click)="closePanel()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                 </button>
-            </div>
-
-            <h3 class="text-slate-400 text-xs uppercase tracking-widest font-bold mb-4">Eligible Agents (Zone Match)</h3>
-            
-            <div class="space-y-3 overflow-y-auto flex-1 pr-2">
-                 <div *ngIf="isAssignmentLoading" class="flex justify-center py-10">
-                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500"></div>
-                 </div>
-
-                 <div *ngIf="!isAssignmentLoading && eligibleLivreurs.length === 0" class="text-center py-10 text-slate-500 border border-dashed border-white/10 rounded-xl">
-                    No eligible livreurs found in this zone.
-                 </div>
-
-                 <div *ngFor="let livreur of eligibleLivreurs" class="flex items-center justify-between p-4 bg-[#0f172a] border border-white/5 rounded-xl hover:border-cyan-500/30 transition-all group">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold">
-                            {{ livreur.prenom.charAt(0) }}{{ livreur.nom.charAt(0) }}
-                        </div>
-                        <div>
-                            <h4 class="text-white font-bold text-sm">{{ livreur.prenom }} {{ livreur.nom }}</h4>
-                            <p class="text-slate-500 text-xs flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                Available
-                            </p>
-                        </div>
-                    </div>
-                    <button (click)="assignLivreur(livreur.id)" class="bg-white text-black text-xs font-bold px-4 py-2 rounded-lg hover:bg-cyan-400 transition-colors">
-                        ASSIGN
-                    </button>
-                 </div>
-            </div>
-        </div>
+  <!-- PERSONNEL VIEW -->
+  <div *ngIf="activeTab === 'personnel'" class="z-10 relative">
+    <div class="flex justify-end mb-6">
+      <button
+        (click)="openLivreurModal()"
+        class="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition-colors flex items-center gap-2"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Add New Agent
+      </button>
     </div>
 
-    <!-- Tracking Modal -->
-    <div *ngIf="isTrackingModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" (click)="closeTrackingModal()">
-        <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto no-click relative" (click)="$event.stopPropagation()">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0f172a] z-10">
-                <h2 class="text-xl font-bold text-white">Tracking History</h2>
-                <button (click)="closeTrackingModal()" class="text-slate-400 hover:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            
-            <div class="p-6">
-                <div *ngIf="trackingHistory.length === 0" class="text-center py-8 text-slate-500">
-                    No history events found.
-                </div>
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+    >
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="col-span-full flex justify-center py-20">
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"
+        ></div>
+      </div>
 
-                <div class="relative border-l border-white/10 ml-3 space-y-8">
-                    <div *ngFor="let event of trackingHistory" class="relative pl-8">
-                         <div class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-cyan-500 border border-[#0f172a]"></div>
-                         <p class="text-white font-bold text-sm">{{ event.status }}</p>
-                         <p class="text-slate-400 text-xs mt-1">{{ event.commentaire || 'Status updated' }}</p>
-                         <p class="text-slate-600 text-[10px] mt-1">{{ event.dateChangement | date:'medium' }}</p>
-                    </div>
-                </div>
-            </div>
+      <!-- Livreur Card -->
+      <div
+        *ngFor="let livreur of livreurList"
+        class="bg-[#0f172a] border border-white/5 rounded-2xl p-6 relative group hover:border-cyan-500/30 transition-all"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <div
+            class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 font-bold text-lg"
+          >
+            {{ livreur.prenom.charAt(0) }}{{ livreur.nom.charAt(0) }}
+          </div>
+          <button
+            (click)="deleteLivreur(livreur.id)"
+            class="text-slate-600 hover:text-red-500 transition-colors p-2"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
         </div>
-    </div>
 
-    <!-- Create Livreur Modal -->
-    <div *ngIf="isLivreurModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" (click)="closeLivreurModal()">
-        <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto no-click shadow-2xl" (click)="$event.stopPropagation()">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-white">Register New Agent</h2>
-                    <button (click)="closeLivreurModal()" class="text-slate-400 hover:text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
+        <h3 class="text-white font-bold text-lg">
+          {{ livreur.prenom }} {{ livreur.nom }}
+        </h3>
+        <p class="text-slate-400 text-xs mb-4">{{ livreur.email }}</p>
 
-                <form [formGroup]="livreurForm" (ngSubmit)="submitLivreur()" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold uppercase mb-2">First Name</label>
-                            <input formControlName="prenom" type="text" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Last Name</label>
-                            <input formControlName="nom" type="text" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Email</label>
-                        <input formControlName="email" type="email" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Phone</label>
-                            <input formControlName="telephone" type="tel" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Vehicle</label>
-                            <input formControlName="vehicule" type="text" placeholder="e.g. Van, Bike" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Assigned Zone</label>
-                        <select formControlName="zoneAssigneeId" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                            <option value="" disabled selected>Select a Zone</option>
-                            <option *ngFor="let zone of zoneList" [value]="zone.id">{{ zone.nom }} - {{ zone.codePostal }}</option>
-                        </select>
-                        <p class="text-xs text-slate-500 mt-1">Agent will operate primarily in this zone.</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Password</label>
-                            <input formControlName="password" type="password" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Confirm Password</label>
-                            <input formControlName="confirmPassword" type="password" class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors">
-                        </div>
-                    </div>
-
-                    <div class="pt-6 border-t border-white/10 flex justify-end gap-3">
-                        <button type="button" (click)="closeLivreurModal()" class="px-6 py-2 rounded-lg text-slate-400 hover:bg-white/5 transition-colors font-bold">Cancel</button>
-                        <button type="submit" [disabled]="livreurForm.invalid || isLivreurActionLoading" class="px-6 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-colors disabled:opacity-50">
-                            {{ isLivreurActionLoading ? 'Creating...' : 'Create Agent' }}
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <div class="space-y-2 pt-4 border-t border-white/5 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Phone</span>
+            <span class="text-white">{{ livreur.telephone }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Vehicle</span>
+            <span class="text-white">{{ livreur.vehicule || "N/A" }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Zone</span>
+            <span class="text-cyan-400 font-mono">{{
+              livreur.zoneAssignee?.nom || "Unassigned"
+            }}</span>
+          </div>
         </div>
-    </div>
+      </div>
 
+      <!-- Empty State -->
+      <div
+        *ngIf="!isLoading && livreurList.length === 0"
+        class="col-span-full text-center py-20 text-slate-500"
+      >
+        No delivery agents found. Create one to get started.
+      </div>
+    </div>
+  </div>
+
+  <!-- Assignment Panel (Already implemented, kept same) -->
+  <div
+    *ngIf="selectedColis"
+    class="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm"
+    (click)="closePanel()"
+  >
+    <!-- ... existing content ... -->
+    <div
+      class="w-full max-w-lg bg-[#050b14] h-full shadow-2xl border-l border-white/10 p-8 flex flex-col no-click"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- ... -->
+      <div
+        class="flex justify-between items-center mb-8 border-b border-white/10 pb-6"
+      >
+        <div>
+          <h2 class="text-2xl font-bold text-white">Assign Livreur</h2>
+          <p class="text-slate-400 text-sm mt-1">
+            Select an agent for Shipment #{{ selectedColis.id.substring(0, 8) }}
+          </p>
+        </div>
+        <button
+          (click)="closePanel()"
+          class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition"
+        >
+          <svg
+            class="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <h3
+        class="text-slate-400 text-xs uppercase tracking-widest font-bold mb-4"
+      >
+        Eligible Agents (Zone Match)
+      </h3>
+
+      <div class="space-y-3 overflow-y-auto flex-1 pr-2">
+        <div *ngIf="isAssignmentLoading" class="flex justify-center py-10">
+          <div
+            class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500"
+          ></div>
+        </div>
+
+        <div
+          *ngIf="!isAssignmentLoading && eligibleLivreurs.length === 0"
+          class="text-center py-10 text-slate-500 border border-dashed border-white/10 rounded-xl"
+        >
+          No eligible livreurs found in this zone.
+        </div>
+
+        <div
+          *ngFor="let livreur of eligibleLivreurs"
+          class="flex items-center justify-between p-4 bg-[#0f172a] border border-white/5 rounded-xl hover:border-cyan-500/30 transition-all group"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="w-10 h-10 rounded-full bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold"
+            >
+              {{ livreur.prenom.charAt(0) }}{{ livreur.nom.charAt(0) }}
+            </div>
+            <div>
+              <h4 class="text-white font-bold text-sm">
+                {{ livreur.prenom }} {{ livreur.nom }}
+              </h4>
+              <p class="text-slate-500 text-xs flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                Available
+              </p>
+            </div>
+          </div>
+          <button
+            (click)="assignLivreur(livreur.id)"
+            class="bg-white text-black text-xs font-bold px-4 py-2 rounded-lg hover:bg-cyan-400 transition-colors"
+          >
+            ASSIGN
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tracking Modal -->
+  <div
+    *ngIf="isTrackingModalOpen"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+    (click)="closeTrackingModal()"
+  >
+    <div
+      class="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto no-click relative"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0f172a] z-10"
+      >
+        <h2 class="text-xl font-bold text-white">Tracking History</h2>
+        <button
+          (click)="closeTrackingModal()"
+          class="text-slate-400 hover:text-white"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div
+          *ngIf="trackingHistory.length === 0"
+          class="text-center py-8 text-slate-500"
+        >
+          No history events found.
+        </div>
+
+        <div class="relative border-l border-white/10 ml-3 space-y-8">
+          <div *ngFor="let event of trackingHistory" class="relative pl-8">
+            <div
+              class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-cyan-500 border border-[#0f172a]"
+            ></div>
+            <p class="text-white font-bold text-sm">{{ event.status }}</p>
+            <p class="text-slate-400 text-xs mt-1">
+              {{ event.commentaire || "Status updated" }}
+            </p>
+            <p class="text-slate-600 text-[10px] mt-1">
+              {{ event.dateChangement | date: "medium" }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Livreur Modal -->
+  <div
+    *ngIf="isLivreurModalOpen"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+    (click)="closeLivreurModal()"
+  >
+    <div
+      class="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto no-click shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="p-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white">Register New Agent</h2>
+          <button
+            (click)="closeLivreurModal()"
+            class="text-slate-400 hover:text-white"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <form
+          [formGroup]="livreurForm"
+          (ngSubmit)="submitLivreur()"
+          class="space-y-4"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                class="block text-slate-400 text-xs font-bold uppercase mb-2"
+                >First Name</label
+              >
+              <input
+                formControlName="prenom"
+                type="text"
+                class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-slate-400 text-xs font-bold uppercase mb-2"
+                >Last Name</label
+              >
+              <input
+                formControlName="nom"
+                type="text"
+                class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 text-xs font-bold uppercase mb-2"
+              >Email</label
+            >
+            <input
+              formControlName="email"
+              type="email"
+              class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                class="block text-slate-400 text-xs font-bold uppercase mb-2"
+                >Phone</label
+              >
+              <input
+                formControlName="telephone"
+                type="tel"
+                class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-slate-400 text-xs font-bold uppercase mb-2"
+                >Vehicle</label
+              >
+              <input
+                formControlName="vehicule"
+                type="text"
+                placeholder="e.g. Van, Bike"
+                class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 text-xs font-bold uppercase mb-2"
+              >Assigned Zone</label
+            >
+            <select
+              formControlName="zoneAssigneeId"
+              class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+            >
+              <option value="" disabled selected>Select a Zone</option>
+              <option *ngFor="let zone of zoneList" [value]="zone.id">
+                {{ zone.nom }} - {{ zone.codePostal }}
+              </option>
+            </select>
+            <p class="text-xs text-slate-500 mt-1">
+              Agent will operate primarily in this zone.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                class="block text-slate-400 text-xs font-bold uppercase mb-2"
+                >Password</label
+              >
+              <input
+                formControlName="password"
+                type="password"
+                class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-slate-400 text-xs font-bold uppercase mb-2"
+                >Confirm Password</label
+              >
+              <input
+                formControlName="confirmPassword"
+                type="password"
+                class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+              />
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-white/10 flex justify-end gap-3">
+            <button
+              type="button"
+              (click)="closeLivreurModal()"
+              class="px-6 py-2 rounded-lg text-slate-400 hover:bg-white/5 transition-colors font-bold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="livreurForm.invalid || isLivreurActionLoading"
+              class="px-6 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-colors disabled:opacity-50"
+            >
+              {{ isLivreurActionLoading ? "Creating..." : "Create Agent" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

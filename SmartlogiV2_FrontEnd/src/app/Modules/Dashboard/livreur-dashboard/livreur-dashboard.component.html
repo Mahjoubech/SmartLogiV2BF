@@ -138,12 +138,36 @@
 
             <!-- Content Area: Parcels -->
             <div>
-                 <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                     <h3 class="text-xl font-bold flex items-center gap-2">
                         <span class="w-2 h-8 bg-cyan-500 rounded-full"></span>
                         {{ currentFilter === 'ALL' ? 'All Parcels' : (currentFilter === 'TO_COLLECT' ? 'Pending Collection' : (currentFilter === 'TO_DELIVER' ? 'Active Deliveries' : 'History')) }}
                     </h3>
-                 </div>
+
+                    <div class="flex items-center gap-3 self-end sm:self-auto">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:block">Sort by:</span>
+                        <div class="flex bg-[#0f172a] border border-white/5 rounded-lg p-1">
+                            <button (click)="setSort('DATE')"
+                                    [class.bg-white_10]="currentSort === 'DATE'"
+                                    [class.text-white]="currentSort === 'DATE'"
+                                    class="px-3 py-1.5 rounded-md text-[10px] font-bold text-slate-400 hover:text-white transition-all">
+                                Date
+                            </button>
+                            <button (click)="setSort('PRIORITY')"
+                                    [class.bg-white_10]="currentSort === 'PRIORITY'"
+                                    [class.text-white]="currentSort === 'PRIORITY'"
+                                    class="px-3 py-1.5 rounded-md text-[10px] font-bold text-slate-400 hover:text-white transition-all">
+                                Priority
+                            </button>
+                            <button (click)="setSort('ZONE')"
+                                    [class.bg-white_10]="currentSort === 'ZONE'"
+                                    [class.text-white]="currentSort === 'ZONE'"
+                                    class="px-3 py-1.5 rounded-md text-[10px] font-bold text-slate-400 hover:text-white transition-all">
+                                Zone
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Loading -->
                 <div *ngIf="isLoading" class="flex justify-center py-20">

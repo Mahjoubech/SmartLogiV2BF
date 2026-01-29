@@ -25,6 +25,7 @@ export class LivreurDashboardComponent implements OnInit {
 
     // UI State
     currentFilter: 'ALL' | 'TO_COLLECT' | 'TO_DELIVER' | 'HISTORY' = 'ALL';
+    currentSort: 'DATE' | 'PRIORITY' | 'ZONE' = 'DATE';
 
     constructor(
         private notificationService: NotificationService,
@@ -54,16 +55,22 @@ export class LivreurDashboardComponent implements OnInit {
     }
 
     get filteredColis() {
+        let list = [];
         switch (this.currentFilter) {
             case 'TO_COLLECT':
-                return this.assignedColis.filter(c => c.status === 'COLLECTE' || c.status === 'CREE');
+                list = this.assignedColis.filter(c => c.status === 'COLLECTE' || c.status === 'CREE');
+                break;
             case 'TO_DELIVER':
-                return this.assignedColis.filter(c => c.status === 'EN_TRANSIT' || c.status === 'EN_STOCK');
+                list = this.assignedColis.filter(c => c.status === 'EN_TRANSIT' || c.status === 'EN_STOCK');
+                break;
             case 'HISTORY':
-                return this.assignedColis.filter(c => c.status === 'LIVRE' || c.status === 'ANNULE');
+                list = this.assignedColis.filter(c => c.status === 'LIVRE' || c.status === 'ANNULE');
+                break;
             default:
-                return this.assignedColis;
+                list = [...this.assignedColis]; // Copy
+                break;
         }
+        return this.applySort(list);
     }
 
     // --- Actions ---
@@ -101,6 +108,24 @@ export class LivreurDashboardComponent implements OnInit {
 
     setFilter(filter: 'ALL' | 'TO_COLLECT' | 'TO_DELIVER' | 'HISTORY') {
         this.currentFilter = filter;
+    }
+
+    setSort(sort: 'DATE' | 'PRIORITY' | 'ZONE') {
+        this.currentSort = sort;
+    }
+
+    applySort(list: any[]): any[] {
+        return list.sort((a, b) => {
+            if (this.currentSort === 'PRIORITY') {
+                const pMap: any = { 'URGENT': 1, 'NORMAL': 2, 'FAIBLE': 3 };
+                return (pMap[a.prioriteStatus] || 2) - (pMap[b.prioriteStatus] || 2);
+            } else if (this.currentSort === 'ZONE') {
+                return (a.zone?.nom || '').localeCompare(b.zone?.nom || '');
+            } else {
+                // DATE default
+                return new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime();
+            }
+        });
     }
 
     openNotificationsModal() {
@@ -157,8 +182,7 @@ export class LivreurDashboardComponent implements OnInit {
                     ...c,
                     status: c.status || c.statut // Handle both cases
                 }));
-                // Sort by date desc
-                this.assignedColis.sort((a, b) => new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime());
+                // Sort by current sort preference implied in applySort later
                 this.isLoading = false;
             },
             error: (err) => {
