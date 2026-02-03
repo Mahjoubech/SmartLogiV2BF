@@ -9,19 +9,30 @@ export const authGuard: CanActivateFn = (
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    if (!authService.isAuthenticated()) {
+    const token = authService.getToken();
+    console.log('[AuthGuard] Checking access. Token present:', !!token);
+
+    if (!token) {
+        console.warn('[AuthGuard] No token found. Redirecting to login.');
         router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
         return false;
     }
+    
     const requiredRoles = route.data['roles'] as Array<string>;
+    console.log('[AuthGuard] Required roles:', requiredRoles);
 
     if (!requiredRoles || requiredRoles.length === 0) {
         return true;
     }
-    if (authService.hasRole(requiredRoles)) {
+    
+    const hasRole = authService.hasRole(requiredRoles);
+    console.log('[AuthGuard] Has role?', hasRole);
+
+    if (hasRole) {
         return true;
     }
-    console.warn('Unauthorized access: User does not have required roles', requiredRoles);
+    
+    console.warn('[AuthGuard] Unauthorized access: Role mismatch.', requiredRoles);
     router.navigate(['/login']);
     return false;
 };

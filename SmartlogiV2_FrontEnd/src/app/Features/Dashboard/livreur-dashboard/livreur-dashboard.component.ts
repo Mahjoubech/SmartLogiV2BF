@@ -146,7 +146,7 @@ export class LivreurDashboardComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const token = this.authService.token;
+        const token = this.authService.getToken();
         if (token) {
             this.livreurId = this.extractUserId(token);
             this.loadNotifications();

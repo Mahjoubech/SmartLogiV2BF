@@ -91,10 +91,15 @@ export class LoginComponent implements OnInit {
         this.authService.login({ email, password }).subscribe({
             next: (res) => {
                 this.isLoading = false;
+                console.log('Login success, response:', res);
+                
                 if (res.role?.name === 'ADMIN') {
+                    console.log('Redirecting to Admin Dashboard');
                     this.router.navigate(['/admin-dashboard']);
                 } else {
-                    this.router.navigate(['/dashboard']);
+                    const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+                    console.log('Redirecting to:', returnUrl);
+                    this.router.navigate([returnUrl]);
                 }
             },
             error: (err) => {

@@ -3,6 +3,7 @@ import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel,
 // import { initFlowbite } from 'flowbite';
 import { CommonModule } from '@angular/common';
 import { LoadingScreenComponent } from './Shared/components/loading-screen/loading-screen.component';
+import { AuthService } from './Core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ export class AppComponent implements OnInit {
   title = 'SmartlogiV2_FrontEnd';
   isLoading = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.isLoading = true;
@@ -29,7 +30,10 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // initFlowbite();
-    console.log('Flowbite loaded globally');
+    if (this.authService.getToken()) {
+      this.authService.syncUser().subscribe({
+        error: () => console.warn('Session sync failed on startup')
+      });
+    }
   }
 }

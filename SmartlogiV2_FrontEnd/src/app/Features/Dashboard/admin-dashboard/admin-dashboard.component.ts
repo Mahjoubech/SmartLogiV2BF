@@ -5,6 +5,7 @@ import { AuthService } from '../../../Core/services/auth.service';
 import { AdminService } from '../../../Core/services/admin.service';
 import { Router } from '@angular/router';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import Swal from 'sweetalert2';
 
 Chart.register(...registerables);
 
@@ -166,19 +167,70 @@ export class AdminDashboardComponent implements OnInit {
 
   toggleBlockUser(user: any, block: boolean) {
     const action = block ? 'block' : 'unblock';
-    if (confirm(`Are you sure you want to ${action} ${user.prenom} ${user.nom}?`)) {
-      if (block) {
-        this.adminService.blockUser(user.id).subscribe({
-            next: () => this.loadUsers(),
-            error: (err) => console.error('Block failed', err)
-        });
-      } else {
-        this.adminService.unblockUser(user.id).subscribe({
-             next: () => this.loadUsers(),
-             error: (err) => console.error('Unblock failed', err)
-        });
+    
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you really want to ${action} access for ${user.prenom} ${user.nom}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: block ? '#ef4444' : '#22c55e', // Red for block, Green for unblock
+      cancelButtonColor: '#334155',
+      confirmButtonText: `Yes, ${action} user`,
+      background: '#0f172a',
+      color: '#f8fafc'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (block) {
+          this.adminService.blockUser(user.id).subscribe({
+            next: () => {
+              this.loadUsers();
+              Swal.fire({
+                title: 'Blocked!',
+                text: 'User has been blocked successfully.',
+                icon: 'success',
+                background: '#0f172a',
+                color: '#f8fafc',
+                confirmButtonColor: '#06b6d4'
+              });
+            },
+            error: (err) => {
+               console.error('Block failed', err);
+               Swal.fire({
+                title: 'Error!',
+                text: 'Failed to block user.',
+                icon: 'error',
+                background: '#0f172a',
+                color: '#f8fafc'
+               });
+            }
+          });
+        } else {
+          this.adminService.unblockUser(user.id).subscribe({
+            next: () => {
+              this.loadUsers();
+              Swal.fire({
+                title: 'Unblocked!',
+                text: 'User access has been restored.',
+                icon: 'success',
+                background: '#0f172a',
+                color: '#f8fafc',
+                confirmButtonColor: '#06b6d4'
+              });
+            },
+            error: (err) => {
+               console.error('Unblock failed', err);
+               Swal.fire({
+                title: 'Error!',
+                 text: 'Failed to unblock user.',
+                 icon: 'error',
+                 background: '#0f172a',
+                 color: '#f8fafc'
+               });
+            }
+          });
+        }
       }
-    }
+    });
   }
 
   // Manager CRUD

@@ -13,20 +13,15 @@ export class JwtInterceptor implements HttpInterceptor {
     ) { }
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        const token = this.authService.token;
+        const token = this.authService.getToken();
         const isApiUrl = request.url.startsWith('http') || request.url.startsWith('https') || request.url.startsWith('/api');
 
-        console.log(`[JwtInterceptor] Intercepting request: ${request.url}`);
-
         if (token && isApiUrl) {
-            console.log(`[JwtInterceptor] Attaching token to: ${request.url} (Token starts with: ${token.substring(0, 10)}...)`);
             request = request.clone({
                 setHeaders: {
                     Authorization: `Bearer ${token}`
                 }
             });
-        } else if (isApiUrl) {
-            console.warn(`[JwtInterceptor] NO TOKEN found for API request: ${request.url}`);
         }
 
         return next.handle(request).pipe(

@@ -1,173 +1,198 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
-@import "flowbite/src/themes/default";
+@import "flowbite/src/themes/default.css";
 
 /* --- MISSION CONTROL DESIGN SYSTEM (GLOBAL) --- */
 
 :root {
-    --mc-bg: #010409;
-    --mc-card-bg: #0d1117;
-    --mc-border: #30363d;
-    --mc-cyan: #22d3ee;
-    --mc-text-main: #f0f6fc;
-    --mc-text-dim: #8b949e;
+  --mc-bg: #010409;
+  --mc-card-bg: #0d1117;
+  --mc-border: #30363d;
+  --mc-cyan: #22d3ee;
+  --mc-text-main: #f0f6fc;
+  --mc-text-dim: #8b949e;
 }
 
 /* NUCLEAR OPTION: Force all text to be light globally */
 * {
-    color: inherit;
+  color: inherit;
 }
 
 body {
-    background-color: var(--mc-bg);
-    margin: 0;
-    -webkit-font-smoothing: antialiased;
-    color: var(--mc-text-main); /* Force global text color to light */
+  background-color: var(--mc-bg);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  color: var(--mc-text-main); /* Force global text color to light */
 }
 
 /* Global Navbar Styling */
 .mc-nav {
-    background: rgba(1, 4, 9, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    height: 80px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
+  background: rgba(1, 4, 9, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  height: 80px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
 }
 
 .mc-nav-link {
-    color: var(--mc-text-dim);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 8px 16px;
-    transition: all 0.3s;
-    border-radius: 4px;
-    text-decoration: none;
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  transition: all 0.3s;
+  border-radius: 4px;
+  text-decoration: none;
 }
 
 .mc-nav-link:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .mc-nav-link.active {
-    color: var(--mc-cyan);
-    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+  color: var(--mc-cyan);
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
 }
 
 /* Common UI Elements */
 .mc-search-bar {
-    background: #0d1117 !important;
-    border: 1px solid #30363d !important;
-    color: #fff !important;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 12px !important;
-    width: 300px !important;
-    height: 40px;
-    border-radius: 6px;
-    padding: 0 12px;
+  background: #0d1117 !important;
+  border: 1px solid #30363d !important;
+  color: #fff !important;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px !important;
+  width: 300px !important;
+  height: 40px;
+  border-radius: 6px;
+  padding: 0 12px;
 }
 
 .mc-btn-back {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--mc-text-dim);
-    font-size: 10px;
-    font-weight: 800;
-    padding: 10px 20px;
-    border-radius: 6px;
-    letter-spacing: 0.1em;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s;
-    cursor: pointer;
-    text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--mc-text-dim);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 10px 20px;
+  border-radius: 6px;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+  cursor: pointer;
+  text-transform: uppercase;
 }
 
 .mc-btn-back:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border-color: var(--mc-cyan);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: var(--mc-cyan);
 }
 
 /* --- GLOBAL INPUT VISIBILITY FIXES --- */
 
 /* Force all inputs to have light text and dark background by default */
-input, textarea, select, .form-control, .form-input {
-    color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.05) !important; 
-    border-color: rgba(255, 255, 255, 0.2) !important;
+input,
+textarea,
+select,
+.form-control,
+.form-input {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Fix Placeholder Visibility */
 ::placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
-    opacity: 1; /* Firefox */
+  color: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1; /* Firefox */
 }
 
 :-ms-input-placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 ::-ms-input-placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* Fix Browser Autofill (Chrome/Edge) - often turns bg white and text black */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #010409 inset !important;
-    -webkit-text-fill-color: #ffffff !important;
-    transition: background-color 5000s ease-in-out 0s;
+  -webkit-box-shadow: 0 0 0 30px #010409 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Ensure focus states are visible */
 /* Ensure focus states are visible */
-input:focus, textarea:focus, select:focus {
-    color: #ffffff !important;
-    border-color: var(--mc-cyan) !important;
-    outline: none !important;
-    box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2) !important;
+input:focus,
+textarea:focus,
+select:focus {
+  color: #ffffff !important;
+  border-color: var(--mc-cyan) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2) !important;
 }
 
 /* UNIVERSAL TEXT RESET FOR DARK MODE */
 /* This is a nuclear option to fix "black text" issues if they persist */
-.login-card *, .register-card *, .glass-card * {
-     color: #f0f6fc;
+.login-card *,
+.register-card *,
+.glass-card * {
+  color: #f0f6fc;
 }
 
 /* Re-apply dim colors for specific elements */
-.login-subtitle, .form-label, .subtitle {
-    color: #8b949e !important;
+.login-subtitle,
+.form-label,
+.subtitle {
+  color: #8b949e !important;
 }
 
 /* Ensure inputs override the universal reset if needed (though they are same color) */
-input, textarea, select {
-    color: #ffffff !important;
+input,
+textarea,
+select {
+  color: #ffffff !important;
 }
 
 /* Explicit overrides for common text elements */
-h1, h2, h3, h4, h5, h6, th, td, p, span, div, a {
-    color: #edf2f7; /* Very light gray/white */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th,
+td,
+p,
+span,
+div,
+a {
+  color: #edf2f7; /* Very light gray/white */
 }
 
 /* Re-allow dim text for specific utility classes if needed */
 .text-muted {
-    color: #a0aec0 !important;
+  color: #a0aec0 !important;
 }
 
 /* Dashboard specific fixes */
-.card, .panel, .dashboard-container {
-    color: #edf2f7 !important;
+.card,
+.panel,
+.dashboard-container {
+  color: #edf2f7 !important;
 }

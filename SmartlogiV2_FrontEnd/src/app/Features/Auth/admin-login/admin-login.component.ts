@@ -60,6 +60,8 @@ export class AdminLoginComponent {
            this.errorMessage = err.error;
         } else if (err.error && err.error.message) {
            this.errorMessage = err.error.message;
+        } else if (err.status === 0) {
+            this.errorMessage = 'Connection Failed. Please ensure Backend is running and check CORS settings.';
         } else if (err.status === 400) {
             this.errorMessage = 'Bad Request: Please check your input.';
         } else {

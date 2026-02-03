@@ -13,79 +13,151 @@ import { AuthResponse } from '../api/models/auth-response';
 })
 export class AuthService {
     private tokenKey = 'token';
+    private userKey = 'user_data';
+    
     private currentUserSubject: BehaviorSubject<AuthResponse | null>;
     public currentUser$: Observable<AuthResponse | null>;
 
     constructor(
         private http: HttpClient,
-        private config: ApiConfiguration
+        private config: ApiConfiguration,
     ) {
-        let savedUser = null;
-        try {
-            if (typeof window !== 'undefined' && window.localStorage) {
-                savedUser = localStorage.getItem(this.tokenKey);
-            }
-        } catch (e) {
-            console.warn('[AuthService] LocalStorage access blocked. Session will not persist across reloads.', e);
-        }
-
-        let user = null;
-        if (savedUser) {
-            try {
-                user = JSON.parse(savedUser);
-            } catch (e) {
-                console.error('[AuthService] Invalid token in storage', e);
-                this.safeRemoveItem(this.tokenKey);
-            }
-        }
-        this.currentUserSubject = new BehaviorSubject<AuthResponse | null>(user);
+        // Initialize from storage (cookies only)
+        const savedUser: AuthResponse | null = this.getUserFromStorage();
+        this.currentUserSubject = new BehaviorSubject<AuthResponse | null>(savedUser);
         this.currentUser$ = this.currentUserSubject.asObservable();
     }
 
-    private safeRemoveItem(key: string): void {
-        try {
-            if (typeof window !== 'undefined' && window.localStorage) {
-                localStorage.removeItem(key);
-            }
-        } catch (e) {
-        }
-    }
+    // --- Public Getters ---
 
     public get currentUserValue(): AuthResponse | null {
         return this.currentUserSubject.value;
     }
 
-    public get token(): string | undefined {
-        const t = this.currentUserValue?.token;
-        if (t) {
-        } else {
-            console.warn('[AuthService] Token getter: EMPTY');
+    public getToken(): string | null {
+        // 1. Prioritize In-Memory
+        const memoryToken = this.currentUserSubject.value?.token;
+        if (memoryToken) return memoryToken;
+
+        // 2. Try LocalStorage (if not blocked)
+        if (typeof window !== 'undefined') {
+            try {
+                // Accessing localStorage itself can throw in some browsers
+                const item = localStorage.getItem(this.tokenKey);
+                if (item) return item;
+            } catch (e) {
+                // Ignore SecurityError, proceed to cookie
+            }
+
+            // 3. Try Cookie
+            const cookieToken = this.getCookie(this.tokenKey);
+            if (cookieToken) return cookieToken;
         }
-        return t;
+
+        return null;
     }
+
+    public getUserRole(): string | undefined {
+        return this.currentUserValue?.role?.name;
+    }
+
+    public isAuthenticated(): boolean {
+        return !!this.getToken();
+    }
+
+    public hasRole(requiredRoles: string[]): boolean {
+        const userRole = this.getUserRole();
+        if (!userRole) return false;
+        return requiredRoles.includes(userRole);
+    }
+
+    // --- Cookie Management ---
+
+    private setCookie(name: string, value: string, days: number): void {
+        if (typeof window === 'undefined') return;
+        try {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        } catch (e) {
+            console.warn('[AuthService] Cookie write failed', e);
+        }
+    }
+
+    private getCookie(name: string): string | null {
+        if (typeof window === 'undefined') return null;
+        try {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+        } catch (e) { }
+        return null;
+    }
+
+    private deleteCookie(name: string): void {
+        if (typeof window === 'undefined') return;
+        try {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        } catch (e) { }
+    }
+
+    // --- Session Management ---
 
     public setSession(authResponse: AuthResponse): void {
+        console.log('[AuthService] setSession called with:', authResponse);
         if (authResponse && authResponse.token) {
-            console.log('[AuthService] Setting new session');
+            
+            // A. Try LocalStorage
             try {
-                if (typeof window !== 'undefined' && window.localStorage) {
-                    localStorage.setItem(this.tokenKey, JSON.stringify(authResponse));
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem(this.tokenKey, authResponse.token);
+                    localStorage.setItem(this.userKey, JSON.stringify(authResponse));
+                    console.log('[AuthService] Saved to LocalStorage');
                 }
             } catch (e) {
-                console.warn('[AuthService] Could not save to storage (likely blocked)', e);
+                console.warn('[AuthService] LocalStorage blocked, skipping.');
             }
+
+            // B. Also Try Cookies (Redundancy)
+            this.setCookie(this.tokenKey, authResponse.token, 1);
+            this.setCookie(this.userKey, JSON.stringify(authResponse), 1);
+            
             this.currentUserSubject.next(authResponse);
-        } else {
-            // console.warn('[AuthService] Attempted to set invalid session or clearing session');
         }
     }
 
+    public logout(): void {
+        // Clear LocalStorage
+        try {
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem(this.tokenKey);
+                localStorage.removeItem(this.userKey);
+            }
+        } catch (e) { }
+
+        // Clear Cookies
+        this.deleteCookie(this.tokenKey);
+        this.deleteCookie(this.userKey);
+
+        this.currentUserSubject.next(null);
+    }
+
+    // --- API Calls ---
+    
     syncUser(): Observable<AuthResponse> {
         return this.http.get<AuthResponse>(`${this.config.rootUrl}/api/v2/auth/me`).pipe(
             tap(authResponse => {
-                const currentResponse = this.currentUserValue;
-                if (currentResponse && !authResponse.token) {
-                    authResponse.token = currentResponse.token;
+                const currentToken = this.getToken();
+                if (!authResponse.token && currentToken) {
+                    authResponse.token = currentToken;
                 }
                 this.setSession(authResponse);
             })
@@ -102,29 +174,8 @@ export class AuthService {
     register(registerRequest: RegisterRequest): Observable<AuthResponse> {
         return register(this.http, this.config.rootUrl, { body: registerRequest }).pipe(
             map(response => response.body),
-            tap(authResponse => {
-                if (authResponse.token) this.setSession(authResponse)
-            })
+            tap(authResponse => this.setSession(authResponse))
         );
-    }
-
-    logout(): void {
-        this.safeRemoveItem(this.tokenKey);
-        this.currentUserSubject.next(null);
-    }
-
-    isAuthenticated(): boolean {
-        return !!this.token;
-    }
-
-    getUserRole(): string | undefined {
-        return this.currentUserValue?.role?.name;
-    }
-
-    hasRole(requiredRoles: string[]): boolean {
-        const userRole = this.getUserRole();
-        if (!userRole) return false;
-        return requiredRoles.includes(userRole);
     }
 
     verifyAccount(email: string, code: string): Observable<AuthResponse> {
@@ -142,5 +193,26 @@ export class AuthService {
 
     updatePassword(currentPassword: string, newPassword: string): Observable<string> {
         return this.http.post(`${this.config.rootUrl}/api/v2/auth/update-password`, { currentPassword, newPassword }, { responseType: 'text' });
+    }
+
+    // --- Helpers ---
+
+    private getUserFromStorage(): AuthResponse | null {
+        if (typeof window === 'undefined') return null;
+
+        // 1. Try LocalStorage
+        try {
+            const storedItem = localStorage.getItem(this.userKey);
+            if (storedItem) return JSON.parse(storedItem);
+        } catch (e) {}
+
+        // 2. Try Cookie
+        const cookieUser = this.getCookie(this.userKey);
+        if (cookieUser) {
+            try {
+                return JSON.parse(cookieUser);
+            } catch (e) { }
+        }
+        return null;
     }
 }
