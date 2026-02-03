@@ -147,8 +147,51 @@
 
   <!-- MAIN CONTENT -->
   <main class="flex-1 flex flex-col overflow-hidden bg-slate-950">
-    <!-- Topbar (Optional if strictly separate profiles, keeping simple) -->
+    <!-- Topbar -->
+    <header
+      class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8"
+    >
+      <!-- Left: Breadcrumb/Title -->
+      <div class="flex items-center gap-4">
+        <h2 class="text-xl font-bold text-white capitalize">{{ activeTab }}</h2>
+      </div>
 
+      <!-- Right: Profile & Security -->
+      <div class="flex items-center gap-6">
+        <!-- Token Info -->
+        <div
+          class="hidden md:flex flex-col items-end mr-4 border-r border-slate-800 pr-6"
+        >
+          <span
+            class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
+            >Session Expires</span
+          >
+          <span class="text-xs font-mono text-cyan-400">{{
+            tokenExpiration | date: "mediumTime"
+          }}</span>
+        </div>
+
+        <!-- Admin Profile -->
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <div class="text-sm font-bold text-white">
+              {{ currentUser?.prenom }} {{ currentUser?.nom }}
+            </div>
+            <div
+              class="text-xs font-bold text-cyan-500 bg-cyan-500/10 px-2 py-0.5 rounded-full inline-block"
+            >
+              ADMIN
+            </div>
+          </div>
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 flex items-center justify-center text-white font-bold shadow-lg"
+          >
+            {{ currentUser?.prenom?.charAt(0)
+            }}{{ currentUser?.nom?.charAt(0) }}
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="flex-1 overflow-y-auto p-8">
       <!-- STATS OVERVIEW -->
       <div *ngIf="activeTab === 'stats'" class="space-y-6">
@@ -303,13 +346,51 @@
                     >Blocked</span
                   >
                 </td>
-                <td class="px-6 py-4 text-right">
+                <td class="px-6 py-4 text-right flex justify-end gap-2">
+                  <button
+                    (click)="editClient(client)"
+                    class="p-1.5 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-lg transition-colors"
+                    title="Edit User Info"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                      ></path>
+                    </svg>
+                  </button>
+                  <button
+                    (click)="assignRole(client)"
+                    class="p-1.5 text-slate-400 hover:text-purple-400 hover:bg-slate-800 rounded-lg transition-colors"
+                    title="Assign Role"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                      ></path>
+                    </svg>
+                  </button>
                   <button
                     *ngIf="client.accountNonLocked"
                     (click)="toggleBlockUser(client, true)"
                     class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1 rounded-lg transition-all font-bold text-xs border border-red-500/20"
                   >
-                    Block Access
+                    Block
                   </button>
                   <button
                     *ngIf="!client.accountNonLocked"
@@ -435,42 +516,244 @@
       </div>
 
       <!-- ROLES & PERMISSIONS TAB -->
-      <div *ngIf="activeTab === 'roles'" class="space-y-6">
-        <h2 class="text-3xl font-black text-white mb-6">Roles & Permissions</h2>
-
-        <div
-          class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center"
-        >
-          <div
-            class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6"
-          >
-            <svg
-              class="w-10 h-10 text-slate-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div *ngIf="activeTab === 'roles'" class="space-y-6 h-full flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-3xl font-black text-white">
+            Roles & Permissions Management
+          </h2>
+          <div class="flex bg-slate-900 border border-slate-800 rounded-xl p-1">
+            <button
+              (click)="activeSubTab = 'roles'"
+              [class.bg-slate-800]="activeSubTab === 'roles'"
+              [class.text-white]="activeSubTab === 'roles'"
+              class="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              ></path>
-            </svg>
+              User Roles
+            </button>
+            <button
+              (click)="activeSubTab = 'permissions'"
+              [class.bg-slate-800]="activeSubTab === 'permissions'"
+              [class.text-white]="activeSubTab === 'permissions'"
+              class="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all"
+            >
+              Permissions Library
+            </button>
           </div>
-          <h3 class="text-xl font-bold text-white mb-2">
-            Role Management Module
-          </h3>
-          <p class="text-slate-400 max-w-md mx-auto mb-8">
-            Advanced permission assignment and role creation features are
-            currently under development. You will be able to granularly control
-            what each Manager can access.
-          </p>
-          <button
-            class="px-6 py-3 bg-slate-800 text-slate-400 rounded-xl font-bold cursor-not-allowed border border-slate-700"
+        </div>
+
+        <!-- PERMISSIONS LIBRARY SUB-TAB -->
+        <div
+          *ngIf="activeSubTab === 'permissions'"
+          class="flex-1 overflow-hidden flex flex-col"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">All System Permissions</h3>
+            <button
+              (click)="createPermission()"
+              class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-cyan-900/20"
+            >
+              + Create Permission
+            </button>
+          </div>
+
+          <div
+            class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex-1"
           >
-            Coming Soon
-          </button>
+            <div class="overflow-y-auto h-full">
+              <table class="w-full text-left text-sm">
+                <thead
+                  class="bg-slate-950 text-slate-400 font-bold uppercase text-xs sticky top-0"
+                >
+                  <tr>
+                    <th class="px-6 py-4">Permission Name</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  <tr
+                    *ngFor="let perm of permissionsList"
+                    class="hover:bg-slate-800/50 transition-colors"
+                  >
+                    <td class="px-6 py-4 font-bold text-white">
+                      {{ perm.name }}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                      <button
+                        (click)="deletePermission(perm)"
+                        class="text-slate-500 hover:text-red-400 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="permissionsList.length === 0">
+                    <td
+                      colspan="2"
+                      class="px-6 py-8 text-center text-slate-500"
+                    >
+                      No permissions found.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROLES SUB-TAB -->
+        <div
+          *ngIf="activeSubTab === 'roles'"
+          class="flex flex-1 gap-6 overflow-hidden"
+        >
+          <!-- Roles List Sidebar -->
+          <div
+            class="w-1/3 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col"
+          >
+            <div
+              class="p-4 border-b border-slate-800 flex justify-between items-center"
+            >
+              <h3 class="text-lg font-bold text-white">Roles</h3>
+              <button
+                (click)="createRole()"
+                class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+                title="Create New Role"
+              >
+                + Add Role
+              </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-2 space-y-2">
+              <div
+                *ngFor="let role of rolesList"
+                (click)="onSelectRole(role)"
+                [class.bg-slate-800]="selectedRole?.id === role.id"
+                [class.border-cyan-500]="selectedRole?.id === role.id"
+                class="p-4 rounded-xl border border-transparent hover:bg-slate-800 transition-all cursor-pointer group flex justify-between items-center"
+              >
+                <div>
+                  <div class="font-bold text-white">{{ role.name }}</div>
+                  <div class="text-xs text-slate-500 mt-1">
+                    {{ role.permissions?.length || 0 }} permissions
+                  </div>
+                </div>
+                <button
+                  (click)="deleteRole(role); $event.stopPropagation()"
+                  class="opacity-0 group-hover:opacity-100 p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-950 rounded transition-all"
+                  title="Delete Role"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Permissions Editor (Assigned Table) -->
+          <div
+            class="w-2/3 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col"
+          >
+            <div
+              *ngIf="selectedRole; else noRoleSelected"
+              class="flex flex-col h-full"
+            >
+              <div
+                class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-800/50"
+              >
+                <div>
+                  <h3
+                    class="text-xl font-bold text-white flex items-center gap-2"
+                  >
+                    Permissions for
+                    <span class="text-cyan-400">{{ selectedRole.name }}</span>
+                  </h3>
+                  <p class="text-slate-400 text-sm mt-1">
+                    Manage assigned permissions.
+                  </p>
+                </div>
+                <button
+                  (click)="openAssignModal()"
+                  class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-cyan-900/20"
+                >
+                  + Assign Permission
+                </button>
+              </div>
+
+              <div class="flex-1 overflow-y-auto p-0">
+                <table class="w-full text-left text-sm">
+                  <thead
+                    class="bg-slate-950 text-slate-400 font-bold uppercase text-xs sticky top-0"
+                  >
+                    <tr>
+                      <th class="px-6 py-4">Permission Name</th>
+                      <th class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800">
+                    <tr
+                      *ngFor="let perm of selectedRole.permissions"
+                      class="hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td class="px-6 py-4 font-bold text-white">
+                        {{ perm.name }}
+                      </td>
+                      <td class="px-6 py-4 text-right">
+                        <button
+                          (click)="unassignPermissionFromSelectedRole(perm)"
+                          class="text-slate-500 hover:text-red-400 transition-colors text-xs font-bold border border-slate-700 px-2 py-1 rounded"
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                    <tr
+                      *ngIf="
+                        !selectedRole.permissions ||
+                        selectedRole.permissions.length === 0
+                      "
+                    >
+                      <td
+                        colspan="2"
+                        class="px-6 py-8 text-center text-slate-500"
+                      >
+                        No permissions assigned to this role.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <ng-template #noRoleSelected>
+              <div
+                class="flex-1 flex flex-col items-center justify-center text-slate-500"
+              >
+                <svg
+                  class="w-16 h-16 mb-4 opacity-20"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  ></path>
+                </svg>
+                <p class="font-bold">Select a role to manage permissions</p>
+              </div>
+            </ng-template>
+          </div>
         </div>
       </div>
     </div>

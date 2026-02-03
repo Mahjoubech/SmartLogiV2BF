@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../../Core/services/auth.service';
 import { AdminService } from '../../../Core/services/admin.service';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
@@ -20,9 +20,17 @@ export class AdminDashboardComponent implements OnInit {
   activeTab: 'stats' | 'clients' | 'managers' | 'roles' = 'stats';
   
   // Data Lists
+  allClients: any[] = []; // Store full list for filtering
   clientsList: any[] = [];
   managersList: any[] = [];
   rolesList: any[] = [];
+  
+  // Search & Filter
+  searchTerm: string = '';
+
+  // User Info
+  currentUser: any = null;
+  tokenExpiration: Date | null = null;
   
   // Stats
   stats = {
@@ -61,7 +69,36 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentUser = this.authService.currentUserValue;
+    this.calculateTokenExpiration();
     this.loadData();
+  }
+
+  calculateTokenExpiration() {
+    const token = this.authService.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp) {
+          this.tokenExpiration = new Date(payload.exp * 1000);
+        }
+      } catch (e) {
+        console.error('Failed to parse token expiry', e);
+      }
+    }
+  }
+
+  filterClients() {
+    if (!this.searchTerm) {
+      this.clientsList = [...this.allClients];
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      this.clientsList = this.allClients.filter(client => 
+        client.nom?.toLowerCase().includes(term) || 
+        client.prenom?.toLowerCase().includes(term) ||
+        client.email?.toLowerCase().includes(term)
+      );
+    }
   }
 
   loadData() {
@@ -102,9 +139,250 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  // Permissions Data
+  permissionsList: any[] = [];
+  selectedRole: any = null;
+  activeSubTab: 'roles' | 'permissions' = 'roles';
+
   loadRoles() {
-    // Placeholder if endpoint exists
-    // this.adminService.getAllRoles()...
+    this.adminService.getAllRoles().subscribe({
+      next: (data) => {
+        this.rolesList = data.content || []; 
+      },
+      error: (err) => console.error('Error loading roles', err)
+    });
+
+    this.loadPermissions();
+  }
+
+  loadPermissions() {
+    this.adminService.getAllPermissions().subscribe({
+      next: (data) => {
+        this.permissionsList = data.content || [];
+      },
+      error: (err) => console.error('Error loading permissions', err)
+    });
+  }
+
+  // --- Permission CRUD (New) ---
+  createPermission() {
+    Swal.fire({
+      title: 'Create New Permission',
+      input: 'text',
+      inputLabel: 'Permission Name',
+      inputPlaceholder: 'e.g. MANAGE_DISPATCH',
+      showCancelButton: true,
+      confirmButtonText: 'Create',
+      confirmButtonColor: '#06b6d4',
+      cancelButtonColor: '#334155',
+      background: '#0f172a',
+      color: '#f8fafc',
+      inputValidator: (value) => {
+        if (!value) return 'Permission name is required!';
+        return null;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.createPermission({ name: result.value }).subscribe({
+          next: () => {
+            this.loadPermissions();
+            Swal.fire({ title: 'Created!', icon: 'success', background: '#0f172a', color: '#f8fafc' });
+          },
+          error: () => Swal.fire('Error', 'Failed to create permission', 'error')
+        });
+      }
+    });
+  }
+
+  deletePermission(permission: any) {
+    Swal.fire({
+      title: 'Delete Permission?',
+      text: `Are you sure you want to delete ${permission.name}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      confirmButtonText: 'Yes, delete it',
+      background: '#0f172a',
+      color: '#f8fafc'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.deletePermission(permission.id).subscribe({
+            next: () => {
+                this.loadPermissions();
+                Swal.fire({ title: 'Deleted!', icon: 'success', background: '#0f172a', color: '#f8fafc' });
+            },
+            error: () => Swal.fire('Error', 'Failed to delete permission', 'error')
+        });
+      }
+    });
+  }
+
+  // --- Role CRUD ---
+  createRole() {
+    Swal.fire({
+      title: 'Create New Role',
+      input: 'text',
+      inputLabel: 'Role Name',
+      inputPlaceholder: 'e.g. SUPERVISOR',
+      showCancelButton: true,
+      confirmButtonText: 'Create',
+      confirmButtonColor: '#06b6d4',
+      cancelButtonColor: '#334155',
+      background: '#0f172a',
+      color: '#f8fafc',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write a role name!'
+        }
+        return null;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.createRole({ name: result.value }).subscribe({
+          next: () => {
+            this.loadRoles();
+            Swal.fire({
+              title: 'Created!',
+              text: 'Role has been created.',
+              icon: 'success',
+              background: '#0f172a',
+              color: '#f8fafc'
+            });
+          },
+          error: (err) => {
+            Swal.fire('Error', 'Failed to create role', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  deleteRole(role: any) {
+    Swal.fire({
+      title: 'Delete Role?',
+      text: `Are you sure you want to delete ${role.name}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#334155',
+      confirmButtonText: 'Yes, delete it',
+      background: '#0f172a',
+      color: '#f8fafc'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.deleteRole(role.id).subscribe({
+          next: () => {
+            this.loadRoles();
+            if (this.selectedRole?.id === role.id) {
+              this.selectedRole = null;
+            }
+            Swal.fire({
+              title: 'Deleted!',
+              text: 'Role has been deleted.',
+              icon: 'success',
+              background: '#0f172a',
+              color: '#f8fafc'
+            });
+          },
+          error: (err) => Swal.fire('Error', 'Failed to delete role', 'error')
+        });
+      }
+    });
+  }
+
+  // --- Permission Assignment (Table View) ---
+  onSelectRole(role: any) {
+    this.selectedRole = { ...role };
+  }
+
+  getAvailablePermissions() {
+    if (!this.selectedRole) return [];
+    if (!this.selectedRole.permissions) return this.permissionsList;
+    
+    const assignedIds = this.selectedRole.permissions.map((p: any) => p.id);
+    return this.permissionsList.filter(p => !assignedIds.includes(p.id));
+  }
+
+  assignPermissionToSelectedRole(permissionId: string) {
+      if (!this.selectedRole) return;
+      
+      this.adminService.assignPermission(this.selectedRole.id, permissionId).subscribe({
+          next: (updatedRole) => {
+             // Update local state by forcing a refresh or mimicking output
+             // Since assignPermission returns AssignResponse which has Role info usually...
+             // Let's reload roles to be safe/simple
+             this.loadRoles();
+             
+             // Manually update selectedRole for instant UI feedback (if possible)
+             // Ideally we find the permission in list and add it
+             const perm = this.permissionsList.find(p => p.id === permissionId);
+             if (perm) {
+                if(!this.selectedRole.permissions) this.selectedRole.permissions = [];
+                this.selectedRole.permissions.push(perm);
+             }
+
+             Swal.fire({ title: 'Assigned', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#0f172a', color: '#f8fafc' });
+          },
+          error: (err) => Swal.fire('Error', 'Failed to assign permission', 'error')
+      });
+  }
+
+  unassignPermissionFromSelectedRole(permission: any) {
+      if (!this.selectedRole) return;
+
+      Swal.fire({
+          title: 'Unassign Permission?',
+          text: `Remove ${permission.name} from ${this.selectedRole.name}?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ef4444',
+          cancelButtonColor: '#334155',
+          confirmButtonText: 'Yes, remove',
+          background: '#0f172a',
+          color: '#f8fafc'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              this.adminService.unassignPermission(this.selectedRole.id, permission.id).subscribe({
+                  next: () => {
+                      this.loadRoles();
+                      // Instant UI update
+                      this.selectedRole.permissions = this.selectedRole.permissions.filter((p: any) => p.id !== permission.id);
+                      
+                      Swal.fire({ title: 'Removed', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#0f172a', color: '#f8fafc' });
+                  },
+                  error: (err) => Swal.fire('Error', 'Failed to remove permission', 'error')
+              });
+          }
+      });
+  }
+
+  async openAssignModal() {
+    const available = this.getAvailablePermissions();
+    if (available.length === 0) {
+        Swal.fire({ title: 'No Permissions', text: 'All available permissions are already assigned.', icon: 'info', background: '#0f172a', color: '#f8fafc' });
+        return;
+    }
+
+    const inputOptions: any = {};
+    available.forEach(p => {
+        inputOptions[p.id] = p.name;
+    });
+
+    const { value: permissionId } = await Swal.fire({
+        title: 'Assign Permission',
+        input: 'select',
+        inputOptions: inputOptions,
+        inputPlaceholder: 'Select a permission',
+        background: '#0f172a',
+        color: '#f8fafc',
+        showCancelButton: true,
+        confirmButtonColor: '#06b6d4',
+        cancelButtonColor: '#334155'
+    });
+
+    if (permissionId) {
+        this.assignPermissionToSelectedRole(permissionId);
+    }
   }
 
   initCharts() {
@@ -164,6 +442,49 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   // --- Actions ---
+
+  editClient(client: any) {
+    Swal.fire({
+      title: 'Feature Coming Soon',
+      text: `Editing details for ${client.prenom} ${client.nom} is under development.`,
+      icon: 'info',
+      background: '#0f172a',
+      color: '#f8fafc',
+      confirmButtonColor: '#06b6d4'
+    });
+  }
+
+  assignRole(client: any) {
+    Swal.fire({
+      title: 'Assign Role',
+      text: `Change role for ${client.prenom} ${client.nom}?`,
+      input: 'select',
+      inputOptions: {
+        'CLIENT': 'Client',
+        'LIVREUR': 'Livreur',
+        'MANAGER': 'Manager'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Update Role',
+      confirmButtonColor: '#8b5cf6',
+      cancelButtonColor: '#334155',
+      background: '#0f172a',
+      color: '#f8fafc',
+      inputPlaceholder: 'Select a role'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Placeholder for API call
+        console.log('Role update requested:', result.value);
+        Swal.fire({
+          title: 'Request Sent',
+          text: 'Role assignment feature is coming in the next update.',
+          icon: 'success',
+          background: '#0f172a',
+          color: '#f8fafc'
+        });
+      }
+    });
+  }
 
   toggleBlockUser(user: any, block: boolean) {
     const action = block ? 'block' : 'unblock';

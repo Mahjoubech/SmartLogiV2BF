@@ -41,4 +41,42 @@ export class AdminService {
   deleteManager(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/manager/delete/${id}`);
   }
+
+  // Role Management
+  getAllRoles(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/roles/all`);
+  }
+
+  createRole(roleData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/roles/create`, roleData);
+  }
+
+  updateRole(id: string, roleData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/roles/update/${id}`, roleData);
+  }
+
+  deleteRole(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/roles/delete/${id}`);
+  }
+
+  // Permission Management
+  getAllPermissions(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/permission/all`);
+  }
+
+  createPermission(permissionData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/permission/create`, permissionData);
+  }
+
+  deletePermission(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/permission/delete/${id}`);
+  }
+
+  assignPermission(roleId: string, permissionId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/Roles/AssignPermission`, { roleId, permissionId });
+  }
+
+  unassignPermission(roleId: string, permissionId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/Roles/UnassignPermission`, { roleId, permissionId });
+  }
 }
