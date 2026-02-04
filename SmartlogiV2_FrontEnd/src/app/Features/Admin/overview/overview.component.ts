@@ -2,6 +2,10 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../Core/services/admin.service';
 import { Chart, registerables } from 'chart.js';
+// @ts-ignore
+import { jsPDF } from 'jspdf';
+// @ts-ignore
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-admin-overview',
@@ -35,6 +39,20 @@ export class OverviewComponent implements OnInit, AfterViewInit {
     }, 500);
   }
 
+  // Manager Details Modal
+  isManagerDetailsModalOpen = false;
+  selectedManager: any = null;
+
+  openManagerDetails(manager: any) {
+      this.selectedManager = manager;
+      this.isManagerDetailsModalOpen = true;
+  }
+
+  closeManagerDetails() {
+      this.isManagerDetailsModalOpen = false;
+      this.selectedManager = null;
+  }
+
   loadStats() {
     this.adminService.getAllUsers(0, 1000).subscribe({
         next: (response) => {
@@ -58,11 +76,25 @@ export class OverviewComponent implements OnInit, AfterViewInit {
                 .sort((a: any, b: any) => b.livreColis - a.livreColis)
                 .slice(0, 5);
 
-                this.topManagers = managers.map((m: any) => ({
-                    ...m,
-                    managedZones: Math.floor(Math.random() * 10) + 1, // Mock Data
-                    totalParcels: Math.floor(Math.random() * 2000) + 100
-                }))
+                const cityNames = ['Casablanca', 'Rabat', 'Marrakech', 'Tangier', 'Agadir', 'Fes'];
+                this.topManagers = managers.map((m: any) => {
+                    const zoneCount = Math.floor(Math.random() * 5) + 2;
+                    const zones = [];
+                    for(let i=0; i<zoneCount; i++) {
+                        zones.push({
+                           name: `Zone ${cityNames[Math.floor(Math.random() * cityNames.length)]} ${Math.floor(Math.random()*10)}`,
+                           status: Math.random() > 0.3 ? 'Active' : 'Pending',
+                           parcels: Math.floor(Math.random() * 300)
+                        });
+                    }
+                    
+                    return {
+                        ...m,
+                        managedZones: zoneCount,
+                        mockZones: zones, // Attached mock details
+                        totalParcels: zones.reduce((acc, z) => acc + z.parcels, 0)
+                    };
+                })
                 .sort((a: any, b: any) => b.totalParcels - a.totalParcels)
                 .slice(0, 5);
                 
@@ -124,5 +156,42 @@ export class OverviewComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+
+  generateReport() {
+        if (!this.selectedManager) return;
+        
+        const doc = new jsPDF();
+        const manager = this.selectedManager;
+
+        // Title
+        doc.setFontSize(20);
+        doc.text('Manager Zone Report', 14, 20);
+        
+        // Manager Info
+        doc.setFontSize(12);
+        doc.text(`Manager: ${manager.nom} ${manager.prenom}`, 14, 30);
+        doc.text(`Email: ${manager.email}`, 14, 36);
+        doc.text(`Phone: ${manager.telephone || 'N/A'}`, 14, 42);
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 48);
+
+        // Zones Table
+        const zones = manager.mockZones || [];
+        const tableData = zones.map((z: any) => [
+            z.name,
+            z.status,
+            z.parcels
+        ]);
+        
+        // Use autoTable imported function
+        autoTable(doc, {
+            startY: 55,
+            head: [['Zone Name', 'Status', 'Parcels Volume']],
+            body: tableData,
+            theme: 'grid',
+            headStyles: { fillColor: [6, 182, 212] }, // cyan-500
+        });
+
+        doc.save(`report_${manager.nom}_${manager.prenom}.pdf`);
   }
 }
