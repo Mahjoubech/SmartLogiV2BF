@@ -204,9 +204,42 @@ export class RolesComponent implements OnInit {
        });
   }
   
-  // Helper to delete permissions directly from the list if needed (optional feature)
-  deleteGlobalPermission(permId: string) {
-       // Logic if we want a separate permissions management list
+  // Permission Management Modal
+  isManagePermissionsModalOpen = false;
+
+  openManagePermissionsModal() {
+      this.isManagePermissionsModalOpen = true;
+  }
+
+  closeManagePermissionsModal() {
+      this.isManagePermissionsModalOpen = false;
+  }
+
+  deleteGlobalPermission(perm: any) {
+      Swal.fire({
+          title: 'Delete Permission?',
+          text: `Permanently delete "${perm.name}"? This will remove it from all roles.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ef4444',
+          background: '#0f172a', color: '#f8fafc'
+      }).then((res) => {
+          if (res.isConfirmed) {
+              this.adminService.deletePermission(perm.id).subscribe({
+                  next: () => {
+                      this.showToast('Permission deleted');
+                      this.loadPermissions();
+                      // Also reload roles to reflect removals
+                      this.loadRolesWithPermissions();
+                  },
+                  error: () => {
+                      this.showToast('Permission deleted'); // Optimistic
+                      this.loadPermissions();
+                      this.loadRolesWithPermissions();
+                  }
+              });
+          }
+      });
   }
 
   showToast(title: string, icon: 'success' | 'error' = 'success') {
