@@ -1,0 +1,198 @@
+<div class="flex h-screen bg-slate-950 text-white overflow-hidden">
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
+    <!-- Logo Area -->
+    <div class="p-6 border-b border-slate-800">
+      <h1 class="text-2xl font-black tracking-tighter">
+        SMART<span class="text-cyan-500">LOGI</span>
+        <span
+          class="block text-xs text-slate-500 font-medium tracking-normal mt-1"
+          >SUPER ADMIN</span
+        >
+      </h1>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+      <button
+        [routerLink]="['/admin/overview']"
+        routerLinkActive="bg-cyan-500/10 text-cyan-400"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
+          />
+        </svg>
+        Overview
+      </button>
+
+      <div
+        class="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-wider"
+      >
+        User Management
+      </div>
+
+      <button
+        [routerLink]="['/admin/clients']"
+        routerLinkActive="bg-cyan-500/10 text-cyan-400"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+          />
+        </svg>
+        Clients
+      </button>
+
+      <button
+        [routerLink]="['/admin/managers']"
+        routerLinkActive="bg-cyan-500/10 text-cyan-400"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
+        </svg>
+        Managers
+      </button>
+
+      <div
+        class="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-wider"
+      >
+        System
+      </div>
+
+      <button
+        [routerLink]="['/admin/roles']"
+        routerLinkActive="bg-cyan-500/10 text-cyan-400"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all group"
+      >
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+          />
+        </svg>
+        Roles & Permissions
+      </button>
+    </nav>
+
+    <!-- User & Logout -->
+    <div class="p-4 border-t border-slate-800">
+      <button
+        (click)="logout()"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-colors"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 flex flex-col overflow-hidden bg-slate-950">
+    <!-- Topbar -->
+    <header
+      class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8"
+    >
+      <!-- Left: Breadcrumb/Title -->
+      <div class="flex items-center gap-4">
+        <!-- We can add dynamic breadcrumb here later -->
+        <h2 class="text-xl font-bold text-white capitalize">Admin Console</h2>
+      </div>
+
+      <!-- Right: Profile & Security -->
+      <div class="flex items-center gap-6">
+        <!-- Token Info -->
+        <div
+          class="hidden md:flex flex-col items-end mr-4 border-r border-slate-800 pr-6"
+        >
+          <span
+            class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
+            >Session Expires</span
+          >
+          <span class="text-xs font-mono text-cyan-400">{{
+            tokenExpiration | date: "mediumTime"
+          }}</span>
+        </div>
+
+        <!-- Admin Profile -->
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <div class="text-sm font-bold text-white">
+              {{ currentUser?.prenom }} {{ currentUser?.nom }}
+            </div>
+            <div
+              class="text-xs font-bold text-cyan-500 bg-cyan-500/10 px-2 py-0.5 rounded-full inline-block"
+            >
+              ADMIN
+            </div>
+          </div>
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 flex items-center justify-center text-white font-bold shadow-lg"
+          >
+            {{ currentUser?.prenom?.charAt(0)
+            }}{{ currentUser?.nom?.charAt(0) }}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Router Outlet -->
+    <div class="flex-1 overflow-hidden p-8">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

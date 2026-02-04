@@ -17,11 +17,11 @@ export class AdminService {
   }
 
   blockUser(id: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/users/block/${id}`, {});
+    return this.http.put(`${this.apiUrl}/users/block/${id}`, {}, { responseType: 'text' });
   }
 
   unblockUser(id: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/users/unblock/${id}`, {});
+    return this.http.put(`${this.apiUrl}/users/unblock/${id}`, {}, { responseType: 'text' });
   }
 
   // Manager CRUD
@@ -39,7 +39,7 @@ export class AdminService {
   }
 
   deleteManager(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/manager/delete/${id}`);
+    return this.http.delete(`${this.apiUrl}/manager/delete/${id}`, { responseType: 'text' });
   }
 
   // Role Management
@@ -56,7 +56,7 @@ export class AdminService {
   }
 
   deleteRole(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/roles/delete/${id}`);
+    return this.http.delete(`${this.apiUrl}/roles/delete/${id}`, { responseType: 'text' });
   }
 
   // Permission Management
@@ -69,7 +69,7 @@ export class AdminService {
   }
 
   deletePermission(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/permission/delete/${id}`);
+    return this.http.delete(`${this.apiUrl}/permission/delete/${id}`, { responseType: 'text' });
   }
 
   assignPermission(roleId: string, permissionId: string): Observable<any> {

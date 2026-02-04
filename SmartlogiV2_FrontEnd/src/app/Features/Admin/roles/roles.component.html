@@ -1,0 +1,250 @@
+<div class="p-6 h-[calc(100vh-64px)] overflow-hidden flex flex-col">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-white">Roles & Permissions</h2>
+      <p class="text-slate-400 text-sm">
+        Manage access levels and capability assignments
+      </p>
+    </div>
+
+    <div class="flex gap-3">
+      <button
+        (click)="createPermission()"
+        class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm font-semibold transition-colors border border-slate-700"
+      >
+        New Permission
+      </button>
+      <button
+        (click)="createRole()"
+        class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm font-bold transition-colors shadow-lg shadow-cyan-900/20"
+      >
+        + Create Role
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
+    <!-- Left Panel: Roles List -->
+    <div
+      class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-xl flex flex-col overflow-hidden"
+    >
+      <div class="p-4 border-b border-slate-800 bg-slate-900/50">
+        <h3 class="text-slate-300 font-bold text-sm uppercase tracking-wider">
+          Available Roles
+        </h3>
+      </div>
+
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+        <div *ngIf="isLoading" class="p-8 text-center text-slate-500">
+          <div
+            class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"
+          ></div>
+          <p class="mt-2 text-xs">Loading roles...</p>
+        </div>
+
+        <div
+          *ngFor="let role of rolesWithPermissions"
+          (click)="selectRole(role)"
+          [class.bg-cyan-500_10]="selectedRole?.id === role.id"
+          [class.border-cyan-500]="selectedRole?.id === role.id"
+          [class.border-transparent]="selectedRole?.id !== role.id"
+          class="group flex items-center justify-between p-3 rounded-lg border border-transparent hover:bg-slate-800 cursor-pointer transition-all"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              [class.bg-cyan-500]="selectedRole?.id === role.id"
+              [class.bg-slate-700]="selectedRole?.id !== role.id"
+              class="w-2 h-2 rounded-full transition-colors"
+            ></div>
+            <div>
+              <div
+                [class.text-cyan-400]="selectedRole?.id === role.id"
+                class="text-white font-bold text-sm transition-colors"
+              >
+                {{ role.name }}
+              </div>
+              <div class="text-xs text-slate-500">
+                {{ role.permissions?.length || 0 }} permissions
+              </div>
+            </div>
+          </div>
+
+          <button
+            (click)="$event.stopPropagation(); deleteRole(role)"
+            class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 p-1.5 rounded-md hover:bg-red-500/10 transition-all"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Permissions Detail -->
+    <div
+      class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-xl flex flex-col overflow-hidden relative"
+    >
+      <div *ngIf="selectedRole" class="flex flex-col h-full">
+        <!-- Detail Header -->
+        <div
+          class="p-6 border-b border-slate-800 bg-slate-900/50 flex justify-between items-start"
+        >
+          <div>
+            <h2 class="text-2xl font-bold text-white mb-1">
+              {{ selectedRole.name }}
+            </h2>
+            <p class="text-slate-400 text-sm">
+              Configure permissions for this role
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="relative group">
+              <select
+                [(ngModel)]="assignPermissionId"
+                class="appearance-none bg-slate-800 border border-slate-600 hover:border-slate-500 text-white text-sm rounded-lg pl-3 pr-8 py-2 outline-none focus:border-cyan-500 transition-all w-48"
+              >
+                <option value="" disabled selected>Add Permission...</option>
+                <option
+                  *ngFor="let p of getAvailablePermissions()"
+                  [value]="p.id"
+                >
+                  {{ p.name }}
+                </option>
+              </select>
+              <div
+                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-slate-400"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+            <button
+              [disabled]="!assignPermissionId"
+              (click)="assignPermission()"
+              class="bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Permissions Grid -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
+          <div
+            *ngIf="
+              !selectedRole.permissions || selectedRole.permissions.length === 0
+            "
+            class="h-full flex flex-col items-center justify-center text-slate-500 opacity-50"
+          >
+            <svg
+              class="w-16 h-16 mb-4 text-slate-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              ></path>
+            </svg>
+            <p>No permissions assigned yet</p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 content-start">
+            <div
+              *ngFor="let perm of selectedRole.permissions"
+              class="group bg-slate-800 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800/80 rounded-lg pl-3 pr-2 py-1.5 flex items-center gap-2 transition-all"
+            >
+              <span class="text-slate-200 text-sm font-medium">{{
+                perm.name
+              }}</span>
+              <button
+                (click)="unassignPermission(perm)"
+                class="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded p-0.5 transition-colors"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State (No Role Selected) -->
+      <div
+        *ngIf="!selectedRole"
+        class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-slate-900/50 backdrop-blur-sm z-0"
+      >
+        <div class="bg-slate-900 p-8 rounded-full mb-6 ring-4 ring-slate-800">
+          <svg
+            class="w-16 h-16 text-slate-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Select a Role</h3>
+        <p class="max-w-xs text-center text-sm">
+          Choose a role from the left sidebar to view and modify its
+          permissions.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

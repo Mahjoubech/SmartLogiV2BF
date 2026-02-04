@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './Features/Auth/login/login.component';
 import { authGuard } from './Core/guards/auth.guard';
+import { LayoutComponent } from './Features/Admin/Layout/layout.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -26,11 +27,21 @@ export const routes: Routes = [
         data: { roles: ['LIVREUR'] }
     },
     {
-        path: 'admin-dashboard',
-        loadComponent: () => import('./Features/Dashboard/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+        path: 'admin',
+        component: LayoutComponent,
         canActivate: [authGuard],
-        data: { roles: ['ADMIN'] }
+        data: { roles: ['ADMIN'] },
+        children: [
+            { path: '', redirectTo: 'overview', pathMatch: 'full' },
+            { path: 'overview', loadComponent: () => import('./Features/Admin/Overview/overview.component').then(m => m.OverviewComponent) },
+            { path: 'clients', loadComponent: () => import('./Features/Admin/Clients/clients.component').then(m => m.ClientsComponent) },
+            { path: 'managers', loadComponent: () => import('./Features/Admin/Managers/managers.component').then(m => m.ManagersComponent) },
+            { path: 'roles', loadComponent: () => import('./Features/Admin/Roles/roles.component').then(m => m.RolesComponent) }
+        ]
     },
+    // Leaving old route redirect for backward compatibility/safety if needed, or just remove it.
+    { path: 'admin-dashboard', redirectTo: 'admin/overview', pathMatch: 'full' },
+    
     { path: 'tracking-concept', loadComponent: () => import('./Features/Home/tracking-concept/tracking-concept.component').then(m => m.TrackingConceptComponent) },
     { path: 'concept/:id', loadComponent: () => import('./Features/Home/concept-detail/concept-detail.component').then(m => m.ConceptDetailComponent) },
     { path: 'verify-email', loadComponent: () => import('./Features/Auth/verify-email/verify-email.component').then(m => m.VerifyEmailComponent) },
