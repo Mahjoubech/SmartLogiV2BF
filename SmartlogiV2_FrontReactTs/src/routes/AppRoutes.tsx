@@ -4,7 +4,7 @@ import ProtectedRoute from './ProtectedRoute';
 
 // Placeholder components - Replace with actual features later
 const Login = () => <div className="p-4">Login Page</div>;
-const Dashboard = () => <div className="p-4">Dashboard</div>;
+const Dashboard = () => <div className="p-4 bg-red-200">Dashboard</div>;
 const Parcels = () => <div className="p-4">Parcels</div>;
 
 const AppRoutes: React.FC = () => {

@@ -2,7 +2,7 @@
 
 const UserProfile = () => {
   return (
-    <div>
+    <div className="bg-red-200">
       <h2>User Profile</h2>
     </div>
   );

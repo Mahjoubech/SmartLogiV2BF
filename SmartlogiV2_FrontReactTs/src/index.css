@@ -1,1 +1,6 @@
-/* Global Styles */
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #3b82f6;
+  --font-display: "Inter", sans-serif;
+}
