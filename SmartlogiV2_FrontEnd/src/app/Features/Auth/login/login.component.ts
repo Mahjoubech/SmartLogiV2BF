@@ -95,7 +95,10 @@ export class LoginComponent implements OnInit {
                 
                 if (res.role?.name === 'ADMIN') {
                     console.log('Redirecting to Admin Dashboard');
-                    this.router.navigate(['/admin-dashboard']);
+                    this.router.navigate(['/admin/overview']);
+                } else if (res.role?.name === 'MANAGER') {
+                    console.log('Redirecting to Manager Dashboard');
+                    this.router.navigate(['/manager/overview']);
                 } else {
                     const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
                     console.log('Redirecting to:', returnUrl);

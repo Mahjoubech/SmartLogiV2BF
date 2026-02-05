@@ -11,4 +11,5 @@ export interface ColisRequest {
   priorite: string;
   produits: Array<ProduitRequest>;
   villeDestination: string;
+  codePostalOrigine: string;
 }

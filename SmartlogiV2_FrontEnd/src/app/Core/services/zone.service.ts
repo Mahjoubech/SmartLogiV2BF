@@ -13,4 +13,11 @@ export class ZoneService {
     getAllZones(): Observable<any[]> {
         return this.http.get<any[]>(`${this.config.rootUrl}/api/v1/zones`);
     }
+
+    assignManagerToZone(zoneId: string, managerId: string): Observable<string> {
+        return this.http.put(`${this.config.rootUrl}/api/v1/zones/${zoneId}/manager`, null, {
+            params: { managerId },
+            responseType: 'text'
+        });
+    }
 }

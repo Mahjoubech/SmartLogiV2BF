@@ -1,0 +1,118 @@
+<div class="h-full flex flex-col gap-6 animate-in fade-in duration-700">
+  <!-- HEADER -->
+  <div class="flex items-end justify-between">
+    <div>
+      <h1 class="text-4xl font-black text-white tracking-tighter uppercase">
+        Gestion des <span class="text-cyan-500">Zones</span>
+      </h1>
+      <p
+        class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2 flex items-center gap-2"
+      >
+        <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+        Administration des Hubs Logistiques
+      </p>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div
+    class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 flex-1 flex flex-col shadow-2xl overflow-hidden relative"
+  >
+    <!-- Loader -->
+    <div
+      *ngIf="isLoading"
+      class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center"
+    >
+      <div
+        class="w-12 h-12 border-4 border-cyan-500/10 border-t-cyan-500 rounded-full animate-spin"
+      ></div>
+    </div>
+
+    <!-- Zones Grid -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar pr-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          *ngFor="let zone of zones"
+          class="group bg-slate-950/40 border border-slate-800 rounded-3xl p-6 transition-all duration-300 hover:border-cyan-500/50 hover:bg-slate-950/60 relative overflow-hidden"
+        >
+          <!-- Zone Icon/Watermark -->
+          <div
+            class="absolute -right-4 -bottom-4 text-slate-900/40 group-hover:text-cyan-500/10 transition-colors duration-500"
+          >
+            <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+              />
+            </svg>
+          </div>
+
+          <div class="relative z-10">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-black text-white tracking-tighter">
+                  {{ zone.nom }}
+                </h3>
+                <span
+                  class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest"
+                  >{{ zone.codePostal }}</span
+                >
+              </div>
+              <div
+                class="bg-slate-800/50 px-3 py-1 rounded-full text-[9px] font-black text-slate-400 uppercase border border-slate-700"
+              >
+                HUB-ACTIVE
+              </div>
+            </div>
+
+            <!-- Manager Section -->
+            <div class="mt-8 space-y-4">
+              <div>
+                <label
+                  class="text-[9px] font-black text-slate-600 uppercase tracking-widest block mb-2"
+                  >Gestionnaire Actuel</label
+                >
+                <div
+                  class="flex items-center gap-3 bg-slate-900/50 border border-slate-800 p-3 rounded-2xl"
+                >
+                  <div
+                    class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white uppercase"
+                  >
+                    {{ zone.managerName ? zone.managerName.charAt(0) : "?" }}
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-xs font-bold text-white truncate">
+                      {{ zone.managerName || "Non Assigné" }}
+                    </div>
+                    <div class="text-[9px] text-slate-500 font-medium">
+                      Responsable Hub
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Assignment Selection -->
+              <div>
+                <label
+                  class="text-[9px] font-black text-slate-600 uppercase tracking-widest block mb-2"
+                  >Assigner Nouveau</label
+                >
+                <select
+                  [(ngModel)]="zone.newManagerId"
+                  (change)="onManagerChange(zone)"
+                  class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-300 focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer"
+                >
+                  <option [ngValue]="null" disabled>
+                    Sélectionner un gestionnaire...
+                  </option>
+                  <option *ngFor="let manager of managers" [value]="manager.id">
+                    {{ manager.nom }} {{ manager.prenom }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

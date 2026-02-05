@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './Features/Auth/login/login.component';
 import { authGuard } from './Core/guards/auth.guard';
-import { LayoutComponent } from './Features/Admin/Layout/layout.component';
+import { LayoutComponent } from './Features/Admin/layout/layout.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -15,11 +15,18 @@ export const routes: Routes = [
         data: { roles: ['CLIENT'] }
     },
     {
-        path: 'manager-dashboard',
-        loadComponent: () => import('./Features/Dashboard/manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent),
+        path: 'manager',
+        loadComponent: () => import('./Features/Manager/Layout/manager-layout/manager-layout.component').then(m => m.ManagerLayoutComponent),
         canActivate: [authGuard],
-        data: { roles: ['MANAGER'] }
+        data: { roles: ['MANAGER'] },
+        children: [
+            { path: '', redirectTo: 'overview', pathMatch: 'full' },
+            { path: 'overview', loadComponent: () => import('./Features/Manager/Overview/manager-overview/manager-overview.component').then(m => m.ManagerOverviewComponent) },
+            { path: 'parcels', loadComponent: () => import('./Features/Manager/Parcels/parcel-list/parcel-list.component').then(m => m.ParcelListComponent) },
+            { path: 'assignments', loadComponent: () => import('./Features/Manager/Assignments/assignment-manager/assignment-manager.component').then(m => m.AssignmentManagerComponent) }
+        ]
     },
+    { path: 'manager-dashboard', redirectTo: 'manager/overview', pathMatch: 'full' },
     {
         path: 'livreur-dashboard',
         loadComponent: () => import('./Features/Dashboard/livreur-dashboard/livreur-dashboard.component').then(m => m.LivreurDashboardComponent),
@@ -33,10 +40,11 @@ export const routes: Routes = [
         data: { roles: ['ADMIN'] },
         children: [
             { path: '', redirectTo: 'overview', pathMatch: 'full' },
-            { path: 'overview', loadComponent: () => import('./Features/Admin/Overview/overview.component').then(m => m.OverviewComponent) },
-            { path: 'clients', loadComponent: () => import('./Features/Admin/Clients/clients.component').then(m => m.ClientsComponent) },
-            { path: 'managers', loadComponent: () => import('./Features/Admin/Managers/managers.component').then(m => m.ManagersComponent) },
-            { path: 'roles', loadComponent: () => import('./Features/Admin/Roles/roles.component').then(m => m.RolesComponent) }
+            { path: 'overview', loadComponent: () => import('./Features/Admin/overview/overview.component').then(m => m.OverviewComponent) },
+            { path: 'clients', loadComponent: () => import('./Features/Admin/clients/clients.component').then(m => m.ClientsComponent) },
+            { path: 'managers', loadComponent: () => import('./Features/Admin/managers/managers.component').then(m => m.ManagersComponent) },
+            { path: 'zones', loadComponent: () => import('./Features/Admin/zones/zones.component').then(m => m.ZonesComponent) },
+            { path: 'roles', loadComponent: () => import('./Features/Admin/roles/roles.component').then(m => m.RolesComponent) }
         ]
     },
     // Leaving old route redirect for backward compatibility/safety if needed, or just remove it.

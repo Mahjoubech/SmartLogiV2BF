@@ -175,7 +175,7 @@ export class LivreurDashboardComponent implements OnInit {
         if (!this.livreurId) return;
         this.isLoading = true;
         this.colisService.getMyAssignedColis(0, 100).subscribe({
-            next: (data) => {
+            next: (data: any) => {
                 const content = data.content || [];
                 // Map backend 'statut' (French) to frontend 'status' (English convention in this component)
                 this.assignedColis = content.map((c: any) => ({
@@ -185,7 +185,7 @@ export class LivreurDashboardComponent implements OnInit {
                 // Sort by current sort preference implied in applySort later
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading assigned colis', err);
                 this.isLoading = false;
             }

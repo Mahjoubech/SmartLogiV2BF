@@ -1,0 +1,467 @@
+<div class="h-full flex flex-col gap-6 animate-in fade-in duration-1000">
+  <!-- HEADER SECTION -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-4xl font-black text-white tracking-tighter uppercase">
+        Centre d'Assignation <span class="text-cyan-500">Alpha</span>
+      </h1>
+      <p
+        class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2 flex items-center gap-2"
+      >
+        <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+        Synchronisation des Flux Logistiques en Temps Réel
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div
+        class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl px-6 py-3 flex flex-col"
+      >
+        <span
+          class="text-[9px] font-black text-slate-500 uppercase tracking-widest"
+          >Colis Sélectionnés</span
+        >
+        <span class="text-xl font-black text-cyan-400"
+          >{{ selectedParcels.size }} UNITS</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 min-h-0">
+    <!-- LEFT: Flux Logistique (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col min-h-0 group/flux">
+      <div
+        class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 flex-1 overflow-hidden flex flex-col shadow-2xl relative transition-all duration-500 hover:border-slate-700"
+      >
+        <!-- Loading Overlay -->
+        <div
+          *ngIf="isLoading"
+          class="absolute inset-0 bg-slate-950/90 backdrop-blur-md z-30 flex items-center justify-center rounded-[2.5rem]"
+        >
+          <div class="flex flex-col items-center gap-6">
+            <div class="relative">
+              <div
+                class="w-16 h-16 border-4 border-cyan-500/10 border-t-cyan-500 rounded-full animate-spin"
+              ></div>
+              <div
+                class="absolute inset-4 border-4 border-slate-800 border-b-slate-600 rounded-full animate-spin-slow"
+              ></div>
+            </div>
+            <p
+              class="text-[10px] font-black text-cyan-500 uppercase tracking-[0.4em] animate-pulse"
+            >
+              Initialisation du Flux...
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-2xl font-black text-white tracking-tighter">
+              Flux Entrant
+            </h2>
+            <div class="h-1 w-12 bg-cyan-500 rounded-full mt-1"></div>
+          </div>
+
+          <!-- Search Bar Parcels -->
+          <div class="relative w-64">
+            <input
+              type="text"
+              [(ngModel)]="searchTermParcels"
+              placeholder="Rechercher #ID ou Ville..."
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white placeholder:text-slate-600 focus:border-cyan-500 outline-none transition-all"
+            />
+            <svg
+              class="w-4 h-4 text-slate-600 absolute right-3 top-2.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Feed Container -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
+          <div
+            *ngFor="let colis of filteredParcels"
+            (click)="toggleParcelSelection(colis.id)"
+            class="group cursor-pointer p-5 rounded-3xl border transition-all duration-300 flex items-center justify-between relative overflow-hidden"
+            [ngClass]="{
+              'bg-cyan-500/10 border-cyan-500/40 shadow-[0_0_20px_rgba(34,211,238,0.1)] translate-x-2':
+                selectedParcels.has(colis.id || ''),
+              'bg-slate-950/40 border-slate-800/60 hover:border-slate-600 hover:bg-slate-950/60':
+                !selectedParcels.has(colis.id || ''),
+            }"
+          >
+            <!-- Background accent -->
+            <div
+              *ngIf="selectedParcels.has(colis.id || '')"
+              class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-500"
+            ></div>
+
+            <div class="flex items-center gap-5">
+              <div
+                class="w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all duration-500"
+                [ngClass]="
+                  selectedParcels.has(colis.id || '')
+                    ? 'bg-cyan-500 border-cyan-500 scale-110'
+                    : 'border-slate-700 group-hover:border-slate-500'
+                "
+              >
+                <svg
+                  *ngIf="selectedParcels.has(colis.id || '')"
+                  class="w-3.5 h-3.5 text-slate-950"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="4"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div
+                  class="font-mono font-black text-white text-sm tracking-tight flex items-center gap-2"
+                >
+                  #{{ colis.id?.substring(0, 8).toUpperCase() || "NEW-UNIT" }}
+                  <span
+                    *ngIf="colis.status === 'EN_STOCK'"
+                    class="bg-amber-500/20 text-amber-500 text-[8px] px-1.5 py-0.5 rounded uppercase tracking-widest"
+                    >Stock</span
+                  >
+                </div>
+                <div
+                  class="flex items-center gap-3 mt-1 underline decoration-cyan-500/20 underline-offset-4"
+                >
+                  <span
+                    class="text-[9px] text-cyan-400 font-black uppercase tracking-widest"
+                    >{{
+                      colis.status === "CREE"
+                        ? "Collecte: " + (colis.zoneOrigine?.nom || "N/A")
+                        : "Destination: " + (colis.villeDestination || "N/A")
+                    }}</span
+                  >
+                  <span class="w-1 h-1 bg-slate-800 rounded-full"></span>
+                  <span
+                    class="text-[9px] text-slate-500 font-bold uppercase tracking-widest"
+                    >{{ colis.priorite || "BASIQUE" }}</span
+                  >
+                </div>
+                <div
+                  *ngIf="colis.status === 'CREE'"
+                  class="text-[8px] text-slate-600 mt-0.5"
+                >
+                  Vers: {{ colis.villeDestination || "?" }} ({{
+                    colis.zone?.nom || "?"
+                  }})
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-end">
+              <div class="text-base font-black text-white tracking-tighter">
+                {{ colis.poids || "0.0" }}
+                <span class="text-[10px] text-slate-600">KG</span>
+              </div>
+              <div class="text-[8px] font-bold text-slate-500 uppercase mt-1">
+                {{ colis.dateCreation | date: "shortTime" }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div
+            *ngIf="!isLoading && filteredParcels.length === 0"
+            class="flex flex-col items-center justify-center py-24 text-center"
+          >
+            <div
+              class="w-20 h-20 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-800 mb-6 group-hover/flux:scale-110 transition-transform duration-700"
+            >
+              <svg
+                class="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0l-4 4m-4-4l4 4m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2v-1"
+                />
+              </svg>
+            </div>
+            <h3 class="text-white font-black text-lg">Flux Vide</h3>
+            <p
+              class="text-slate-600 font-bold uppercase text-[9px] tracking-widest mt-1"
+            >
+              Tous les colis ont été dispatchés
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Flotte Active (5 cols) -->
+    <div class="lg:col-span-5 flex flex-col min-h-0">
+      <div
+        class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 flex-1 overflow-hidden flex flex-col shadow-2xl relative transition-all duration-500 hover:border-slate-700"
+      >
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-2xl font-black text-white tracking-tighter">
+              Opérateurs
+            </h2>
+            <div class="h-1 w-12 bg-white rounded-full mt-1"></div>
+          </div>
+
+          <!-- Search Bar Couriers -->
+          <div class="relative w-40">
+            <input
+              type="text"
+              [(ngModel)]="searchTermCouriers"
+              placeholder="Filtre..."
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white placeholder:text-slate-700 focus:border-white/20 outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
+          <div
+            *ngFor="let courier of filteredCouriers"
+            (click)="selectCourier(courier.id)"
+            class="p-5 rounded-3xl border transition-all duration-300 cursor-pointer relative overflow-hidden group/card"
+            [ngClass]="{
+              'border-white bg-white/5 ring-1 ring-white/10 scale-[1.02] shadow-[0_0_30px_rgba(255,255,255,0.05)]':
+                selectedCourierId === courier.id,
+              'border-slate-800/60 bg-slate-950/20 hover:bg-slate-950/40 hover:border-slate-700':
+                selectedCourierId !== courier.id,
+            }"
+          >
+            <!-- Badge Capacité Full -->
+            <div
+              *ngIf="getWeightProgress(courier) >= 100"
+              class="absolute -right-8 -top-8 bg-rose-500 text-white text-[8px] font-black px-10 py-1 rotate-45 z-10"
+            >
+              FULL
+            </div>
+
+            <div class="flex items-center gap-4 mb-5">
+              <div
+                class="w-12 h-12 rounded-2xl bg-linear-to-br from-slate-800 to-slate-950 border border-slate-700 flex items-center justify-center text-white font-black text-base shadow-xl group-hover/card:rotate-3 transition-all"
+              >
+                {{ courier.nom?.charAt(0) || "U" }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <div
+                    class="text-sm font-black text-white leading-tight uppercase truncate"
+                  >
+                    {{ courier.nom || "Utilisateur" }} {{ courier.prenom }}
+                  </div>
+                  <span
+                    *ngIf="
+                      selectedParcels.size > 0 && isZoneCompatible(courier)
+                    "
+                    class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[8px] font-black uppercase tracking-wider animate-pulse border border-emerald-500/30"
+                  >
+                    OK
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 mt-1">
+                  <span
+                    class="w-1.5 h-1.5 rounded-full"
+                    [ngClass]="
+                      courier.assignedColisCount >= 3
+                        ? 'bg-amber-500 animate-pulse'
+                        : 'bg-emerald-500'
+                    "
+                  ></span>
+                  <span
+                    class="text-[9px] font-black text-slate-500 uppercase tracking-tighter"
+                    >{{ courier.zoneAssignee?.nom || "Z-NOMAD" }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Analytics Load -->
+            <div class="space-y-2">
+              <div
+                class="flex justify-between text-[9px] font-black uppercase tracking-widest"
+              >
+                <span class="text-slate-600">Charge Active</span>
+                <span class="text-white"
+                  >{{ (courier.currentWeight || 0).toFixed(1) }}
+                  <span class="text-slate-600">/ 50 KG</span></span
+                >
+              </div>
+              <div
+                class="h-1.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800/50"
+              >
+                <div
+                  class="h-full transition-all duration-1000 ease-out"
+                  [ngClass]="getLoadColor(courier)"
+                  [style.width.%]="getWeightProgress(courier)"
+                ></div>
+              </div>
+              <div class="flex justify-between text-[8px] font-bold uppercase">
+                <span class="text-slate-500"
+                  >{{ courier.assignedColisCount || 0 }} COLIS ACTIFS</span
+                >
+                <span
+                  class="text-cyan-500"
+                  *ngIf="courier.assignedColisCount < 3"
+                  >DISPONIBLE</span
+                >
+                <span
+                  class="text-rose-500"
+                  *ngIf="courier.assignedColisCount >= 3"
+                  >LIMITE ATTEINTE</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div class="mt-6 pt-6 border-t border-slate-800/40">
+          <button
+            type="button"
+            [disabled]="
+              !selectedCourierId || selectedParcels.size === 0 || isAssigning
+            "
+            (click)="assignParcels()"
+            class="group w-full bg-white hover:bg-cyan-500 hover:text-white disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-slate-950 font-black py-4 rounded-2xl transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3 relative overflow-hidden"
+          >
+            <span
+              *ngIf="isAssigning"
+              class="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin"
+            ></span>
+
+            <span class="text-xs uppercase tracking-[0.2em] relative z-10">
+              {{
+                isAssigning
+                  ? "INJECTION..."
+                  : "PROCESS ASSIGNATION (" + selectedParcels.size + ")"
+              }}
+            </span>
+
+            <svg
+              *ngIf="!isAssigning"
+              class="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M13 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modern Status Modal -->
+<div
+  *ngIf="statusPopup.show"
+  class="fixed inset-0 z-100 flex items-center justify-center px-4"
+>
+  <!-- Backdrop -->
+  <div
+    class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+    (click)="closePopup()"
+  ></div>
+
+  <!-- Modal Content -->
+  <div
+    class="relative bg-slate-900 border border-slate-800 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-300"
+  >
+    <div class="p-8 text-center text-white">
+      <!-- Icon Circle -->
+      <div
+        [ngClass]="
+          statusPopup.type === 'success'
+            ? 'bg-emerald-500/10 border-emerald-500/20'
+            : 'bg-rose-500/10 border-rose-500/20'
+        "
+        class="w-20 h-20 rounded-full border-4 mx-auto mb-6 flex items-center justify-center"
+      >
+        <!-- Success Icon -->
+        <svg
+          *ngIf="statusPopup.type === 'success'"
+          class="w-10 h-10 text-emerald-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="3"
+            d="M5 13l4 4L19 7"
+          ></path>
+        </svg>
+        <!-- Error Icon -->
+        <svg
+          *ngIf="statusPopup.type === 'error'"
+          class="w-10 h-10 text-rose-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="3"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </div>
+
+      <h3 class="text-2xl font-black mb-2 uppercase tracking-tight">
+        {{ statusPopup.title }}
+      </h3>
+      <p class="text-slate-400 font-medium leading-relaxed mb-8">
+        {{ statusPopup.message }}
+      </p>
+
+      <button
+        (click)="closePopup()"
+        [ngClass]="
+          statusPopup.type === 'success'
+            ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20'
+            : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/20'
+        "
+        class="w-full py-4 rounded-2xl text-white font-black uppercase tracking-widest shadow-xl transition-all active:scale-95"
+      >
+        Compris
+      </button>
+    </div>
+
+    <!-- Decorative Glow -->
+    <div
+      [ngClass]="
+        statusPopup.type === 'success' ? 'bg-emerald-500/5' : 'bg-rose-500/5'
+      "
+      class="absolute inset-0 pointer-events-none"
+    ></div>
+  </div>
+</div>

@@ -25,6 +25,10 @@ export class OverviewComponent implements OnInit, AfterViewInit {
   topLivreurs: any[] = [];
   topManagers: any[] = [];
 
+  // Manager Details Modal
+  isManagerDetailsModalOpen = false;
+  selectedManager: any = null;
+
   constructor(private adminService: AdminService) {
     Chart.register(...registerables);
   }
@@ -38,10 +42,6 @@ export class OverviewComponent implements OnInit, AfterViewInit {
         this.renderCharts();
     }, 500);
   }
-
-  // Manager Details Modal
-  isManagerDetailsModalOpen = false;
-  selectedManager: any = null;
 
   openManagerDetails(manager: any) {
       this.selectedManager = manager;
@@ -130,8 +130,8 @@ export class OverviewComponent implements OnInit, AfterViewInit {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false, // Allow custom size
-        cutout: '75%', // Thinner ring
+        maintainAspectRatio: false, 
+        cutout: '75%', 
         plugins: {
           legend: { 
               position: 'bottom', 

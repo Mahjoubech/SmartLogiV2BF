@@ -2,10 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ApiConfiguration } from '../api/api-configuration';
-import { createColis } from '../api/fn/gestion-des-colis/create-colis';
 import { ColisRequest } from '../api/models/colis-request';
 import { ColisResponse } from '../api/models/colis-response';
-import { PageColisResponse } from '../api/models/page-colis-response';
 
 @Injectable({
     providedIn: 'root'
@@ -16,31 +14,21 @@ export class ColisService {
         private config: ApiConfiguration
     ) { }
 
-    getColisByExpediteur(email: string): Observable<ColisResponse[]> {
-        return this.http.get<PageColisResponse>(`${this.config.rootUrl}/api/v3/clients/expediteur/colis?email=${email}`).pipe(
-            map(response => response.content || [])
-        );
-    }
-
     createColis(request: ColisRequest): Observable<ColisResponse> {
-        return createColis(this.http, this.config.rootUrl, { body: request }).pipe(
-            map(response => response.body)
-        );
+        return this.http.post<ColisResponse>(`${this.config.rootUrl}/api/v2/colis`, request);
     }
 
     getColisDetails(id: string): Observable<ColisResponse> {
         return this.http.get<ColisResponse>(`${this.config.rootUrl}/api/v2/colis/${id}`);
     }
+
+    getColisByExpediteur(email: string, page: number = 0, size: number = 50): Observable<ColisResponse[]> {
+        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/expediteur/${email}?page=${page}&size=${size}`)
+            .pipe(map(response => response.content || []));
+    }
+
     getAllColis(page: number = 0, size: number = 10): Observable<any> {
         return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis?page=${page}&size=${size}`);
-    }
-
-    getEligibleLivreurs(colisId: string): Observable<any[]> {
-        return this.http.get<any[]>(`${this.config.rootUrl}/api/v2/colis/${colisId}/eligible-livreurs`);
-    }
-
-    assignLivreur(colisId: string, livreurId: string): Observable<ColisResponse> {
-        return this.http.put<ColisResponse>(`${this.config.rootUrl}/api/v2/colis/gestionner/livreur/${colisId}/assign?livreurId=${livreurId}`, {});
     }
 
     getAvailableColis(page: number = 0, size: number = 10): Observable<any> {
@@ -51,20 +39,19 @@ export class ColisService {
         return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/my-assigned?page=${page}&size=${size}`);
     }
 
+    assignLivreur(colisId: string, livreurId: string): Observable<ColisResponse> {
+        return this.http.put<ColisResponse>(`${this.config.rootUrl}/api/v2/colis/gestionner/livreur/${colisId}/assign?livreurId=${livreurId}`, {});
+    }
+
     updateStatus(colisId: string, status: string, commentaire: string = ''): Observable<ColisResponse> {
         return this.http.put<ColisResponse>(`${this.config.rootUrl}/api/v2/colis/${colisId}/status`, {
             statut: status,
-            commentaire: commentaire,
-            dateChangement: new Date().toISOString()
+            commentaire: commentaire
         });
     }
 
-    getAllAssignedColis(page: number = 0, size: number = 10): Observable<any> {
-        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/assigned?page=${page}&size=${size}`);
-    }
-
-    getColisHistory(colisId: string): Observable<any> {
-        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/${colisId}/history`);
+    getColisHistory(colisId: string, page: number = 0, size: number = 50): Observable<any> {
+        return this.http.get<any>(`${this.config.rootUrl}/api/v2/colis/${colisId}/history?page=${page}&size=${size}`);
     }
 
     getDashboardStats(): Observable<any> {

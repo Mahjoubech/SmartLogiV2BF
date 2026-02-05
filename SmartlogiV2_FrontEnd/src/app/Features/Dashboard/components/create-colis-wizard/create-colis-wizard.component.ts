@@ -76,7 +76,11 @@ import { ColisRequest } from '../../../../Core/api/models/colis-request';
             <input formControlName="villeDestination" placeholder="e.g. Casablanca">
           </div>
           <div class="form-group">
-              <label>Zip Code</label>
+              <label>Origin Zip Code</label>
+              <input formControlName="codePostalOrigine" placeholder="20000" title="Zip code of pickup location">
+          </div>
+          <div class="form-group">
+              <label>Dest. Zip Code</label>
               <input formControlName="codePostal" placeholder="20000" title="Must be a valid postal code (e.g. 20000)">
           </div>
           <div class="form-group full-width">
@@ -148,6 +152,7 @@ export class CreateColisWizardComponent implements OnInit {
       priorite: ['NORMAL', Validators.required],
       villeDestination: ['', Validators.required],
       codePostal: ['', Validators.required],
+      codePostalOrigine: ['', Validators.required],
       description: [''],
       produits: this.fb.array([])
     });
@@ -207,6 +212,7 @@ export class CreateColisWizardComponent implements OnInit {
         priorite: formValue.priorite,
         villeDestination: formValue.villeDestination,
         codePostal: formValue.codePostal,
+        codePostalOrigine: formValue.codePostalOrigine,
         description: formValue.description || 'Standard Delivery',
         clientExpediteurEmail: this.userEmail,
         destinataireEmail: this.step1Form.value.email,

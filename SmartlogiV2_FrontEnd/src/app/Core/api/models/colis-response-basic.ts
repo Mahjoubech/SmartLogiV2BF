@@ -14,4 +14,5 @@ export interface ColisResponseBasic {
   statut?: string;
   villeDestination?: string;
   zone?: ZoneResponse;
+  zoneOrigine?: ZoneResponse;
 }

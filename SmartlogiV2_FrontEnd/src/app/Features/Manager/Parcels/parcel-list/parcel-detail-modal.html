@@ -1,0 +1,104 @@
+<div
+  *ngIf="isDetailModalOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+>
+  <div
+    (click)="closeDetails()"
+    class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+  ></div>
+  <div
+    class="relative bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
+  >
+    <!-- Header -->
+    <div
+      class="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/50"
+    >
+      <div>
+        <h3 class="text-xl font-bold text-white">Parcel History</h3>
+        <p class="text-sm text-slate-500">
+          Full audit trail for #{{ selectedParcel?.trackingCode }}
+        </p>
+      </div>
+      <button
+        (click)="closeDetails()"
+        class="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 overflow-y-auto max-h-[60vh] space-y-8">
+      <!-- Summary Info -->
+      <div
+        class="grid grid-cols-2 md:grid-cols-4 gap-4 pb-6 border-b border-slate-800"
+      >
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase">Weight</p>
+          <p class="text-white font-bold">{{ selectedParcel?.weight }} kg</p>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase">Status</p>
+          <p class="text-cyan-400 font-bold">{{ selectedParcel?.status }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase">Zone</p>
+          <p class="text-white font-bold">{{ selectedParcel?.zone }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase">City</p>
+          <p class="text-white font-bold">{{ selectedParcel?.city }}</p>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="relative">
+        <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-800"></div>
+        <div class="space-y-8">
+          <div *ngFor="let step of mockHistory" class="relative pl-10">
+            <div
+              class="absolute left-2.5 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-slate-900"
+              [ngClass]="step.completed ? 'bg-cyan-500' : 'bg-slate-700'"
+            ></div>
+            <div>
+              <p class="text-sm font-bold text-slate-200">{{ step.action }}</p>
+              <p class="text-xs text-slate-500">
+                {{ step.date | date:'medium' }}
+              </p>
+              <p class="text-xs text-slate-400 mt-1 italic">{{ step.note }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div
+      class="p-6 bg-slate-950 border-t border-slate-800 flex justify-end gap-3"
+    >
+      <button
+        (click)="closeDetails()"
+        class="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-colors"
+      >
+        Close
+      </button>
+      <button
+        class="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold transition-colors shadow-lg shadow-cyan-900/20"
+      >
+        Download Label
+      </button>
+    </div>
+  </div>
+</div>
