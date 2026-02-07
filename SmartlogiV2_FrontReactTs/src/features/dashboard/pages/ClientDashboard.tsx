@@ -54,10 +54,14 @@ const ClientDashboard = () => {
                 statuses = ['CREE', 'COLLECTE', 'EN_TRANSIT', 'EN_STOCK'];
             } else if (activeTab === 'DELIVERED') {
                 statuses = undefined; // Fetch ALL history
+            } else if (activeTab === 'STATISTICS') {
+                statuses = undefined; // Fetch ALL for stats
             }
 
-            if (activeTab === 'MANIFEST' || activeTab === 'DELIVERED') {
-                dispatch(fetchMyParcels({ userId: user.id, page, size: pageSize, status: statuses }));
+            const size = activeTab === 'STATISTICS' ? 100 : pageSize;
+
+            if (activeTab === 'MANIFEST' || activeTab === 'DELIVERED' || activeTab === 'STATISTICS') {
+                dispatch(fetchMyParcels({ userId: user.id, page, size: size, status: statuses }));
             }
         }
     }, [dispatch, user, page, activeTab]);
@@ -391,11 +395,99 @@ const ClientDashboard = () => {
                             </div>
 
                              {/* Chart Placeholders */}
-                             <div className="bg-white rounded-[2rem] border border-slate-100 p-12 text-center shadow-sm">
-                                <div className="text-6xl mb-6 opacity-10">📈</div>
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">Graphiques Détaillés</h3>
-                                <p className="text-slate-500">Les visualisations de données seront bientôt disponibles.</p>
-                             </div>
+                            {/* Charts Section */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                
+                                {/* Activity Chart (Bar) */}
+                                <div className="lg:col-span-2 bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-slate-900">Activité Hebdomadaire</h3>
+                                            <p className="text-slate-500 text-sm">Volume d'expéditions sur les 7 derniers jours</p>
+                                        </div>
+                                        <div className="bg-slate-50 px-3 py-1 rounded-lg text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                            Cette Semaine
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="h-64 flex items-end justify-between gap-2">
+                                        {(() => {
+                                            const last7Days = Array.from({length: 7}, (_, i) => {
+                                                const d = new Date();
+                                                d.setDate(d.getDate() - (6 - i));
+                                                return d;
+                                            });
+
+                                            // Mock data calculation based on history dates or creation dates
+                                            // Ideally we'd use parcel.dateCreation or history events
+                                            const getDataForDay = (date: Date) => {
+                                                const dateStr = date.toISOString().split('T')[0];
+                                                return parcels.filter(p => p.dateCreation.startsWith(dateStr)).length;
+                                            };
+                                            
+                                            const maxVal = Math.max(...last7Days.map(d => getDataForDay(d)), 5); // Minimum scale of 5
+
+                                            return last7Days.map((date, i) => {
+                                                const val = getDataForDay(date);
+                                                const hPercent = (val / maxVal) * 100;
+                                                const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
+                                                
+                                                return (
+                                                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                                                        <div className="relative w-full flex items-end justify-center h-full bg-slate-50 rounded-xl overflow-hidden group-hover:bg-slate-100 transition-colors">
+                                                            <div 
+                                                                style={{ height: `${hPercent}%` }} 
+                                                                className={`w-full max-w-[40px] rounded-t-xl transition-all duration-1000 ease-out ${i === 6 ? 'bg-orange-500' : 'bg-slate-300 group-hover:bg-slate-400'}`}
+                                                            >
+                                                                {val > 0 && (
+                                                                    <div className="text-[10px] font-bold text-white text-center pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                        {val}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <span className={`text-xs font-bold ${i===6 ? 'text-orange-600' : 'text-slate-400'}`}>{dayName.replace('.', '')}</span>
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
+                                    </div>
+                                </div>
+
+                                {/* Status Distribution (Donut-like using CSS conic-gradient or simple list) */}
+                                <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm flex flex-col">
+                                    <h3 className="text-xl font-bold text-slate-900 mb-6">État du Réseau</h3>
+                                    
+                                    <div className="flex-1 flex flex-col justify-center gap-6">
+                                        {[
+                                            { label: 'Livrés', val: stats.delivered, total: stats.total, color: 'bg-emerald-500', text: 'text-emerald-600' },
+                                            { label: 'En Transit', val: stats.transit, total: stats.total, color: 'bg-blue-500', text: 'text-blue-600' },
+                                            { label: 'En Attente', val: stats.total - stats.delivered - stats.transit, total: stats.total, color: 'bg-slate-300', text: 'text-slate-500' }
+                                        ].map((item, i) => (
+                                            <div key={i}>
+                                                <div className="flex justify-between items-end mb-2">
+                                                    <span className="font-bold text-slate-700 flex items-center gap-2">
+                                                        <span className={`w-3 h-3 rounded-full ${item.color}`}></span>
+                                                        {item.label}
+                                                    </span>
+                                                    <span className={`font-black ${item.text}`}>{item.val}</span>
+                                                </div>
+                                                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                                                    <div 
+                                                        style={{ width: `${(item.val / (item.total || 1)) * 100}%` }} 
+                                                        className={`h-full ${item.color} rounded-full transition-all duration-1000`}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-8 pt-6 border-t border-slate-50 text-center">
+                                        <p className="text-xs text-slate-400">Total colis gérés</p>
+                                        <p className="text-3xl font-black text-slate-900">{stats.total}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
 
