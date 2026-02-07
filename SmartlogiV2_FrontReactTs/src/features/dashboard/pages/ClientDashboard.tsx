@@ -6,14 +6,7 @@ import { fetchMyParcels, selectAllColis } from '../../parcels/colisSlice';
 import CreateColisWizard from '../../parcels/components/CreateColisWizard';
 import UserProfile from '../../users/components/UserProfile';
 import { useNavigate } from 'react-router-dom';
-import client from '../../../api/client'; // Import client for history fetch
-
-// We need a custom ParcelGrid implementation or refactor ParcelList
-// For now, I will inline the Grid logic here or create a new component to match Angular's "Masonry" style if ParcelList is a Table.
-// ParcelList is currently a Table. Angular uses "Masonry" cards.
-// The user asked for "Exact like frontend angular". Angular uses `app-colis-card` (Masonry).
-// React `ParcelList` uses `Table`.
-// I should probably create `ParcelGrid` component that looks like Angular's cards.
+import client from '../../../api/client'; 
 
 import type { Colis } from '../../parcels/colisSlice';
 
@@ -68,13 +61,7 @@ const ClientDashboard = () => {
 
     const handleTabChange = (tab: typeof activeTab) => {
         if (tab === 'DELIVERED' && activeTab !== 'DELIVERED') {
-            // When opening History tab: 
-            // 1. Keep the CURRENT highlight cutoff (so user sees what's new)
-            // 2. Update the 'lastSeen' effectively clearing the red dot for NEXT time
-            // 3. We delay the actual update of 'highlightCutoff' or just let it stay for this session?
-            //    User request: "When I click button hid red point". 
-            
-            // We update the persistent store immediately so the red dot goes away
+           
             localStorage.setItem('lastHistoryCheck', new Date().toISOString());
             setLastSeenDate(new Date()); 
             

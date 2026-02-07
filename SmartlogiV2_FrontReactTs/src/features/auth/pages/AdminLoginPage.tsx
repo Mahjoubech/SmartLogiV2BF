@@ -18,6 +18,7 @@ const AdminLoginPage: React.FC = () => {
         const result = await dispatch(loginUser({ email, password }));
         
         if (loginUser.fulfilled.match(result)) {
+            console.log("Login successful, payload:", result.payload);
             navigate('/admin-dashboard');
         }
     };

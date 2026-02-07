@@ -17,6 +17,7 @@ export interface User {
   telephone?: string;
   role: UserRole;
   enabled?: boolean;
+  accountNonLocked?: boolean;
 }
 
 export interface AuthResponse {
@@ -137,12 +138,19 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = true;
             state.token = action.payload.token;
-            // Construct User object from AuthResponse (mapping fields)
+            // Normalize role
+            const rolePayload = action.payload.role as any;
+            const normalizedRole = typeof rolePayload === 'string' 
+                ? { id: 0, name: rolePayload } 
+                : (rolePayload && rolePayload.name ? rolePayload : { id: 0, name: 'CLIENT' });
+
             state.user = {
                 id: action.payload.id,
                 nom: action.payload.nom,
+                prenom: action.payload.prenom,
                 email: action.payload.email,
-                role: action.payload.role
+                telephone: action.payload.telephone,
+                role: normalizedRole
             };
             
             localStorage.setItem('token', action.payload.token);
@@ -164,11 +172,17 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = true;
             state.token = action.payload.token;
+             // Normalize role
+            const rolePayload = action.payload.role as any;
+            const normalizedRole = typeof rolePayload === 'string' 
+                ? { id: 0, name: rolePayload } 
+                : (rolePayload && rolePayload.name ? rolePayload : { id: 0, name: 'CLIENT' });
+
              state.user = {
                 id: action.payload.id,
                 nom: action.payload.nom,
                 email: action.payload.email,
-                role: action.payload.role
+                role: normalizedRole
             };
             localStorage.setItem('token', action.payload.token);
             localStorage.setItem('user_data', JSON.stringify(state.user));
@@ -188,11 +202,17 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = true;
             state.token = action.payload.token;
+             // Normalize role
+            const rolePayload = action.payload.role as any;
+            const normalizedRole = typeof rolePayload === 'string' 
+                ? { id: 0, name: rolePayload } 
+                : (rolePayload && rolePayload.name ? rolePayload : { id: 0, name: 'CLIENT' });
+
              state.user = {
                 id: action.payload.id,
                 nom: action.payload.nom,
                 email: action.payload.email,
-                role: action.payload.role
+                role: normalizedRole
             };
             localStorage.setItem('token', action.payload.token);
             localStorage.setItem('user_data', JSON.stringify(state.user));

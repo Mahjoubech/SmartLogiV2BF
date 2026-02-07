@@ -10,7 +10,7 @@ import AdminLoginPage from '../features/auth/pages/AdminLoginPage';
 import ClientDashboard from '../features/dashboard/pages/ClientDashboard';
 import DashboardLayout from '../components/layout/DashboardLayout';
 
-import AdminDashboard from '../features/dashboard/pages/AdminDashboard';
+import AdminDashboard from '../features/admin/pages/AdminDashboard';
 import ManagerDashboard from '../features/dashboard/pages/ManagerDashboard';
 import LivreurDashboard from '../features/dashboard/pages/LivreurDashboard';
 
