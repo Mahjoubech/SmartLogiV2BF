@@ -6,11 +6,11 @@ import type { RootState } from '../../store/store';
 // Types
 export interface UserRole {
   id: number;
-  name: string; // 'ADMIN' | 'MANAGER' | 'LIVREUR' | 'CLINET'
+  name: string; // 'ADMIN' | 'MANAGER' | 'LIVREUR' | 'CLIENT'
 }
 
 export interface User {
-  id: number;
+  id: string; // Updated to match backend String UUID
   nom: string;
   prenom?: string;
   email: string;
@@ -22,6 +22,7 @@ export interface User {
 export interface AuthResponse {
   token: string;
   refreshToken?: string;
+  id: string; // Added field
   role: UserRole;
   nom: string;
   email: string;
@@ -93,6 +94,21 @@ export const verifyAccount = createAsyncThunk(
     }
 );
 
+export const updatePassword = createAsyncThunk(
+    'auth/updatePassword',
+    async (credentials: { currentPassword: string; newPassword: string }, { rejectWithValue }) => {
+        try {
+            const response = await client.post('/auth/update-password', credentials);
+            return response.data;
+        } catch (err: unknown) {
+             const error = err as AxiosError<{ message: string }>;
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message || 'Update failed');
+            }
+            return rejectWithValue('Update failed');
+        }
+    }
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -123,7 +139,7 @@ const authSlice = createSlice({
             state.token = action.payload.token;
             // Construct User object from AuthResponse (mapping fields)
             state.user = {
-                id: 0, // ID might not be in auth response directly, usually is
+                id: action.payload.id,
                 nom: action.payload.nom,
                 email: action.payload.email,
                 role: action.payload.role
@@ -149,7 +165,7 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.token = action.payload.token;
              state.user = {
-                id: 0, 
+                id: action.payload.id,
                 nom: action.payload.nom,
                 email: action.payload.email,
                 role: action.payload.role
@@ -173,7 +189,7 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.token = action.payload.token;
              state.user = {
-                id: 0, 
+                id: action.payload.id,
                 nom: action.payload.nom,
                 email: action.payload.email,
                 role: action.payload.role
