@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createManager, updateManager, deleteManager } from '../adminSlice';
 import type { ManagerData } from '../adminService';
-// We might need a generic Modal component, but I'll build a specific one here for speed or reuse if exists.
-// I'll build a simple inline modal for now.
 
 const ManagerDirectory: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -75,10 +73,10 @@ const ManagerDirectory: React.FC = () => {
     return (
         <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-black text-white">Managers Directory</h2>
+                <h2 className="text-3xl font-black text-slate-900">Managers Directory</h2>
                 <button 
                     onClick={openCreateModal}
-                    className="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-cyan-900/20 flex items-center gap-2 transition-all hover:scale-105"
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-slate-900/20 flex items-center gap-2 transition-all hover:scale-105"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
                     Add New Manager
@@ -87,38 +85,38 @@ const ManagerDirectory: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {managers.data.map((manager) => (
-                    <div key={manager.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 group hover:border-cyan-500/50 transition-all hover:bg-slate-800/50">
+                    <div key={manager.id} className="bg-white border border-slate-200 rounded-2xl p-6 group hover:border-orange-500/50 transition-all hover:shadow-md shadow-sm">
                         <div className="flex justify-between items-start mb-6">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-900/50">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-orange-500/30">
                                 {manager.prenom?.charAt(0)}{manager.nom?.charAt(0)}
                             </div>
                             <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button 
                                     onClick={() => openEditModal(manager)}
-                                    className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-cyan-400 transition-colors" title="Edit Profile"
+                                    className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-orange-600 transition-colors" title="Edit Profile"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                 </button>
                                 <button 
                                     onClick={() => handleDelete(manager.id!)}
-                                    className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-red-400 transition-colors" title="Delete Manager"
+                                    className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-red-500 transition-colors" title="Delete Manager"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </div>
                         </div>
 
-                        <h3 className="text-xl font-bold text-white mb-1">{manager.prenom} {manager.nom}</h3>
-                        <p className="text-slate-400 text-sm mb-6">{manager.email}</p>
+                        <h3 className="text-xl font-bold text-slate-900 mb-1">{manager.prenom} {manager.nom}</h3>
+                        <p className="text-slate-500 text-sm mb-6">{manager.email}</p>
 
-                        <div className="space-y-3 pt-6 border-t border-slate-800">
+                        <div className="space-y-3 pt-6 border-t border-slate-100">
                             <div className="flex justify-between text-sm">
                                 <span className="text-slate-500">Privileges</span>
-                                <span className="text-cyan-400 font-bold bg-cyan-400/10 px-2 py-0.5 rounded text-xs border border-cyan-400/20">MANAGER</span>
+                                <span className="text-orange-600 font-bold bg-orange-50 px-2 py-0.5 rounded text-xs border border-orange-100">MANAGER</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-slate-500">Contact</span>
-                                <span className="text-slate-300 font-mono text-xs">{manager.telephone || 'N/A'}</span>
+                                <span className="text-slate-700 font-mono text-xs">{manager.telephone || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
@@ -127,11 +125,11 @@ const ManagerDirectory: React.FC = () => {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn">
-                    <div className="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-                        <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900">
-                            <h2 className="text-xl font-bold text-white">{isEditing ? 'Edit Manager Profile' : 'Create New Manager'}</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn">
+                    <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+                        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                            <h2 className="text-xl font-bold text-slate-900">{isEditing ? 'Edit Manager Profile' : 'Create New Manager'}</h2>
+                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-red-500 transition-colors">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -142,7 +140,7 @@ const ManagerDirectory: React.FC = () => {
                                     <input 
                                         type="text" 
                                         required 
-                                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-cyan-500 focus:outline-none"
+                                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
                                         value={formData.prenom}
                                         onChange={e => setFormData({...formData, prenom: e.target.value})}
                                     />
@@ -152,7 +150,7 @@ const ManagerDirectory: React.FC = () => {
                                     <input 
                                         type="text" 
                                         required 
-                                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-cyan-500 focus:outline-none"
+                                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
                                         value={formData.nom}
                                         onChange={e => setFormData({...formData, nom: e.target.value})}
                                     />
@@ -163,7 +161,7 @@ const ManagerDirectory: React.FC = () => {
                                 <input 
                                     type="email" 
                                     required 
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-cyan-500 focus:outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
                                     value={formData.email}
                                     onChange={e => setFormData({...formData, email: e.target.value})}
                                 />
@@ -173,7 +171,7 @@ const ManagerDirectory: React.FC = () => {
                                 <input 
                                     type="tel" 
                                     required 
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-cyan-500 focus:outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
                                     value={formData.telephone || ''}
                                     onChange={e => setFormData({...formData, telephone: e.target.value})}
                                 />
@@ -185,7 +183,7 @@ const ManagerDirectory: React.FC = () => {
                                 <input 
                                     type="password" 
                                     required={!isEditing}
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-cyan-500 focus:outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
                                     value={formData.password}
                                     onChange={e => setFormData({...formData, password: e.target.value})}
                                     minLength={6}
@@ -196,13 +194,13 @@ const ManagerDirectory: React.FC = () => {
                                 <button 
                                     type="button" 
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                                    className="px-4 py-2 rounded-xl font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button 
                                     type="submit" 
-                                    className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-cyan-900/20 transition-all"
+                                    className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-slate-900/20 transition-all transform active:scale-95"
                                 >
                                     {isEditing ? 'Update Manager' : 'Create Manager'}
                                 </button>

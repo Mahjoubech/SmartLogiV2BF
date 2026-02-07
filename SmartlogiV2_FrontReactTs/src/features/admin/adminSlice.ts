@@ -1,11 +1,20 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import adminService from './adminService';
 import type { ManagerData, RoleData, Permission, PaginatedResponse } from './adminService';
 import type { User } from '../auth/authSlice';
 
+export type { ManagerData, RoleData, Permission };
+
 interface AdminState {
   users: {
     data: User[];
+    loading: boolean;
+    error: string | null;
+    totalElements: number;
+    totalPages: number;
+  };
+  parcels: {
+    data: any[];
     loading: boolean;
     error: string | null;
     totalElements: number;
@@ -38,6 +47,13 @@ const initialState: AdminState = {
     totalElements: 0,
     totalPages: 0,
   },
+  parcels: {
+    data: [],
+    loading: false,
+    error: null,
+    totalElements: 0,
+    totalPages: 0,
+  },
   managers: {
     data: [],
     loading: false,
@@ -58,6 +74,18 @@ const initialState: AdminState = {
 };
 
 // Async Thunks
+
+export const fetchAllParcels = createAsyncThunk(
+  'admin/fetchAllParcels',
+  async ({ page = 0, size = 1000 }: { page?: number; size?: number }, { rejectWithValue }) => {
+    try {
+      const data = await adminService.getAllParcels(page, size);
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch parcels');
+    }
+  }
+);
 
 export const fetchAllUsers = createAsyncThunk(
   'admin/fetchAllUsers',
@@ -290,6 +318,22 @@ const adminSlice = createSlice({
       .addCase(fetchAllManagers.rejected, (state, action) => {
         state.managers.loading = false;
         state.managers.error = action.payload as string;
+      })
+      
+      // Parcels
+      .addCase(fetchAllParcels.pending, (state) => {
+        state.parcels.loading = true;
+        state.parcels.error = null;
+      })
+      .addCase(fetchAllParcels.fulfilled, (state, action) => {
+        state.parcels.loading = false;
+        state.parcels.data = action.payload.content;
+        state.parcels.totalElements = action.payload.totalElements;
+        state.parcels.totalPages = action.payload.totalPages;
+      })
+      .addCase(fetchAllParcels.rejected, (state, action) => {
+        state.parcels.loading = false;
+        state.parcels.error = action.payload as string;
       });
 
     // Roles

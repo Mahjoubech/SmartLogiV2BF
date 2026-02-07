@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useNavigate } from 'react-router-dom';
 import { logout } from '../../auth/authSlice';
 import { fetchAllUsers, fetchAllManagers, fetchAllRoles, fetchAllPermissions } from '../adminSlice';
 
@@ -9,130 +9,163 @@ import ClientDirectory from '../components/ClientDirectory';
 import ManagerDirectory from '../components/ManagerDirectory';
 import RolesPermissions from '../components/RolesPermissions';
 
-// Icons
-const Icons = {
-    overview: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
-    ),
-    clients: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-    ),
-    managers: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-    ),
-    roles: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-    ),
-    logout: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-    )
-};
-
 const AdminDashboard: React.FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { user } = useAppSelector(state => state.auth);
     const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'CLIENTS' | 'MANAGERS' | 'ROLES'>('OVERVIEW');
+    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        // Initial fetch
-        dispatch(fetchAllUsers({ page: 0, size: 100 })); // Fetch more to get good stats
-        dispatch(fetchAllManagers({ page: 0, size: 100 }));
+        dispatch(fetchAllUsers({}));
+        dispatch(fetchAllManagers({}));
         dispatch(fetchAllRoles());
         dispatch(fetchAllPermissions());
     }, [dispatch]);
+
+    // Track scroll for header effect
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        setScrolled(e.currentTarget.scrollTop > 20);
+    };
 
     const handleLogout = () => {
         dispatch(logout());
         navigate('/login');
     };
 
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'OVERVIEW': return <AdminOverview />;
+            case 'CLIENTS': return <ClientDirectory />;
+            case 'MANAGERS': return <ManagerDirectory />;
+            case 'ROLES': return <RolesPermissions />;
+            default: return <AdminOverview />;
+        }
+    };
+
+    const navItems = [
+        { id: 'OVERVIEW', label: 'Overview', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
+        { id: 'CLIENTS', label: 'Clients', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+        { id: 'MANAGERS', label: 'Managers', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+        { id: 'ROLES', label: 'Roles & Perms', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' }
+    ];
+
     return (
-        <div className="flex h-screen bg-slate-950 text-white overflow-hidden font-sans">
-            {/* SIDEBAR */}
-            <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
-                <div className="p-6 border-b border-slate-800">
-                    <h1 className="text-2xl font-black tracking-tighter">
-                        SMART<span className="text-cyan-500">LOGI</span>
-                        <span className="block text-xs text-slate-500 font-medium tracking-normal mt-1">SUPER ADMIN</span>
-                    </h1>
+        <div className="flex h-screen bg-[#f8fafc] text-slate-900 overflow-hidden font-sans selection:bg-orange-500/20">
+            {/* Sidebar */}
+            <aside className="w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[4px_0_24px_-4px_rgba(0,0,0,0.02)] z-30 transition-all duration-300">
+                <div className="h-20 flex items-center px-8 border-b border-slate-100/50">
+                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setActiveTab('OVERVIEW')}>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:scale-105 transition-transform duration-300">
+                           <span className="text-white font-black text-xl tracking-tighter">S</span>
+                        </div>
+                        <div>
+                            <h1 className="text-lg font-black tracking-tight text-slate-900 leading-none group-hover:text-orange-600 transition-colors">SmartLogi</h1>
+                            <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold">Admin Panel</span>
+                        </div>
+                    </div>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <button
-                        onClick={() => setActiveTab('OVERVIEW')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all group ${activeTab === 'OVERVIEW' ? 'bg-cyan-500/10 text-cyan-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
-                    >
-                        {Icons.overview}
-                        Overview
-                    </button>
-
-                    <div className="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-wider">User Management</div>
-
-                    <button
-                        onClick={() => setActiveTab('CLIENTS')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all group ${activeTab === 'CLIENTS' ? 'bg-cyan-500/10 text-cyan-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
-                    >
-                        {Icons.clients}
-                        Clients
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('MANAGERS')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all group ${activeTab === 'MANAGERS' ? 'bg-cyan-500/10 text-cyan-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
-                    >
-                        {Icons.managers}
-                        Managers
-                    </button>
-
-                    <div className="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-wider">System</div>
-
-                    <button
-                        onClick={() => setActiveTab('ROLES')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all group ${activeTab === 'ROLES' ? 'bg-cyan-500/10 text-cyan-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
-                    >
-                        {Icons.roles}
-                        Roles & Permissions
-                    </button>
+                <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto custom-scrollbar">
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-4">Main Menu</div>
+                    {navItems.map((item) => (
+                        <button
+                            key={item.id}
+                            //@ts-ignore - string vs literal
+                            onClick={() => setActiveTab(item.id)}
+                            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 group relative overflow-hidden ${
+                                activeTab === item.id 
+                                ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/10 scale-[1.02]' 
+                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:pl-5'
+                            }`}
+                        >
+                             {/* Active Glow */}
+                             {activeTab === item.id && (
+                                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-20 pointer-events-none" />
+                            )}
+                            
+                            <svg className={`w-5 h-5 transition-transform duration-300 ${activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}></path>
+                            </svg>
+                            <span className="relative">{item.label}</span>
+                            
+                            {/* Active Indicator Dot */}
+                            {activeTab === item.id && (
+                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 ml-auto shadow-[0_0_8px_rgba(249,115,22,0.6)]"></div>
+                            )}
+                        </button>
+                    ))}
                 </nav>
 
-                <div className="p-4 border-t border-slate-800">
-                    <button
+                <div className="p-4 border-t border-slate-100/50 bg-slate-50/50 backdrop-blur-sm">
+                    <button 
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-red-500 hover:bg-red-50 transition-all font-bold group"
                     >
-                        {Icons.logout}
-                        Sign Out
+                        <div className="p-2 rounded-lg bg-white border border-slate-200 group-hover:border-red-100 transition-colors shadow-sm">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        </div>
+                        <span className="group-hover:translate-x-1 transition-transform">Sign Out</span>
                     </button>
+                    <div className="text-center mt-4 text-[10px] text-slate-300 font-medium">
+                        v2.4.0 • SmartLogi Inc.
+                    </div>
                 </div>
             </aside>
 
-            {/* MAIN CONTENT */}
-            <main className="flex-1 flex flex-col overflow-hidden bg-slate-950">
-                {/* Header */}
-                <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8">
-                    <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-bold text-white capitalize">{activeTab.toLowerCase()}</h2>
-                    </div>
+            {/* Main Content */}
+            <main className="flex-1 flex flex-col overflow-hidden bg-[#f8fafc] relative">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#1e293b 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
+                {/* Header */}
+                <header className={`h-20 flex items-center justify-between px-8 z-20 sticky top-0 transition-all duration-500 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200/50' : 'bg-transparent'}`}>
+                    <div className="flex flex-col justify-center">
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                            <span>Admin</span>
+                            <span>/</span>
+                            <span className="text-orange-600">{activeTab.toLowerCase()}</span>
+                        </div>
+                        <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 capitalize tracking-tight">
+                            {activeTab === 'OVERVIEW' ? 'Dashboard Overview' : 
+                             activeTab === 'CLIENTS' ? 'Client Management' : 
+                             activeTab === 'MANAGERS' ? 'Branch Managers' : 'System Access'}
+                        </h2>
+                    </div>
+                    
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-3">
-                            <div className="text-right hidden sm:block">
-                                <div className="text-sm font-bold text-white">{user?.prenom} {user?.nom}</div>
-                                <div className="text-xs font-bold text-cyan-500 bg-cyan-500/10 px-2 py-0.5 rounded-full inline-block">ADMIN</div>
+                            <button className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-200 transition-all shadow-sm hover:shadow-md active:scale-95 group">
+                                <svg className="w-5 h-5 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </button>
+                            <button className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-200 transition-all shadow-sm hover:shadow-md active:scale-95 relative group">
+                                <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                                <svg className="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            </button>
+                        </div>
+                        
+                        <div className="h-8 w-px bg-slate-200"></div>
+                        
+                        <div className="flex items-center gap-3 pl-1 pr-1 py-1 rounded-full hover:bg-white/50 transition-all cursor-pointer group">
+                            <div className="flex flex-col items-end mr-2 hidden sm:flex">
+                                <span className="text-sm font-bold text-slate-800 leading-tight group-hover:text-orange-600 transition-colors">{user?.prenom} {user?.nom}</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Super Admin</span>
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 flex items-center justify-center text-white font-bold shadow-lg">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/20 ring-4 ring-white group-hover:scale-105 transition-transform">
                                 {user?.prenom?.charAt(0)}{user?.nom?.charAt(0)}
                             </div>
                         </div>
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto p-8">
-                    {activeTab === 'OVERVIEW' && <AdminOverview />}
-                    {activeTab === 'CLIENTS' && <ClientDirectory />}
-                    {activeTab === 'MANAGERS' && <ManagerDirectory />}
-                    {activeTab === 'ROLES' && <RolesPermissions />}
+                {/* Content Area */}
+                <div 
+                    className="flex-1 overflow-y-auto p-8 custom-scrollbar scroll-smooth"
+                    onScroll={handleScroll}
+                >
+                    <div className="max-w-7xl mx-auto h-full pb-10">
+                        {renderContent()}
+                    </div>
                 </div>
             </main>
         </div>

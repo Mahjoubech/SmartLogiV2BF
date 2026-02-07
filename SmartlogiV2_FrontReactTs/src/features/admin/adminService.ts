@@ -123,6 +123,15 @@ const adminService = {
   unassignPermission: async (roleId: string, permissionId: string) => {
     const response = await client.post(`${ADMIN_URL}/Roles/UnassignPermission`, { roleId, permissionId });
     return response.data;
+  },
+
+  // Parcel Management (For Admin View)
+  getAllParcels: async (page = 0, size = 1000) => {
+    // Fetch large size to calculate stats client-side for now
+    const response = await client.get<PaginatedResponse<any>>('/colis', {
+      params: { page, size }
+    });
+    return response.data;
   }
 };
 
