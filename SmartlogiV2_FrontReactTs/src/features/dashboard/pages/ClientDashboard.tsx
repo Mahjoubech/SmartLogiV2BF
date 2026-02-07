@@ -29,7 +29,23 @@ const ClientDashboard = () => {
     const [searchText, setSearchText] = useState('');
     const [page, setPage] = useState(0);
     const [activeColisId, setActiveColisId] = useState<string | null>(null);
-    const pageSize = 9; // Grid 3x3
+    const pageSize = 6; // Grid 3x2
+
+    // State for notifications
+    const [lastSeenDate, setLastSeenDate] = useState<Date>(() => {
+        const stored = localStorage.getItem('lastHistoryCheck');
+        return stored ? new Date(stored) : new Date(0);
+    });
+    // This state preserves the cutoff date for highlights properly during the session
+    const [highlightCutoff] = useState<Date>(() => {
+         const stored = localStorage.getItem('lastHistoryCheck');
+         return stored ? new Date(stored) : new Date(0);
+    });
+    
+    // Calculate latest history date
+    const allHistory = parcels.flatMap(p => p.historique || []).map(h => new Date(h.dateChangement));
+    const latestHistoryDate = allHistory.length > 0 ? new Date(Math.max(...allHistory.map(d => d.getTime()))) : new Date(0);
+    const hasNewHistory = latestHistoryDate.getTime() > lastSeenDate.getTime();
 
     useEffect(() => {
         if (user?.id) {
@@ -37,7 +53,7 @@ const ClientDashboard = () => {
             if (activeTab === 'MANIFEST') {
                 statuses = ['CREE', 'COLLECTE', 'EN_TRANSIT', 'EN_STOCK'];
             } else if (activeTab === 'DELIVERED') {
-                statuses = ['LIVRE', 'ANNULE'];
+                statuses = undefined; // Fetch ALL history
             }
 
             if (activeTab === 'MANIFEST' || activeTab === 'DELIVERED') {
@@ -47,10 +63,25 @@ const ClientDashboard = () => {
     }, [dispatch, user, page, activeTab]);
 
     const handleTabChange = (tab: typeof activeTab) => {
+        if (tab === 'DELIVERED' && activeTab !== 'DELIVERED') {
+            // When opening History tab: 
+            // 1. Keep the CURRENT highlight cutoff (so user sees what's new)
+            // 2. Update the 'lastSeen' effectively clearing the red dot for NEXT time
+            // 3. We delay the actual update of 'highlightCutoff' or just let it stay for this session?
+            //    User request: "When I click button hid red point". 
+            
+            // We update the persistent store immediately so the red dot goes away
+            localStorage.setItem('lastHistoryCheck', new Date().toISOString());
+            setLastSeenDate(new Date()); 
+            
+            // Note: highlightCutoff remains at its old value for this render cycle so items stay highlighted.
+            // If we wanted to clear highlights on CLICKING the ITEM, we handle that in the item click.
+        }
         setActiveTab(tab);
         setPage(0);
     };
 
+    // ... existing handleLogout ...
     const handleLogout = () => {
         dispatch(logout());
         navigate('/login');
@@ -63,6 +94,7 @@ const ClientDashboard = () => {
         }
     };
 
+    // ... existing filters ...
     // Filter Logic (Client-side search only)
     const filteredParcels = parcels.filter(p => {
         if (!searchText) return true;
@@ -72,13 +104,18 @@ const ClientDashboard = () => {
             p.destinataire.nom.toLowerCase().includes(searchLower) ||
             p.villeDestination?.toLowerCase().includes(searchLower);
     });
-
-    // Stats
+    
+    // ... existing stats ...
     const stats = {
         total: totalElements || parcels.length,
         delivered: parcels.filter(c => c.statut === 'LIVRE').length, // Approximation for current view
         transit: parcels.filter(c => c.statut === 'EN_TRANSIT' || c.statut === 'COLLECTE').length,
         weight: parcels.reduce((acc, c) => acc + (c.poids || 0), 0)
+    };
+
+    // Helper to check if a specific item is new relative to the session cutoff
+    const isItemNew = (dateStr: string) => {
+        return new Date(dateStr).getTime() > highlightCutoff.getTime();
     };
 
     return (
@@ -109,7 +146,7 @@ const ClientDashboard = () => {
                                 <button 
                                     key={tabId}
                                     onClick={() => handleTabChange(tabId)} 
-                                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
+                                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 relative ${
                                         activeTab === tabId 
                                         ? 'bg-white text-orange-600 shadow-[0_2px_8px_rgba(0,0,0,0.08)] scale-100 ring-1 ring-black/5' 
                                         : 'text-slate-500 hover:text-slate-900 hover:bg-white/50'
@@ -117,10 +154,15 @@ const ClientDashboard = () => {
                                 >
                                     <span className={activeTab === tabId ? 'scale-110 transition' : ''}>{icons[tabId]}</span>
                                     {labels[tabId]}
+                                    {tabId === 'DELIVERED' && hasNewHistory && (
+                                        <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                                    )}
                                 </button>
                             );
                         })}
                     </div>
+
+
 
                     {/* User Profile Trigger */}
                     <div className="hidden md:flex items-center gap-4 pl-6 border-l border-slate-200">
@@ -215,11 +257,81 @@ const ClientDashboard = () => {
                                 </div>
                              ) : (
                                 <>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                        {filteredParcels.map(parcel => (
-                                            <ColisCard key={parcel.id} parcel={parcel} onOpenHistory={() => setActiveColisId(parcel.id)} />
-                                        ))}
-                                    </div>
+                                    {activeTab === 'DELIVERED' ? (
+                                        <div className="max-w-4xl mx-auto space-y-4">
+                                            {(() => {
+                                                const flattenedHistory = filteredParcels.flatMap(p => 
+                                                    (p.historique || []).map(h => ({
+                                                        ...h,
+                                                        parcelId: p.id,
+                                                        parcelCode: p.id.split('-')[0].toUpperCase(), // Short code
+                                                        destinataire: p.destinataire ? `${p.destinataire.nom} ${p.destinataire.prenom}` : 'Inconnu'
+                                                    }))
+                                                ).sort((a, b) => new Date(b.dateChangement).getTime() - new Date(a.dateChangement).getTime());
+
+                                                if (flattenedHistory.length === 0) {
+                                                    return (
+                                                        <div className="text-center py-12 text-slate-400">
+                                                            Aucun événement récent.
+                                                        </div>
+                                                    );
+                                                }
+
+                                                return flattenedHistory.map((item, idx) => (
+                                                    <div 
+                                                        key={`${item.parcelId}-${idx}`} 
+                                                        onClick={() => setActiveColisId(item.parcelId)}
+                                                        className={`${isItemNew(item.dateChangement) ? 'bg-orange-50 border-orange-200 shadow-md ring-1 ring-orange-500/10' : 'bg-white border-slate-100 shadow-sm'} p-5 rounded-2xl border hover:shadow-lg transition-all cursor-pointer flex items-center gap-5 group relative overflow-hidden`}
+                                                    >
+                                                        {isItemNew(item.dateChangement) && (
+                                                            <div className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-bl-xl shadow-sm z-10"></div>
+                                                        )}
+                                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl flex-shrink-0 ${
+                                                            item.status === 'LIVRE' ? 'bg-emerald-100 text-emerald-600' :
+                                                            item.status === 'ANNULE' ? 'bg-red-100 text-red-600' :
+                                                            'bg-blue-50 text-blue-600'
+                                                        }`}>
+                                                            {item.status === 'LIVRE' ? '✅' : item.status === 'ANNULE' ? '❌' : '🚚'}
+                                                        </div>
+                                                        
+                                                        <div className="flex-1">
+                                                            <div className="flex justify-between items-start mb-1">
+                                                                <h4 className="font-bold text-slate-900 text-sm">
+                                                                    Colis #{item.parcelCode} <span className="text-slate-400 font-normal">vers {item.destinataire}</span>
+                                                                </h4>
+                                                                <span className="text-[10px] font-bold uppercase text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">
+                                                                    {new Date(item.dateChangement).toLocaleString()}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex gap-2 items-center">
+                                                                <span className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded ${
+                                                                    item.status === 'LIVRE' ? 'bg-emerald-50 text-emerald-700' : 
+                                                                    'bg-slate-100 text-slate-600'
+                                                                }`}>
+                                                                    {item.status ? item.status.replace('_', ' ') : 'INFO'}
+                                                                </span>
+                                                                {item.commentaire && (
+                                                                    <p className="text-sm text-slate-500 truncate max-w-md">
+                                                                        {item.commentaire}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div className="text-slate-300 group-hover:text-orange-500 transition-colors">
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                                                        </div>
+                                                    </div>
+                                                ));
+                                            })()}
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                            {filteredParcels.map(parcel => (
+                                                <ColisCard key={parcel.id} parcel={parcel} onOpenHistory={() => setActiveColisId(parcel.id)} />
+                                            ))}
+                                        </div>
+                                    )}
 
                                     {/* Pagination Controls */}
                                     {totalPages > 1 && (
@@ -338,7 +450,7 @@ const ParcelDetailsModal = ({ parcel, onClose }: { parcel: Colis, onClose: () =>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                             <span className="text-[10px] uppercase text-slate-400 font-bold tracking-widest block mb-1">Expéditeur</span>
-                            <div className="font-bold text-slate-900 text-lg mb-1">{parcel.expediteur.nom} {parcel.expediteur.prenom}</div>
+                            <div className="font-bold text-slate-900 text-lg mb-1">{parcel.expediteur?.nom} {parcel.expediteur?.prenom}</div>
                             <div className="text-xs text-slate-500">Zone Origine: {parcel.codePostalOrigine}</div>
                         </div>
                         <div className="bg-orange-50 p-5 rounded-2xl border border-orange-100 relative overflow-hidden">
@@ -354,28 +466,34 @@ const ParcelDetailsModal = ({ parcel, onClose }: { parcel: Colis, onClose: () =>
                     {/* Timeline */}
                     <div>
                         <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <span>📅</span> Historique
+                            <span>📅</span> Suivi & Messages
                         </h4>
-                        <div className="space-y-6 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100 pl-2">
+                        <div className="flex flex-col space-y-4 bg-slate-50 p-6 rounded-2xl max-h-[400px] overflow-y-auto custom-scrollbar">
                              {parcel.historique && parcel.historique.length > 0 ? (
                                 parcel.historique.map((h, i) => (
-                                    <div key={i} className="flex gap-4 relative group">
-                                        <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center z-10 border-4 border-white shadow-sm transition-all duration-300 ${i === 0 ? 'bg-orange-500 text-white scale-110' : 'bg-slate-100 text-slate-400'}`}>
-                                            {i === 0 ? '●' : '○'}
+                                    <div key={i} className="flex gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0 text-xs font-bold text-slate-500">
+                                            {i === 0 ? '🤖' : '📦'}
                                         </div>
-                                        <div className="bg-white p-4 rounded-2xl border border-slate-100 w-full hover:shadow-md transition-all duration-300">
-                                            <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
-                                                <span className={`font-bold ${i===0 ? 'text-slate-900' : 'text-slate-600'}`}>{h.status.replace('_', ' ')}</span>
-                                                <span className="text-[10px] font-mono text-slate-400 font-bold uppercase bg-slate-50 px-2 py-1 rounded-md">
-                                                    {new Date(h.dateChangement).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
-                                                </span>
+                                        <div className="flex flex-col items-start max-w-[85%]">
+                                            <div className={`p-4 rounded-2xl rounded-tl-none shadow-sm ${i === 0 ? 'bg-orange-500 text-white' : 'bg-white text-slate-700 border border-slate-100'}`}>
+                                                
+                                                <div className="font-bold text-sm mb-1 uppercase tracking-wide flex justify-between gap-4">
+                                                    <span>{h.status ? h.status.replace('_', ' ') : 'Mise à jour'}</span>
+                                                </div>
+                                                
+                                                {h.commentaire && <p className={`text-sm leading-relaxed ${i===0 ? 'text-orange-50' : 'text-slate-500'}`}>
+                                                    {h.commentaire}
+                                                </p>}
                                             </div>
-                                            {h.commentaire && <p className="text-sm text-slate-500 leading-snug mt-1 italic">"{h.commentaire}"</p>}
+                                            <span className="text-[10px] font-medium text-slate-400 mt-1 ml-2">
+                                                {new Date(h.dateChangement).toLocaleString(undefined, {  weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
+                                            </span>
                                         </div>
                                     </div>
                                 ))
                              ) : (
-                                <div className="ml-12 text-slate-400 italic">Aucun historique disponible.</div>
+                                <div className="text-center py-8 text-slate-400 italic">Aucun historique disponible.</div>
                              )}
                         </div>
                     </div>
