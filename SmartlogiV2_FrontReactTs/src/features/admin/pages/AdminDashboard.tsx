@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { logout } from '../../auth/authSlice';
-import { fetchAllUsers, fetchAllManagers, fetchAllRoles, fetchAllPermissions } from '../adminSlice';
-
-import AdminOverview from '../components/AdminOverview';
-import ClientDirectory from '../components/ClientDirectory';
-import ManagerDirectory from '../components/ManagerDirectory';
-import RolesPermissions from '../components/RolesPermissions';
+import { fetchAllUsers, fetchAllManagers, fetchAllRoles, fetchAllPermissions, fetchAllParcels } from '../adminSlice';
 
 const AdminDashboard: React.FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const { user } = useAppSelector(state => state.auth);
-    const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'CLIENTS' | 'MANAGERS' | 'ROLES'>('OVERVIEW');
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -21,6 +16,7 @@ const AdminDashboard: React.FC = () => {
         dispatch(fetchAllManagers({}));
         dispatch(fetchAllRoles());
         dispatch(fetchAllPermissions());
+        dispatch(fetchAllParcels({}));
     }, [dispatch]);
 
     // Track scroll for header effect
@@ -33,29 +29,23 @@ const AdminDashboard: React.FC = () => {
         navigate('/login');
     };
 
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'OVERVIEW': return <AdminOverview />;
-            case 'CLIENTS': return <ClientDirectory />;
-            case 'MANAGERS': return <ManagerDirectory />;
-            case 'ROLES': return <RolesPermissions />;
-            default: return <AdminOverview />;
-        }
-    };
-
     const navItems = [
-        { id: 'OVERVIEW', label: 'Overview', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
-        { id: 'CLIENTS', label: 'Clients', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
-        { id: 'MANAGERS', label: 'Managers', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
-        { id: 'ROLES', label: 'Roles & Perms', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' }
+        { id: 'OVERVIEW', label: 'Overview', path: 'overview', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
+        { id: 'CLIENTS', label: 'Clients', path: 'clients', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+        { id: 'MANAGERS', label: 'Managers', path: 'managers', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+        { id: 'LIVREURS', label: 'Drivers', path: 'drivers', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+        { id: 'ROLES', label: 'Roles & Perms', path: 'roles', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' }
     ];
+
+    const currentPath = location.pathname.split('/').pop() || 'overview';
+    const activeItem = navItems.find(item => location.pathname.includes(item.path)) || navItems[0];
 
     return (
         <div className="flex h-screen bg-[#f8fafc] text-slate-900 overflow-hidden font-sans selection:bg-orange-500/20">
             {/* Sidebar */}
             <aside className="w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[4px_0_24px_-4px_rgba(0,0,0,0.02)] z-30 transition-all duration-300">
                 <div className="h-20 flex items-center px-8 border-b border-slate-100/50">
-                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setActiveTab('OVERVIEW')}>
+                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/admin-dashboard')}>
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:scale-105 transition-transform duration-300">
                            <span className="text-white font-black text-xl tracking-tighter">S</span>
                         </div>
@@ -68,33 +58,35 @@ const AdminDashboard: React.FC = () => {
 
                 <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto custom-scrollbar">
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-4">Main Menu</div>
-                    {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            //@ts-ignore - string vs literal
-                            onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 group relative overflow-hidden ${
-                                activeTab === item.id 
-                                ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/10 scale-[1.02]' 
-                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:pl-5'
-                            }`}
-                        >
-                             {/* Active Glow */}
-                             {activeTab === item.id && (
-                                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-20 pointer-events-none" />
-                            )}
-                            
-                            <svg className={`w-5 h-5 transition-transform duration-300 ${activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}></path>
-                            </svg>
-                            <span className="relative">{item.label}</span>
-                            
-                            {/* Active Indicator Dot */}
-                            {activeTab === item.id && (
-                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 ml-auto shadow-[0_0_8px_rgba(249,115,22,0.6)]"></div>
-                            )}
-                        </button>
-                    ))}
+                    {navItems.map((item) => {
+                        const isActive = location.pathname.includes(item.path);
+                        return (
+                            <button
+                                key={item.id}
+                                onClick={() => navigate(item.path)}
+                                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 group relative overflow-hidden ${
+                                    isActive 
+                                    ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/10 scale-[1.02]' 
+                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:pl-5'
+                                }`}
+                            >
+                                 {/* Active Glow */}
+                                 {isActive && (
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-20 pointer-events-none" />
+                                )}
+                                
+                                <svg className={`w-5 h-5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}></path>
+                                </svg>
+                                <span className="relative">{item.label}</span>
+                                
+                                {/* Active Indicator Dot */}
+                                {isActive && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 ml-auto shadow-[0_0_8px_rgba(249,115,22,0.6)]"></div>
+                                )}
+                            </button>
+                        );
+                    })}
                 </nav>
 
                 <div className="p-4 border-t border-slate-100/50 bg-slate-50/50 backdrop-blur-sm">
@@ -124,12 +116,10 @@ const AdminDashboard: React.FC = () => {
                         <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                             <span>Admin</span>
                             <span>/</span>
-                            <span className="text-orange-600">{activeTab.toLowerCase()}</span>
+                            <span className="text-orange-600">{currentPath}</span>
                         </div>
                         <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 capitalize tracking-tight">
-                            {activeTab === 'OVERVIEW' ? 'Dashboard Overview' : 
-                             activeTab === 'CLIENTS' ? 'Client Management' : 
-                             activeTab === 'MANAGERS' ? 'Branch Managers' : 'System Access'}
+                            {activeItem.label} Management
                         </h2>
                     </div>
                     
@@ -164,12 +154,11 @@ const AdminDashboard: React.FC = () => {
                     onScroll={handleScroll}
                 >
                     <div className="max-w-7xl mx-auto h-full pb-10">
-                        {renderContent()}
+                        <Outlet />
                     </div>
                 </div>
             </main>
         </div>
     );
 };
-
 export default AdminDashboard;

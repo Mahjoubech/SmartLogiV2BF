@@ -344,7 +344,8 @@ const adminSlice = createSlice({
       })
       .addCase(fetchAllRoles.fulfilled, (state, action) => {
         state.roles.loading = false;
-        state.roles.data = action.payload;
+        // The payload is PaginatedResponse<RoleData>, we need the content
+        state.roles.data = action.payload.content;
       })
       .addCase(fetchAllRoles.rejected, (state, action) => {
         state.roles.loading = false;
@@ -359,7 +360,8 @@ const adminSlice = createSlice({
       })
       .addCase(fetchAllPermissions.fulfilled, (state, action) => {
         state.permissions.loading = false;
-        state.permissions.data = action.payload;
+        // The payload is PaginatedResponse<Permission>, we need the content
+        state.permissions.data = action.payload.content;
       })
       .addCase(fetchAllPermissions.rejected, (state, action) => {
         state.permissions.loading = false;

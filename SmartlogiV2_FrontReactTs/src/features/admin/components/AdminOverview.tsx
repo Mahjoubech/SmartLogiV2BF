@@ -1,6 +1,21 @@
 import React from 'react';
 import { useAppSelector } from '../../../store/hooks';
 
+const StatCard = ({ title, value, icon, color, gradient }: any) => (
+    <div className={`relative overflow-hidden rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group bg-white border border-slate-100`}>
+        <div className={`absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br ${gradient} rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity`}></div>
+        <div className="relative z-10 flex justify-between items-start">
+            <div>
+                <p className="text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">{title}</p>
+                <h3 className="text-4xl font-black text-slate-900 tracking-tight">{value}</h3>
+            </div>
+            <div className={`p-3 rounded-2xl bg-slate-50 ${color} group-hover:scale-110 transition-transform shadow-sm`}>
+                {icon}
+            </div>
+        </div>
+    </div>
+);
+
 const AdminOverview: React.FC = () => {
     const { users, managers } = useAppSelector(state => state.admin);
     

@@ -11,11 +11,14 @@ import ClientDashboard from '../features/dashboard/pages/ClientDashboard';
 import DashboardLayout from '../components/layout/DashboardLayout';
 
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
+import AdminOverview from '../features/admin/components/AdminOverview';
+import ClientDirectory from '../features/admin/components/ClientDirectory';
+import ManagerDirectory from '../features/admin/components/ManagerDirectory';
+import LivreurDirectory from '../features/admin/components/LivreurDirectory';
+import RolesPermissions from '../features/admin/components/RolesPermissions';
+
 import ManagerDashboard from '../features/dashboard/pages/ManagerDashboard';
 import LivreurDashboard from '../features/dashboard/pages/LivreurDashboard';
-
-// Placeholder components - Replace with actual features later
-
 
 const AppRoutes: React.FC = () => {
     return (
@@ -28,7 +31,8 @@ const AppRoutes: React.FC = () => {
                 <Route path="/verify-email" element={<VerificationPage />} />
                 <Route path="/staff-login" element={<StaffLoginPage />} />
                 <Route path="/admin-login" element={<AdminLoginPage />} />
-                {/* Protected Routes */}
+                
+                {/* Protected Client Routes */}
                  <Route element={<ProtectedRoute allowedRoles={['CLIENT']} />}>
                     <Route element={<DashboardLayout />}>
                         <Route path="/dashboard" element={<ClientDashboard />} />
@@ -47,7 +51,14 @@ const AppRoutes: React.FC = () => {
 
                 {/* Admin Routes */}
                 <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
-                    <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                    <Route path="/admin-dashboard" element={<AdminDashboard />}>
+                        <Route index element={<Navigate to="overview" replace />} />
+                        <Route path="overview" element={<AdminOverview />} />
+                        <Route path="clients" element={<ClientDirectory />} />
+                        <Route path="managers" element={<ManagerDirectory />} />
+                        <Route path="drivers" element={<LivreurDirectory />} />
+                        <Route path="roles" element={<RolesPermissions />} />
+                    </Route>
                 </Route>
 
                 {/* Catch All */}

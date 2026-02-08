@@ -79,8 +79,10 @@ const adminService = {
   },
 
   // Role Management
-  getAllRoles: async () => {
-    const response = await client.get<RoleData[]>(`${ADMIN_URL}/roles/all`);
+  getAllRoles: async (page = 0, size = 100) => {
+    const response = await client.get<PaginatedResponse<RoleData>>(`${ADMIN_URL}/roles/all`, {
+      params: { page, size }
+    });
     return response.data;
   },
 
@@ -100,8 +102,10 @@ const adminService = {
   },
 
   // Permission Management
-  getAllPermissions: async () => {
-    const response = await client.get<Permission[]>(`${ADMIN_URL}/permission/all`);
+  getAllPermissions: async (page = 0, size = 100) => {
+    const response = await client.get<PaginatedResponse<Permission>>(`${ADMIN_URL}/permission/all`, {
+      params: { page, size }
+    });
     return response.data;
   },
 
