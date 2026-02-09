@@ -17,5 +17,10 @@ export default defineConfig({
         // For now, let's keep it default or 'clientPort' if needed.
         // clientPort: 5173 
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
   }
 })
