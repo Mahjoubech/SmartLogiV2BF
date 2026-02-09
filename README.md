@@ -1,67 +1,102 @@
-# SmartLogi V2 - Frontend Application
+# SmartLogi V2 - Logistics Management System
 
-This is the Angular frontend application for the SmartLogi V2 Logistics Management System. It provides a modern, responsive interface for managing shipments, delivery agents (Livreurs), and tracking operations.
+SmartLogi V2 is a comprehensive logistics management solution designed to streamline shipping, tracking, and delivery operations. This repository contains the source code for the backend API and two frontend implementations (Angular and React).
 
-## 🚀 Technology Stack
+## 📂 Project Structure
 
+- **`SmartlogiV2_BackEnd`**: Spring Boot REST API
+- **`SmartlogiV2_FrontEnd`**: Angular Frontend Application
+- **`SmartlogiV2_FrontReactTs`**: React + TypeScript Frontend Application
+
+---
+
+## 🅰️ SmartLogi V2 - Angular Frontend (`SmartlogiV2_FrontEnd`)
+
+This is the original Angular frontend application for the SmartLogi V2 system. It provides a structured, responsive interface for managing shipments and delivery agents.
+
+### 🚀 Technology Stack
 - **Framework**: Angular 16+
 - **Styling**: TailwindCSS (v3) with PostCSS
 - **State Management**: RxJS
 - **HTTP Client**: Angular HttpClient
 - **Icons**: Heroicons (via SVG)
 
-## ✨ Key Features
-
-### 🔐 Authentication & Security
+### ✨ Key Features
 - **Secure Login**: Role-based authentication (Manager, Livreur, Client).
-- **Guards**: Protected routes ensuring only authorized users access specific dashboards.
-- **Social Login**: Structure for OAuth2 integration.
+- **Manager Dashboard**:
+  - Filter View: Toggle between "All", "Ready", and "Assigned" shipments.
+  - Assignment Modal: Assign eligible Livreurs based on Zone.
+  - Tracking: View full history of parcel status changes.
+- **Livreur Dashboard**:
+  - Task Management: View assigned parcels.
+  - Status Updates: Update parcel status (e.g., "Picked Up", "Delivered").
+- **Client Features**:
+  - Parcel Creation Wizard.
+  - Home Page with Service Overview.
 
-### 📊 Manager Dashboard
-- **Shipment Management**:
-  - **Filter View**: Toggle between "All", "Ready" (Unassigned), and "Assigned" shipments.
-  - **Assignment**: interactive modal to assign eligible Livreurs based on Zone.
-  - **Tracking**: View full history of parcel status changes.
-- **Personnel Management**:
-  - View list of all Delivery Agents.
-  - **Create Agent**: Modal form to register new Livreurs with auto-assigned zones.
+### 🛠️ Setup & Installation
+1.  **Navigate to Directory**: `cd SmartlogiV2_FrontEnd`
+2.  **Install Dependencies**: `npm install`
+3.  **Run Development Server**: `ng serve` (http://localhost:4200/)
 
-### 🚚 Livreur (Courier) Dashboard
-- **Task Management**: View assigned parcels ("To Collect", "To Deliver").
-- **Status Updates**: Update parcel status (e.g., "Picked Up", "Delivered", "Returned to Stock") with comments.
-- **Notifications**: Real-time alerts for new assignments.
-- **History**: View past deliveries.
+---
 
-### 📦 Client/Public Features
-- **Home Page**: Modern landing page with service overview.
-- **Parcel Creation**: Step-by-step wizard for clients to create new shipment requests.
+## ⚛️ SmartLogi V2 - React Frontend (`SmartlogiV2_FrontReactTs`)
 
-## 🛠️ Setup & Installation
+This is the modern, high-performance React implementation of the frontend, built with TypeScript and Vite for speed and scalability.
 
-1.  **Prerequisites**: Node.js (v16+) and npm.
-2.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-3.  **Run Development Server**:
-    ```bash
-    ng serve
-    ```
-    Navigate to `http://localhost:4200/`.
+### 🚀 Technology Stack
+- **Framework**: React 18+
+- **Language**: TypeScript (TSX)
+- **Build Tool**: Vite
+- **Styling**: TailwindCSS (v4)
+- **State Management**: Redux Toolkit (Centralized store for Auth, Colis, Livreur)
+- **Routing**: React Router v6 (Protected Routes, Role-based Guards)
+- **Testing**: Vitest + React Testing Library
+- **Containerization**: Docker + Nginx
 
-## 🔄 Recent Updates & Workflow Improvements
+### ✨ Key Features
+- **Authentication**:
+  - JWT Authentication with Redux persistence.
+  - Role-Based Access Control (RBAC) ensuring secure routing.
+- **Dashboards**:
+  - **Client**: Track parcels, request new shipments.
+  - **Manager**: comprehensive analytics, driver management, and mission assignment.
+  - **Driver (Livreur)**: Mobile-first dashboard to view missions, update statuses, and check history.
+- **Modern UI/UX**:
+  - Glassmorphism design elements.
+  - Responsive layouts for all devices.
+  - Real-time feedback and notifications.
 
-- **Assignment Logic**:
-  - **"Ready" State**: Parcels are marked "Ready" when created (`CREE`) or returned to warehouse (`EN_STOCK`).
-  - **Auto-Unassign**: When a Livreur marks a parcel as `EN_STOCK`, they are automatically unassigned, making the parcel available for re-assignment.
-- **Visual Feedback**:
-  - Added "Ready" badges with pulse animation for urgent attention.
-  - Clickable "Assigned Agent" cards in the Manager view.
-- **Data Integrity**:
-  - Fixed Backend-Frontend mapping to ensure `Livreur` details appear correctly in lists.
+### 🛠️ Setup & Installation
+1.  **Navigate to Directory**: `cd SmartlogiV2_FrontReactTs`
+2.  **Install Dependencies**: `npm install`
+3.  **Run Development Server**: `npm run dev` (http://localhost:5173/)
+4.  **Run Tests**: `npm test`
 
-## 📂 Project Structure
+### 🐳 Docker Usage
+To run the React frontend with the Backend using Docker Compose:
+```bash
+cd SmartlogiV2_BackEnd
+docker-compose up --build
+```
+This will start:
+- **Backend API**: http://localhost:8081
+- **React Frontend**: http://localhost (Served via Nginx)
+- **PostgreSQL**: Port 5432
 
-- `src/app/Modules`: Contains feature modules (Auth, Dashboard, Home).
-- `src/app/Core`: Singleton services (AuthService, ColisService), Guards, and Interceptors.
-- `src/app/Shared`: Reusable components (Navbar, Footer, Loaders).
+---
+
+## ☕ SmartLogi V2 - Backend (`SmartlogiV2_BackEnd`)
+
+The core API powering both frontends.
+
+### 🚀 Technology Stack
+- **Framework**: Spring Boot 3
+- **Database**: PostgreSQL
+- **Security**: Spring Security + JWT
+- **Build Tool**: Maven
+
+### 🛠️ Setup
+1.  **Configure Database**: Ensure PostgreSQL is running and credentials in `application.properties` match.
+2.  **Run Application**: `mvn spring-boot:run`
