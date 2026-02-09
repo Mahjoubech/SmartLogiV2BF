@@ -335,7 +335,9 @@ const ManagerDashboard = () => {
                                     </select>
                                 ) : (
                                     <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-bold border border-red-100">
-                                        Aucun livreur disponible dans {selectedColis.zone?.nom || 'cette zone'}.
+                                        Aucun livreur disponible dans la zone 
+                                        <span className="text-red-800 mx-1">{selectedColis.statut === 'CREE' ? (selectedColis.zoneOrigine?.nom || selectedColis.codePostalOrigine) : selectedColis.zone?.nom}</span>.
+                                        Veuillez assigner un livreur à cette zone.
                                     </div>
                                 )}
                             </div>

@@ -10,7 +10,7 @@ import {
     fetchAllRoles,
     fetchAllPermissions
 } from '../adminSlice';
-import type { RoleData, Permission } from '../adminSlice';
+import type { RoleData } from '../adminSlice';
 
 const RolesPermissions: React.FC = () => {
     const dispatch = useAppDispatch();

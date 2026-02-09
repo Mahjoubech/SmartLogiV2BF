@@ -14,6 +14,7 @@ export interface Colis {
     expediteur: { id: string; nom: string; prenom: string };
     destinataire: { id: string; nom: string; prenom: string; adresse: string; telephone: string };
     zone: { id: string; nom: string };
+    zoneOrigine?: { id: string; nom: string; ville?: string; codePostal?: string }; // Added optional zoneOrigine
     codePostal: string;
     codePostalOrigine: string;
     description?: string;

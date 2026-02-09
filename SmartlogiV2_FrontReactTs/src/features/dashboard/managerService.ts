@@ -47,7 +47,17 @@ const managerService = {
     // --- Stats ---
     getDashboardStats: async () => {
         const response = await client.get<any>(`${COLIS_URL}/dashboard-stats`);
-        return response.data.stats; // Backend returns { stats: { ... }, zoneBreakdown: { ... } }
+        const statsData = response.data.stats || {};
+        // Default missing keys to 0
+        return {
+            TOTAL: statsData.TOTAL || 0,
+            CREE: statsData.CREE || 0,
+            COLLECTE: statsData.COLLECTE || 0,
+            EN_TRANSIT: statsData.EN_TRANSIT || 0,
+            EN_STOCK: statsData.EN_STOCK || 0,
+            LIVRE: statsData.LIVRE || 0,
+            ANNULE: statsData.ANNULE || 0
+        };
     },
 
     // --- Colis Management ---
