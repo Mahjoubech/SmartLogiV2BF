@@ -22,34 +22,34 @@ export class AuthService {
         private http: HttpClient,
         private config: ApiConfiguration,
     ) {
-        // Initialize from storage (cookies only)
+        
         const savedUser: AuthResponse | null = this.getUserFromStorage();
         this.currentUserSubject = new BehaviorSubject<AuthResponse | null>(savedUser);
         this.currentUser$ = this.currentUserSubject.asObservable();
     }
 
-    // --- Public Getters ---
+    
 
     public get currentUserValue(): AuthResponse | null {
         return this.currentUserSubject.value;
     }
 
     public getToken(): string | null {
-        // 1. Prioritize In-Memory
+        
         const memoryToken = this.currentUserSubject.value?.token;
         if (memoryToken) return memoryToken;
 
-        // 2. Try LocalStorage (if not blocked)
+        
         if (typeof window !== 'undefined') {
             try {
-                // Accessing localStorage itself can throw in some browsers
+                
                 const item = localStorage.getItem(this.tokenKey);
                 if (item) return item;
             } catch (e) {
-                // Ignore SecurityError, proceed to cookie
+                
             }
 
-            // 3. Try Cookie
+            
             const cookieToken = this.getCookie(this.tokenKey);
             if (cookieToken) return cookieToken;
         }
@@ -71,7 +71,7 @@ export class AuthService {
         return requiredRoles.includes(userRole);
     }
 
-    // --- Cookie Management ---
+    
 
     private setCookie(name: string, value: string, days: number): void {
         if (typeof window === 'undefined') return;
@@ -109,13 +109,13 @@ export class AuthService {
         } catch (e) { }
     }
 
-    // --- Session Management ---
+    
 
     public setSession(authResponse: AuthResponse): void {
         console.log('[AuthService] setSession called with:', authResponse);
         if (authResponse && authResponse.token) {
             
-            // A. Try LocalStorage
+            
             try {
                 if (typeof window !== 'undefined') {
                     localStorage.setItem(this.tokenKey, authResponse.token);
@@ -126,7 +126,7 @@ export class AuthService {
                 console.warn('[AuthService] LocalStorage blocked, skipping.');
             }
 
-            // B. Also Try Cookies (Redundancy)
+            
             this.setCookie(this.tokenKey, authResponse.token, 1);
             this.setCookie(this.userKey, JSON.stringify(authResponse), 1);
             
@@ -135,7 +135,7 @@ export class AuthService {
     }
 
     public logout(): void {
-        // Clear LocalStorage
+        
         try {
             if (typeof window !== 'undefined') {
                 localStorage.removeItem(this.tokenKey);
@@ -143,14 +143,14 @@ export class AuthService {
             }
         } catch (e) { }
 
-        // Clear Cookies
+        
         this.deleteCookie(this.tokenKey);
         this.deleteCookie(this.userKey);
 
         this.currentUserSubject.next(null);
     }
 
-    // --- API Calls ---
+    
     
     syncUser(): Observable<AuthResponse> {
         return this.http.get<AuthResponse>(`${this.config.rootUrl}/api/v2/auth/me`).pipe(
@@ -195,18 +195,18 @@ export class AuthService {
         return this.http.post(`${this.config.rootUrl}/api/v2/auth/update-password`, { currentPassword, newPassword }, { responseType: 'text' });
     }
 
-    // --- Helpers ---
+    
 
     private getUserFromStorage(): AuthResponse | null {
         if (typeof window === 'undefined') return null;
 
-        // 1. Try LocalStorage
+        
         try {
             const storedItem = localStorage.getItem(this.userKey);
             if (storedItem) return JSON.parse(storedItem);
         } catch (e) {}
 
-        // 2. Try Cookie
+        
         const cookieUser = this.getCookie(this.userKey);
         if (cookieUser) {
             try {

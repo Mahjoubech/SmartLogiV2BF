@@ -8,14 +8,14 @@ const HomePage: React.FC = () => {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
-    // Check for deep links
+    
     useEffect(() => {
         if (location.pathname === '/login') {
             setIsLoginOpen(true);
         }
     }, [location]);
 
-    // Handle Scroll for Navbar
+    
     useEffect(() => {
         const handleScroll = () => {
              setScrolled(window.scrollY > 50);
@@ -30,7 +30,7 @@ const HomePage: React.FC = () => {
     return (
         <div className="font-sans antialiased text-slate-800 bg-stone-50 selection:bg-orange-200 selection:text-orange-900 overflow-x-hidden relative">
             
-            {/* Navbar */}
+            {}
             <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md h-20' : 'bg-transparent h-24'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
                     <div className="flex justify-between items-center h-full">
@@ -66,9 +66,9 @@ const HomePage: React.FC = () => {
                 </div>
             </nav>
 
-            {/* Hero Section (Paper Kit Style) */}
+            {}
             <section className="relative h-screen min-h-[800px] w-full flex items-center justify-center overflow-hidden">
-                {/* Background Image */}
+                {}
                 <div 
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 transform scale-105"
                     style={{ backgroundImage: "url('/assets/images/hero-bg.png')" }}
@@ -105,7 +105,7 @@ const HomePage: React.FC = () => {
                 </div>
             </section>
 
-            {/* SERVICES SECTION */}
+            {}
             <section id="services" className="py-24 bg-white relative">
                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                      <div className="text-center mb-16">
@@ -132,7 +132,7 @@ const HomePage: React.FC = () => {
                  </div>
             </section>
 
-            {/* TRUCKING & TRACKING SECTION */}
+            {}
             <section id="tracking" className="py-24 bg-slate-900 text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-orange-900/30 via-slate-900 to-slate-900"></div>
                 
@@ -167,7 +167,7 @@ const HomePage: React.FC = () => {
                         </div>
                         
                         <div className="lg:w-1/2 relative">
-                             {/* Abstract Fleet Visual */}
+                             {}
                             <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 border border-white/5 shadow-2xl">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-black/40 p-4 rounded-xl">
@@ -204,7 +204,7 @@ const HomePage: React.FC = () => {
             </section>
 
 
-             {/* LOGIN DRAWER (Slide from Bottom) */}
+             {}
             <div 
                 className={`fixed inset-x-0 bottom-0 z-[60] transform transition-transform duration-500 ease-spring ${isLoginOpen ? 'translate-y-0' : 'translate-y-full'}`}
             >
@@ -224,7 +224,7 @@ const HomePage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Backdrop for Login Drawer */}
+            {}
             {isLoginOpen && (
                 <div 
                     className="fixed inset-0 bg-black/60 z-[55] transition-opacity" 

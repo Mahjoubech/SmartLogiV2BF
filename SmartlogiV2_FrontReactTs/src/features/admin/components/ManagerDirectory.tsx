@@ -7,18 +7,18 @@ const ManagerDirectory: React.FC = () => {
     const dispatch = useAppDispatch();
     const { managers } = useAppSelector(state => state.admin);
     
-    // Modal State
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null);
     
-    // Form State
+    
     const [formData, setFormData] = useState<ManagerData>({
         nom: '',
         prenom: '',
         email: '',
         telephone: '',
-        password: '' // Only used for create
+        password: '' 
     });
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -40,7 +40,7 @@ const ManagerDirectory: React.FC = () => {
             prenom: manager.prenom,
             email: manager.email,
             telephone: manager.telephone || '',
-            password: '' // Don't show password
+            password: '' 
         });
         setConfirmPassword('');
         setPasswordError(null);
@@ -51,7 +51,7 @@ const ManagerDirectory: React.FC = () => {
         e.preventDefault();
         setPasswordError(null);
 
-        // Password Validation
+        
         if (!isEditing || formData.password) {
             if (formData.password !== confirmPassword) {
                 setPasswordError("Passwords do not match");
@@ -64,7 +64,7 @@ const ManagerDirectory: React.FC = () => {
         }
         
         if (isEditing && selectedManagerId) {
-            // Update
+            
             const updateData: Partial<ManagerData> = {
                 nom: formData.nom,
                 prenom: formData.prenom,
@@ -77,12 +77,12 @@ const ManagerDirectory: React.FC = () => {
             
             await dispatch(updateManager({ id: selectedManagerId, data: updateData }));
         } else {
-            // Create
+            
             await dispatch(createManager(formData));
         }
-        // Only close if successful? For now close immediately or check action result if needed, 
-        // but typically Redux action doesn't return success boolean easily without unwrap.
-        // We'll close for now.
+        
+        
+        
         setIsModalOpen(false);
     };
 
@@ -147,7 +147,7 @@ const ManagerDirectory: React.FC = () => {
                 ))}
             </div>
 
-            {/* Modal */}
+            {}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn" onClick={() => setIsModalOpen(false)}>
                     <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>

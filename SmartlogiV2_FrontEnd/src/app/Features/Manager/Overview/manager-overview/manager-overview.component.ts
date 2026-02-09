@@ -83,7 +83,7 @@ export class ManagerOverviewComponent implements OnInit, AfterViewInit, OnDestro
 
       this.alerts = [];
       
-      // Critical Priority / Late
+      
       const critical = parcels.filter(p => p.priorite === 'URGENT' || p.prioriteStatus === 'URGENT');
       critical.slice(0, 2).forEach(p => {
           this.alerts.push({
@@ -93,7 +93,7 @@ export class ManagerOverviewComponent implements OnInit, AfterViewInit, OnDestro
           });
       });
 
-      // Unassigned but New
+      
       const unassigned = parcels.filter(p => !p.livreur && (p.status === 'CREE' || p.status === 'EN_STOCK'));
       if (unassigned.length > 0) {
           this.alerts.push({

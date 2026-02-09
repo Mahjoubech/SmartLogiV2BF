@@ -19,7 +19,7 @@ const StaffLoginPage: React.FC = () => {
         const result = await dispatch(loginUser({ email, password }));
         
         if (loginUser.fulfilled.match(result)) {
-            // Role-based redirect
+            
             if (role === 'MANAGER') navigate('/manager-dashboard');
             else navigate('/livreur-dashboard');
         }
@@ -27,7 +27,7 @@ const StaffLoginPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex bg-stone-50 overflow-hidden font-sans">
-             {/* Left Brand Panel - Staff Variant */}
+             {}
              <div className="hidden lg:flex lg:w-1/2 bg-slate-900 relative justify-center items-center overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-orange-900/50 to-transparent opacity-60"></div>
                 
@@ -42,7 +42,7 @@ const StaffLoginPage: React.FC = () => {
                 </div>
             </div>
 
-             {/* Right Form Panel */}
+             {}
              <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
                 <div className="w-full max-w-md">
                     <div className="text-center mb-10">
@@ -57,7 +57,7 @@ const StaffLoginPage: React.FC = () => {
                         </div>
                     )}
 
-                    {/* Role Selector */}
+                    {}
                     <div className="grid grid-cols-2 gap-2 p-1 bg-stone-200 rounded-xl mb-8">
                         <button 
                             className={`py-2 text-sm font-bold rounded-lg transition-all ${role === 'MANAGER' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}

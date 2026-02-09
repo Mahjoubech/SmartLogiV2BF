@@ -76,7 +76,7 @@ h2 {
 
 label {
     display: block;
-    color: #e2e8f0; /* Lighter text for better contrast */
+    color: #e2e8f0; 
     font-size: 0.85rem;
     font-weight: 500;
     margin-bottom: 0.5rem;
@@ -89,9 +89,9 @@ input {
     border-radius: 12px;
     padding: 0.875rem 1rem;
     color: #fff;
-    font-size: 1.5rem; /* Larger font for code */
-    text-align: center; /* Center the code */
-    letter-spacing: 0.5em; /* Space out characters */
+    font-size: 1.5rem; 
+    text-align: center; 
+    letter-spacing: 0.5em; 
     transition: all 0.2s;
 }
 
@@ -166,7 +166,7 @@ input:focus {
     color: #fff;
 }
 
-/* EXPLICT TEXT COLOR OVERRIDES */
+
 input, .form-input {
     color: #ffffff !important;
 }

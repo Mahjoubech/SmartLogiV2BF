@@ -20,10 +20,10 @@ export class ManagerLayoutComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Correctly accessing the property from AuthService
+    
     this.currentUser = this.authService.currentUserValue;
     
-    // Calculate token expiration
+    
     const expiresAt = localStorage.getItem('expires_at');
     if (expiresAt) {
       this.tokenExpiration = new Date(JSON.parse(expiresAt) * 1000);

@@ -1,4 +1,4 @@
-/* Mission Control Core Design System */
+
 :host {
     display: block;
     background-color: #010409;
@@ -63,7 +63,7 @@
     color: #484f58;
 }
 
-/* Intelligence Grid */
+
 .masonry-grid {
     column-count: 1;
     column-gap: 24px;
@@ -168,7 +168,7 @@
     border-style: dashed;
 }
 
-/* Footer Section */
+
 .footer-mission {
     padding: 40px 0;
     border-top: 1px solid #30363d;

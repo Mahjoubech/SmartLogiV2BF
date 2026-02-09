@@ -19,14 +19,14 @@ const StatCard = ({ title, value, icon, color, gradient }: any) => (
 const AdminOverview: React.FC = () => {
     const { users, managers } = useAppSelector(state => state.admin);
     
-    // Stats Calculation
+    
     const totalUsers = users.totalElements || users.data.length;
     const loadedUsers = users.data;
     const loadedManagers = managers.data;
     
     const clientsCount = loadedUsers.filter(u => u.role?.name === 'CLIENT').length;
     
-    // Calculate percentages
+    
     const sampleSize = loadedUsers.length || 1;
     const clientPct = Math.round((clientsCount / sampleSize) * 100);
     
@@ -36,7 +36,7 @@ const AdminOverview: React.FC = () => {
 
     return (
         <div className="space-y-8 animate-fadeIn pb-10">
-            {/* Welcome Banner */}
+            {}
             <div className="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 p-8 shadow-2xl shadow-slate-900/10">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-orange-500/20 to-purple-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 <div className="relative z-10 flex justify-between items-center">
@@ -50,7 +50,7 @@ const AdminOverview: React.FC = () => {
                 </div>
             </div>
 
-            {/* Key Metrics */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard 
                     title="Total Users" 
@@ -82,12 +82,12 @@ const AdminOverview: React.FC = () => {
                 />
             </div>
 
-            {/* Charts Section - Enhanced */}
+            {}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1 bg-white border border-slate-100 rounded-3xl p-8 shadow-xl shadow-slate-200/40 relative overflow-hidden">
                     <h3 className="text-xl font-bold text-slate-900 mb-8 relative z-10">User Distribution</h3>
                     <div className="flex flex-col items-center justify-center relative z-10">
-                         {/* CSS Doughnut */}
+                         {}
                          <div className="relative w-56 h-56 rounded-full shadow-2xl shadow-orange-500/10 mb-8 transform hover:scale-105 transition-transform duration-500" 
                               style={{ 
                                   background: `conic-gradient(

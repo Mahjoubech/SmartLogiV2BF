@@ -14,23 +14,23 @@ import { finalize } from 'rxjs';
 })
 export class ParcelListComponent implements OnInit {
   
-  // Filters
+  
   searchTerm: string = '';
   selectedStatus: string = '';
   selectedZone: string = '';
   selectedPriority: string = '';
   
-  // Pagination
+  
   currentPage: number = 0;
   pageSize: number = 10;
   totalElements: number = 0;
   totalPages: number = 0;
   
-  // Data
+  
   parcels: any[] = [];
   isLoading = false;
   
-  // Options (Adjusted to match backend expected values)
+  
   statuses = ['CREE', 'COLLECTE', 'EN_STOCK', 'EN_TRANSIT', 'LIVRE', 'ANNULE'];
   zones: any[] = [];
   priorities = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
@@ -81,7 +81,7 @@ export class ParcelListComponent implements OnInit {
   }
 
   applyFilters() {
-      // Server-side filtering logic could be implemented here
+      
   }
 
   clearFilters() {
@@ -105,7 +105,7 @@ export class ParcelListComponent implements OnInit {
       }
   }
 
-  // Action Logic
+  
   isDetailModalOpen = false;
   selectedParcel: any = null;
   parcelHistory: any[] = [];
@@ -119,13 +119,13 @@ export class ParcelListComponent implements OnInit {
 
   editParcel(colis: any) {
       console.log('Edit colis triggered', colis);
-      // Logic for editing a colis (e.g., navigation to edit form)
+      
   }
 
   deleteParcel(colis: any) {
       if (confirm(`Voulez-vous vraiment supprimer le colis #${colis.id?.substring(0,8).toUpperCase()}?`)) {
           console.log('Delete colis triggered', colis);
-          // Backend call for deletion would go here
+          
       }
   }
 

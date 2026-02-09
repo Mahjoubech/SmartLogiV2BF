@@ -171,7 +171,7 @@ export class CreateColisWizardComponent implements OnInit {
       nom: ['', Validators.required],
       categorie: ['', Validators.required],
       quantite: [1, [Validators.required, Validators.min(1)]],
-      poids: [0.5, [Validators.required, Validators.min(0.5)]], // Enforcing min 0.5kg
+      poids: [0.5, [Validators.required, Validators.min(0.5)]], 
       prix: [1.0, [Validators.required, Validators.min(0)]]
     });
     this.produits.push(productForm);
@@ -230,14 +230,14 @@ export class CreateColisWizardComponent implements OnInit {
       await this.colisService.createColis(request).toPromise();
       this.completed.emit();
     } catch (err: any) {
-      // Improve error message display
+      
       let msg = 'Failed to create shipment. Please try again.';
       if (err.error) {
         if (typeof err.error === 'string') {
           msg = err.error;
         } else if (err.error.message) {
           msg = err.error.message;
-        } else if (err.error.errors) { // Spring validation errors usually come in 'errors' list or 'fieldErrors'
+        } else if (err.error.errors) { 
           msg = JSON.stringify(err.error.errors || err.error);
         }
       }

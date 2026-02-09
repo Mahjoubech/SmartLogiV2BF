@@ -1,4 +1,4 @@
-/* Command Center Gateway Design System */
+
 .login-page-container {
     min-height: 100vh;
     width: 100%;
@@ -194,7 +194,7 @@
     font-weight: 600;
 }
 
-/* Register Specific Grid */
+
 .grid { display: grid; gap: 16px; }
 .grid-cols-2 { grid-template-columns: 1fr 1fr; }
 
@@ -202,7 +202,7 @@
     .grid-cols-2 { grid-template-columns: 1fr; }
 }
 
-/* EXPLICT TEXT COLOR OVERRIDES */
+
 .login-card, .login-title, .form-input, .submit-btn {
     color: #f0f6fc !important;
 }

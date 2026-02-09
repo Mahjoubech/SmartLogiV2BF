@@ -1,7 +1,7 @@
 <div class="flex h-screen bg-slate-950 text-white overflow-hidden">
-  <!-- SIDEBAR -->
+  
   <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
-    <!-- Logo Area -->
+    
     <div class="p-6 border-b border-slate-800">
       <h1 class="text-2xl font-black tracking-tighter">
         SMART<span class="text-cyan-500">LOGI</span>
@@ -12,7 +12,7 @@
       </h1>
     </div>
 
-    <!-- Navigation -->
+    
     <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
       <button
         (click)="activeTab = 'stats'"
@@ -121,7 +121,7 @@
       </button>
     </nav>
 
-    <!-- User & Logout -->
+    
     <div class="p-4 border-t border-slate-800">
       <button
         (click)="logout()"
@@ -145,20 +145,20 @@
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  
   <main class="flex-1 flex flex-col overflow-hidden bg-slate-950">
-    <!-- Topbar -->
+    
     <header
       class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8"
     >
-      <!-- Left: Breadcrumb/Title -->
+      
       <div class="flex items-center gap-4">
         <h2 class="text-xl font-bold text-white capitalize">{{ activeTab }}</h2>
       </div>
 
-      <!-- Right: Profile & Security -->
+      
       <div class="flex items-center gap-6">
-        <!-- Token Info -->
+        
         <div
           class="hidden md:flex flex-col items-end mr-4 border-r border-slate-800 pr-6"
         >
@@ -171,7 +171,7 @@
           }}</span>
         </div>
 
-        <!-- Admin Profile -->
+        
         <div class="flex items-center gap-3">
           <div class="text-right hidden sm:block">
             <div class="text-sm font-bold text-white">
@@ -193,11 +193,11 @@
       </div>
     </header>
     <div class="flex-1 overflow-y-auto p-8">
-      <!-- STATS OVERVIEW -->
+      
       <div *ngIf="activeTab === 'stats'" class="space-y-6">
         <h2 class="text-3xl font-black text-white mb-6">Overview</h2>
 
-        <!-- Key Metrics -->
+        
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
             <div class="text-slate-400 text-xs font-bold uppercase mb-2">
@@ -239,7 +239,7 @@
           </div>
         </div>
 
-        <!-- Charts Section -->
+        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
             <h3 class="text-lg font-bold text-white mb-6">User Distribution</h3>
@@ -247,7 +247,7 @@
               <canvas id="userChart"></canvas>
             </div>
           </div>
-          <!-- Placeholder for future chart -->
+          
           <div
             class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-center items-center text-slate-500"
           >
@@ -271,11 +271,11 @@
         </div>
       </div>
 
-      <!-- CLIENTS TAB -->
+      
       <div *ngIf="activeTab === 'clients'" class="space-y-6">
         <div class="flex justify-between items-center">
           <h2 class="text-3xl font-black text-white">Clients Directory</h2>
-          <!-- Search placeholder -->
+          
           <div class="relative">
             <input
               type="text"
@@ -411,7 +411,7 @@
         </div>
       </div>
 
-      <!-- MANAGERS TAB -->
+      
       <div *ngIf="activeTab === 'managers'" class="space-y-6">
         <div class="flex justify-between items-center">
           <h2 class="text-3xl font-black text-white">Managers Directory</h2>
@@ -515,7 +515,7 @@
         </div>
       </div>
 
-      <!-- ROLES & PERMISSIONS TAB -->
+      
       <div *ngIf="activeTab === 'roles'" class="space-y-6 h-full flex flex-col">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-3xl font-black text-white">
@@ -541,7 +541,7 @@
           </div>
         </div>
 
-        <!-- PERMISSIONS LIBRARY SUB-TAB -->
+        
         <div
           *ngIf="activeSubTab === 'permissions'"
           class="flex-1 overflow-hidden flex flex-col"
@@ -600,12 +600,12 @@
           </div>
         </div>
 
-        <!-- ROLES SUB-TAB -->
+        
         <div
           *ngIf="activeSubTab === 'roles'"
           class="flex flex-1 gap-6 overflow-hidden"
         >
-          <!-- Roles List Sidebar -->
+          
           <div
             class="w-1/3 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col"
           >
@@ -658,7 +658,7 @@
             </div>
           </div>
 
-          <!-- Permissions Editor (Assigned Table) -->
+          
           <div
             class="w-2/3 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col"
           >
@@ -759,7 +759,7 @@
     </div>
   </main>
 
-  <!-- Manager Modal -->
+  
   <div
     *ngIf="isManagerModalOpen"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"

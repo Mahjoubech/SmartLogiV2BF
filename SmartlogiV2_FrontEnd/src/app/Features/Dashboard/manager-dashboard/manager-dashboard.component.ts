@@ -15,26 +15,26 @@ import { ZoneService } from '../../../Core/services/zone.service';
     styleUrl: './manager-dashboard.component.css'
 })
 export class ManagerDashboardComponent implements OnInit {
-    // Tabs
+    
     activeTab: 'shipments' | 'personnel' = 'shipments';
 
-    // Colis Data
+    
     colisList: any[] = [];
     selectedColis: any | null = null;
     eligibleLivreurs: any[] = [];
 
-    // Livreur Data
+    
     livreurList: any[] = [];
     zoneList: any[] = [];
     isLivreurModalOpen = false;
     livreurForm: FormGroup;
 
-    // Loading States
+    
     isLoading = false;
     isAssignmentLoading = false;
     isLivreurActionLoading = false;
 
-    // Pagination
+    
     currentPage = 0;
     pageSize = 10;
     totalPages = 0;
@@ -78,7 +78,7 @@ export class ManagerDashboardComponent implements OnInit {
         }
     }
 
-    // Colis Logic
+    
     filterMode: 'ALL' | 'AVAILABLE' | 'ASSIGNED' = 'ALL';
     dashboardStats: any = {
         total: 0,
@@ -89,14 +89,14 @@ export class ManagerDashboardComponent implements OnInit {
 
     setFilterMode(mode: 'ALL' | 'AVAILABLE' | 'ASSIGNED') {
         this.filterMode = mode;
-        this.currentPage = 0; // Reset page
+        this.currentPage = 0; 
         this.loadColis();
     }
 
     loadStats() {
         this.colisService.getDashboardStats().subscribe({
             next: (data) => {
-                // Map backend status to our UI keys
+                
                 this.dashboardStats = {
                     total: data.TOTAL || 0,
                     pending: (data.CREE || 0) + (data.COLLECTE || 0),
@@ -138,9 +138,9 @@ export class ManagerDashboardComponent implements OnInit {
         this.eligibleLivreurs = [];
         this.isAssignmentLoading = true;
 
-        // Convert status if needed, assuming backend returns 'CREE', 'COLLECTE', etc.
-        // We allow assignment mainly if status is CREE or maybe COLLECTE unassigned?
-        // Logic: fetch eligible livreurs
+        
+        
+        
         this.colisService.getEligibleLivreurs(colis.id).subscribe({
             next: (livreurs) => {
                 this.eligibleLivreurs = livreurs;
@@ -161,8 +161,8 @@ export class ManagerDashboardComponent implements OnInit {
         this.colisService.assignLivreur(this.selectedColis.id, livreurId).subscribe({
             next: () => {
                 alert('Livreur assigned successfully');
-                this.selectedColis = null; // Close modal/panel
-                this.loadColis(); // Refresh list
+                this.selectedColis = null; 
+                this.loadColis(); 
                 this.isAssignmentLoading = false;
             },
             error: (err) => {
@@ -178,7 +178,7 @@ export class ManagerDashboardComponent implements OnInit {
         this.eligibleLivreurs = [];
     }
 
-    // --- Livreur Logic ---
+    
     loadLivreurs() {
         this.isLoading = true;
         this.livreurService.getAllLivreurs(this.currentPage, this.pageSize).subscribe({
@@ -247,7 +247,7 @@ export class ManagerDashboardComponent implements OnInit {
         });
     }
 
-    // --- Tracking Logic ---
+    
     isTrackingModalOpen = false;
     trackingHistory: any[] = [];
     trackingColisId: string = '';
@@ -259,7 +259,7 @@ export class ManagerDashboardComponent implements OnInit {
 
         this.colisService.getColisHistory(colis.id).subscribe({
             next: (data: any) => {
-                // Assuming data is Page or List. Endpoint returns Page<HistoriqueLivraisonResponse>
+                
                 this.trackingHistory = data.content ? data.content : data;
             },
             error: (err) => console.error('Error loading history', err)
@@ -271,7 +271,7 @@ export class ManagerDashboardComponent implements OnInit {
         this.trackingHistory = [];
     }
 
-    // --- Helpers ---
+    
     getPrioriteClass(priorite: string): string {
         switch (priorite) {
             case 'URGENT': return 'text-red-500 font-bold';

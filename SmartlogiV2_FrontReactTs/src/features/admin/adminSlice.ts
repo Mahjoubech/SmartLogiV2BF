@@ -73,7 +73,7 @@ const initialState: AdminState = {
   },
 };
 
-// Async Thunks
+
 
 export const fetchAllParcels = createAsyncThunk(
   'admin/fetchAllParcels',
@@ -177,7 +177,7 @@ export const fetchAllRoles = createAsyncThunk(
   }
 );
 
-// Role Thunks
+
 export const createRole = createAsyncThunk(
   'admin/createRole',
   async (name: string, { dispatch, rejectWithValue }) => {
@@ -246,7 +246,7 @@ export const assignPermission = createAsyncThunk(
   async ({ roleId, permissionId }: { roleId: string; permissionId: string }, { dispatch, rejectWithValue }) => {
     try {
       await adminService.assignPermission(roleId, permissionId);
-      dispatch(fetchAllRoles()); // Refresh roles to see new permissions
+      dispatch(fetchAllRoles()); 
       return;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to assign permission');
@@ -267,14 +267,14 @@ export const unassignPermission = createAsyncThunk(
   }
 );
 
-// Slice
+
 
 const adminSlice = createSlice({
   name: 'admin',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Users
+    
     builder
       .addCase(fetchAllUsers.pending, (state) => {
         state.users.loading = true;
@@ -291,19 +291,19 @@ const adminSlice = createSlice({
         state.users.error = action.payload as string;
       });
 
-    // Block/Unblock Optimistic Update
+    
     builder.addCase(toggleUserBlock.fulfilled, (state, action) => {
       const user = state.users.data.find(u => u.id === action.payload.id);
       if (user) {
-        // Assuming 'enabled' handles the blocked/unblocked state, usually backend sets 'accountNonLocked'
-        // For simplicity, we are just triggering re-fetch usually or we update locally
-        // But backend sends List<User>. Let's rely on re-fetch or assume 'enabled' reflects this if mapped.
-        // Actually, User interface has 'enabled', but blockage is accountNonLocked typically.
-        // Let's just invalidate for now or update a local property if we add it to the interface.
+        
+        
+        
+        
+        
       }
     });
 
-    // Managers
+    
     builder
       .addCase(fetchAllManagers.pending, (state) => {
         state.managers.loading = true;
@@ -320,7 +320,7 @@ const adminSlice = createSlice({
         state.managers.error = action.payload as string;
       })
       
-      // Parcels
+      
       .addCase(fetchAllParcels.pending, (state) => {
         state.parcels.loading = true;
         state.parcels.error = null;
@@ -336,7 +336,7 @@ const adminSlice = createSlice({
         state.parcels.error = action.payload as string;
       });
 
-    // Roles
+    
     builder
       .addCase(fetchAllRoles.pending, (state) => {
         state.roles.loading = true;
@@ -344,7 +344,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchAllRoles.fulfilled, (state, action) => {
         state.roles.loading = false;
-        // The payload is PaginatedResponse<RoleData>, we need the content
+        
         state.roles.data = action.payload.content;
       })
       .addCase(fetchAllRoles.rejected, (state, action) => {
@@ -352,7 +352,7 @@ const adminSlice = createSlice({
         state.roles.error = action.payload as string;
       });
 
-    // Permissions
+    
     builder
       .addCase(fetchAllPermissions.pending, (state) => {
         state.permissions.loading = true;
@@ -360,7 +360,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchAllPermissions.fulfilled, (state, action) => {
         state.permissions.loading = false;
-        // The payload is PaginatedResponse<Permission>, we need the content
+        
         state.permissions.data = action.payload.content;
       })
       .addCase(fetchAllPermissions.rejected, (state, action) => {

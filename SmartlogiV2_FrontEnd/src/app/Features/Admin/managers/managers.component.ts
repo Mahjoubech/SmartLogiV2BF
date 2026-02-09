@@ -19,7 +19,7 @@ export class ManagersComponent implements OnInit {
   currentPage: number = 0;
   pageSize: number = 10;
 
-  // Modal State
+  
   isModalOpen = false;
   isEditing = false;
   selectedManagerId: string | null = null;
@@ -29,7 +29,7 @@ export class ManagersComponent implements OnInit {
       private adminService: AdminService,
       private fb: FormBuilder
   ) {
-      // Initialize Form
+      
       this.managerForm = this.fb.group({
           nom: ['', Validators.required],
           prenom: ['', Validators.required],
@@ -64,14 +64,14 @@ export class ManagersComponent implements OnInit {
     });
   }
 
-  // --- Modal Logic ---
+  
 
   openCreateManagerModal() {
       this.isEditing = false;
       this.selectedManagerId = null;
       this.managerForm.reset();
       
-      // Set Password Validators for Create Mode
+      
       this.managerForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
       this.managerForm.get('confirmPassword')?.setValidators([Validators.required]);
       this.managerForm.updateValueAndValidity();
@@ -90,7 +90,7 @@ export class ManagersComponent implements OnInit {
           telephone: manager.telephone
       });
 
-      // Clear Password Validators for Edit Mode (Optional update)
+      
       this.managerForm.get('password')?.clearValidators();
       this.managerForm.get('password')?.updateValueAndValidity();
       this.managerForm.get('confirmPassword')?.clearValidators();
@@ -111,7 +111,7 @@ export class ManagersComponent implements OnInit {
       
       const formData = this.managerForm.value;
       
-      // Basic Password Match Validation
+      
       if (!this.isEditing && formData.password !== formData.confirmPassword) {
           Swal.fire('Error', 'Passwords do not match', 'error');
           return;
@@ -123,19 +123,19 @@ export class ManagersComponent implements OnInit {
 
       this.isSubmitting = true;
 
-      // Prepare payload
-      // GestionnerRequest expects: nom, prenom, email, telephone, password, confirmPassword
+      
+      
       const payload = { ...formData };
       
-      // Remove role as it is not in GestionnerRequest
-      // If backend requires it, it should be in DTO. Since it's /manager/create, likely implied.
+      
+      
       
       if (this.isEditing && !payload.password) {
-        // Backend DTO requires password @NotBlank. 
-        // If we don't send it, it fails. 
-        // If we create a separate UpdateDTO? No backend change allowed easily.
-        // We might be blocked on Update without password change if backend enforces it.
-        // For CREATE, we definitely send it.
+        
+        
+        
+        
+        
         delete payload.password;
         delete payload.confirmPassword;
       }
@@ -150,7 +150,7 @@ export class ManagersComponent implements OnInit {
               },
               error: (err) => {
                   this.isSubmitting = false;
-                  // If update fails due to password validation, we inform user
+                  
                   Swal.fire('Error', 'Failed to update. Password might be required by server settings.', 'error');
               }
           });
@@ -189,7 +189,7 @@ export class ManagersComponent implements OnInit {
             this.loadManagers();
           },
           error: () => {
-              // Optimistic fix if parsing fails for text
+              
               this.showToast('Manager deleted');
               this.loadManagers();
           } 

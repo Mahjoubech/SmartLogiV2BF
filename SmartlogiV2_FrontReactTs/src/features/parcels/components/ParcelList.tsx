@@ -8,7 +8,7 @@ import { fetchMyParcels, selectAllColis } from '../colisSlice';
 import { selectAuth } from '../../auth/authSlice';
 import Table from '../../../components/ui/Table';
 
-// Parcel interface removed as it was unused and replaced by ParcelRow
+
 
 
 const ParcelList = () => {
@@ -23,9 +23,9 @@ const ParcelList = () => {
         }
     }, [dispatch, user]);
 
-    // Map backend data to table format
+    
     interface ParcelRow {
-        id: string; // id is string from backend usually, or number? slice says string in some places but here it seems to come from p.id which might be string. Let's assume string to match Table T constraint. Wait, p.id usually string in this project.
+        id: string; 
         trackingCode: string;
         recipient: string;
         destination: string;
@@ -42,15 +42,15 @@ const ParcelList = () => {
         date: new Date(p.dateCreation).toLocaleDateString()
     }));
 
-    // Import Column type if possible or just rely on inference with explicit typing
-    // Since Column is not exported from Table.tsx (it is not?), I might need to export it or just use 'any' for column array type if lazy, but best to export it.
-    // Let's check Table.tsx exports. It defines interface Column but doesn't export it? 
-    // Ah, line 87 exports default Table.
-    // I can't import Column interface if it's not exported.
-    // I will export it in Table.tsx in a separate tool call if needed, but for now I can just define the columns array without explicit Column<T>[] annotation and let TS infer, OR define a local type matching it.
-    // Better: Fix Table.tsx to export Column interface.
     
-    // Actually, I'll modify ParcelList to just work.
+    
+    
+    
+    
+    
+    
+    
+    
     
     const columns = [
         { header: 'Tracking Code', accessor: 'trackingCode' as const, className: 'font-mono text-orange-600 font-bold' },
@@ -66,7 +66,7 @@ const ParcelList = () => {
                     'LIVRE': 'bg-green-100 text-green-700 border-green-200',
                     'ANNULE': 'bg-red-100 text-red-700 border-red-200'
                 };
-                // Handle status mapping if needed or just use row.status
+                
                 const statusColor = colors[row.status] || 'bg-gray-100 text-gray-700 border-gray-200';
                 
                 return (

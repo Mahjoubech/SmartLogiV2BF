@@ -11,11 +11,11 @@ const LivreurDashboard = () => {
     const user = useAppSelector(selectUser);
     const { missions, notifications, loading } = useAppSelector(state => state.livreur);
     
-    // Local State
+    
     const [activeTab, setActiveTab] = useState<'MISSIONS' | 'HISTORY' | 'PROFILE' | 'NOTIFICATIONS'>('MISSIONS');
     
-    // Mission Filtering
-    // Active missions are those not delivered or cancelled
+    
+    
     const activeMissions = missions.filter(m => m.statut !== 'LIVRE' && m.statut !== 'ANNULE');
     const historyMissions = missions.filter(m => m.statut === 'LIVRE' || m.statut === 'ANNULE');
 
@@ -48,16 +48,16 @@ const LivreurDashboard = () => {
 
     return (
         <div className="min-h-screen bg-stone-50 text-slate-900 font-sans selection:bg-orange-100 selection:text-orange-900">
-            {/* Top Navigation Bar */}
+            {}
             <nav className="sticky top-0 z-50 bg-slate-900 shadow-xl shadow-slate-900/10">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                    {/* Logo Area */}
+                    {}
                     <div className="flex items-center gap-2">
                          <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center font-black text-white text-lg">S</div>
                          <span className="font-bold text-lg tracking-tight text-white">SmartLogi<span className="text-orange-500">Driver</span></span>
                     </div>
 
-                    {/* Tabs */}
+                    {}
                     <div className="flex bg-slate-800/50 p-1 rounded-xl border border-white/5">
                         <button onClick={() => setActiveTab('MISSIONS')} className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${activeTab === 'MISSIONS' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
                             Missions ({activeMissions.length})
@@ -67,9 +67,9 @@ const LivreurDashboard = () => {
                         </button>
                     </div>
 
-                    {/* Profile & Notifs */}
+                    {}
                     <div className="flex items-center gap-5">
-                        {/* Notification Bell */}
+                        {}
                         <div className="relative cursor-pointer group" onClick={() => setActiveTab('NOTIFICATIONS')}>
                             <div className={`p-2 rounded-full transition-colors ${activeTab === 'NOTIFICATIONS' ? 'bg-slate-800 text-orange-500' : 'text-slate-400 group-hover:text-white group-hover:bg-slate-800'}`}>
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
@@ -79,7 +79,7 @@ const LivreurDashboard = () => {
                             )}
                         </div>
 
-                        {/* Profile Trigger */}
+                        {}
                         <div className="cursor-pointer" onClick={() => setActiveTab('PROFILE')}>
                             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-orange-600 to-orange-400 p-[2px]">
                                 <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-xs uppercase hover:bg-slate-800 transition">
@@ -91,7 +91,7 @@ const LivreurDashboard = () => {
                 </div>
             </nav>
 
-            {/* Main Content */}
+            {}
             <main className="max-w-3xl mx-auto px-4 py-8">
                 {activeTab === 'MISSIONS' && (
                     <div className="space-y-6 animate-fadeIn">
@@ -175,7 +175,7 @@ const LivreurDashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Actions */}
+                                    {}
                                     <div className="grid grid-cols-1 gap-3">
                                         {mission.statut === 'CREE' && (
                                             <button 

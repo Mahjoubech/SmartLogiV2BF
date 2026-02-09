@@ -16,7 +16,7 @@
   background: #334155;
 }
 
-/* Table styling fixes */
+
 table {
   border-spacing: 0;
 }
@@ -33,7 +33,7 @@ tbody tr:last-child {
   border-bottom: none;
 }
 
-/* Pulse for status indicators */
+
 .getStatusColor.animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -48,7 +48,7 @@ tbody tr:last-child {
   }
 }
 
-/* Fade in for history items */
+
 .relative.pl-8 {
   animation: slideInLeft 0.5s ease-out forwards;
 }

@@ -16,7 +16,7 @@ const CreateColisWizard: React.FC<CreateColisWizardProps> = ({ onCompleted, onCa
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Form States
+    
     const [step1Data, setStep1Data] = useState({
         nom: '',
         prenom: '',
@@ -38,7 +38,7 @@ const CreateColisWizard: React.FC<CreateColisWizardProps> = ({ onCompleted, onCa
         { nom: '', categorie: '', quantite: 1, poids: 0.5, prix: 1.0 }
     ]);
 
-    // Handlers
+    
     const handleStep1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
         setStep1Data({ ...step1Data, [e.target.name]: e.target.value });
     };
@@ -64,7 +64,7 @@ const CreateColisWizard: React.FC<CreateColisWizardProps> = ({ onCompleted, onCa
         }
     };
 
-    // Actions
+    
     const handleNextStep = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -74,7 +74,7 @@ const CreateColisWizard: React.FC<CreateColisWizardProps> = ({ onCompleted, onCa
             setCurrentStep(2);
         } catch (err: any) {
             const errorMessage = typeof err === 'string' ? err : 'Erreur lors de l\'enregistrement du destinataire';
-            // If user already exists, we can proceed
+            
             if (errorMessage.toLowerCase().includes('existe') || errorMessage.toLowerCase().includes('utilisé') || errorMessage.toLowerCase().includes('already')) {
                 setCurrentStep(2);
             } else {

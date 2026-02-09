@@ -3,14 +3,14 @@ import { AxiosError } from 'axios';
 import client from '../../api/client';
 import type { RootState } from '../../store/store';
 
-// Types
+
 export interface UserRole {
   id: number;
-  name: string; // 'ADMIN' | 'MANAGER' | 'LIVREUR' | 'CLIENT'
+  name: string; 
 }
 
 export interface User {
-  id: string; // Updated to match backend String UUID
+  id: string; 
   nom: string;
   prenom?: string;
   email: string;
@@ -23,7 +23,7 @@ export interface User {
 export interface AuthResponse {
   token: string;
   refreshToken?: string;
-  id: string; // Added field
+  id: string; 
   role: UserRole;
   nom: string;
   email: string;
@@ -37,7 +37,7 @@ interface AuthState {
   error: string | null;
 }
 
-// Initial State
+
 const initialState: AuthState = {
   user: JSON.parse(localStorage.getItem('user_data') || 'null'),
   token: localStorage.getItem('token'),
@@ -46,7 +46,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Async Thunks
+
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -128,7 +128,7 @@ const authSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    // Login
+    
     builder
         .addCase(loginUser.pending, (state) => {
             state.isLoading = true;
@@ -138,7 +138,7 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = true;
             state.token = action.payload.token;
-            // Normalize role
+            
             const rolePayload = action.payload.role as any;
             const normalizedRole = typeof rolePayload === 'string' 
                 ? { id: 0, name: rolePayload } 
@@ -162,7 +162,7 @@ const authSlice = createSlice({
             state.error = action.payload as string;
         });
 
-    // Register
+    
      builder
         .addCase(registerUser.pending, (state) => {
             state.isLoading = true;
@@ -172,7 +172,7 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = true;
             state.token = action.payload.token;
-             // Normalize role
+             
             const rolePayload = action.payload.role as any;
             const normalizedRole = typeof rolePayload === 'string' 
                 ? { id: 0, name: rolePayload } 
@@ -192,7 +192,7 @@ const authSlice = createSlice({
             state.error = action.payload as string;
         });
         
-    // Verify
+    
     builder
         .addCase(verifyAccount.pending, (state) => {
             state.isLoading = true;
@@ -202,7 +202,7 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = true;
             state.token = action.payload.token;
-             // Normalize role
+             
             const rolePayload = action.payload.role as any;
             const normalizedRole = typeof rolePayload === 'string' 
                 ? { id: 0, name: rolePayload } 
@@ -226,7 +226,7 @@ const authSlice = createSlice({
 
 export const { logout, clearError } = authSlice.actions;
 
-// Selectors
+
 export const selectAuth = (state: RootState) => state.auth;
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated;

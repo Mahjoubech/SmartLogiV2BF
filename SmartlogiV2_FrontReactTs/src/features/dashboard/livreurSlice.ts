@@ -20,7 +20,7 @@ const initialState: LivreurState = {
     currentMission: null,
 };
 
-// Async Thunks
+
 export const fetchMissions = createAsyncThunk(
     'livreur/fetchMissions',
     async (_, { rejectWithValue }) => {
@@ -79,7 +79,7 @@ const livreurSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Missions
+            
             .addCase(fetchMissions.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -92,16 +92,16 @@ const livreurSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;
             })
-            // Update Mission
+            
             .addCase(updateMission.fulfilled, (state, action) => {
                 const updated = action.payload;
                 state.missions = state.missions.map(m => m.id === updated.id ? updated : m);
-                // Also update current mission if set
+                
                 if (state.currentMission && state.currentMission.id === updated.id) {
                     state.currentMission = updated;
                 }
             })
-            // Notifications
+            
             .addCase(fetchNotifications.fulfilled, (state, action) => {
                 state.notifications = action.payload;
             })

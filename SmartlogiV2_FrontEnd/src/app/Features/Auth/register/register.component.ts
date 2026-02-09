@@ -57,7 +57,7 @@ export class RegisterComponent {
                     console.error('Registration failed:', err);
                     this.isLoading = false;
 
-                    // Extract cleaner error message
+                    
                     if (err.error && typeof err.error === 'string') {
                         try {
                             const parse = JSON.parse(err.error);

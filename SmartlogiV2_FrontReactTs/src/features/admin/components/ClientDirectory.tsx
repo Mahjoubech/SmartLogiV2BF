@@ -10,7 +10,7 @@ const ClientDirectory: React.FC = () => {
 
     const clients = users.data.filter(u => u.role?.name === 'CLIENT');
     
-    // Filter
+    
     const filteredClients = clients.filter(c => 
         c.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
         c.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

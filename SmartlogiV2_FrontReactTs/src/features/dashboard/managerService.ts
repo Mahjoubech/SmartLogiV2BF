@@ -44,11 +44,11 @@ export interface Zone {
 }
 
 const managerService = {
-    // --- Stats ---
+    
     getDashboardStats: async () => {
         const response = await client.get<any>(`${COLIS_URL}/dashboard-stats`);
         const statsData = response.data.stats || {};
-        // Default missing keys to 0
+        
         return {
             TOTAL: statsData.TOTAL || 0,
             CREE: statsData.CREE || 0,
@@ -60,7 +60,7 @@ const managerService = {
         };
     },
 
-    // --- Colis Management ---
+    
     getAllColis: async (page = 0, size = 10) => {
         const response = await client.get<PaginatedResponse<Colis>>(`${COLIS_URL}`, { params: { page, size } });
         return response.data;
@@ -88,8 +88,8 @@ const managerService = {
         return response.data;
     },
 
-    // --- Livreur Management ---
-    // Assuming /api/v2/livreur is the endpoint based on standard REST patterns in this project
+    
+    
     getAllLivreurs: async (page = 0, size = 10) => {
         const response = await client.get<PaginatedResponse<Livreur>>(`${LIVREUR_URL}`, { params: { page, size } });
         return response.data;
@@ -105,7 +105,7 @@ const managerService = {
         return response.data;
     },
 
-    // --- Zone Management ---
+    
     getAllZones: async () => {
         const response = await client.get<Zone[]>(`${ZONE_URL}`);
         return response.data;

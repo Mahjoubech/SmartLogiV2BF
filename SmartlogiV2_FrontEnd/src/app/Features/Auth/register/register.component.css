@@ -1,4 +1,4 @@
-/* Reuse the same styles as login for consistency */
+
 @import '../login/login.component.css';
 
 .grid {
@@ -37,5 +37,5 @@
 }
 
 .login-card {
-    max-width: 600px; /* Slightly wider for register */
+    max-width: 600px; 
 }

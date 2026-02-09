@@ -24,7 +24,7 @@ export class AdminService {
     return this.http.put(`${this.apiUrl}/users/unblock/${id}`, {}, { responseType: 'text' });
   }
 
-  // Manager CRUD
+  
   getAllManagers(page: number = 0, size: number = 10): Observable<any> {
     const params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<any>(`${this.apiUrl}/manager/all`, { params });
@@ -42,7 +42,7 @@ export class AdminService {
     return this.http.delete(`${this.apiUrl}/manager/delete/${id}`, { responseType: 'text' });
   }
 
-  // Role Management
+  
   getAllRoles(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/roles/all`);
   }
@@ -59,7 +59,7 @@ export class AdminService {
     return this.http.delete(`${this.apiUrl}/roles/delete/${id}`, { responseType: 'text' });
   }
 
-  // Permission Management
+  
   getAllPermissions(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/permission/all`);
   }

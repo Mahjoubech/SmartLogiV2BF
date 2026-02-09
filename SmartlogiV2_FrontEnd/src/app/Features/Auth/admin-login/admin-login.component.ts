@@ -35,20 +35,20 @@ export class AdminLoginComponent {
 
     const { email, password } = this.loginForm.value;
 
-    // We pass 'ADMIN' as the role just for context if needed, but really we just login with creds
-    // The backend LoginRequest currently takes email/password.
-    // Wait, does LoginRequest take a role? Let's check LoginRequest.java or just assume standard login.
-    // The previous conversation implies standard login.
-    // However, I need to ensure that ONLY admins can proceed from here.
+    
+    
+    
+    
+    
     
     this.authService.login({ email, password }).subscribe({
       next: (response) => {
-        // Check if the user is actually an admin
+        
         const user = this.authService.currentUserValue;
         if (user && user.role?.name === 'ADMIN') {
              this.router.navigate(['/admin-dashboard']);
         } else {
-            // Not an admin, kick them out
+            
             this.authService.logout();
             this.errorMessage = 'ACCESS DENIED: Insufficient privileges.';
             this.isLoading = false;

@@ -3,9 +3,9 @@ import { AxiosError } from 'axios';
 import client from '../../api/client';
 import type { RootState } from '../../store/store';
 
-// Types
+
 export interface Colis {
-    id: string; // Backend uses UUID/String
+    id: string; 
     poids: number;
     statut: 'CREE' | 'COLLECTE' | 'EN_TRANSIT' | 'LIVRE' | 'ANNULE';
     dateCreation: string;
@@ -14,7 +14,7 @@ export interface Colis {
     expediteur: { id: string; nom: string; prenom: string };
     destinataire: { id: string; nom: string; prenom: string; adresse: string; telephone: string };
     zone: { id: string; nom: string };
-    zoneOrigine?: { id: string; nom: string; ville?: string; codePostal?: string }; // Added optional zoneOrigine
+    zoneOrigine?: { id: string; nom: string; ville?: string; codePostal?: string }; 
     codePostal: string;
     codePostalOrigine: string;
     description?: string;
@@ -40,8 +40,8 @@ const initialState: ColisState = {
     totalPages: 0,
 };
 
-// Async Thunks
-// Async Thunks
+
+
 export const fetchMyParcels = createAsyncThunk(
     'colis/fetchMyParcels',
     async ({ userId, page = 0, size = 10, status }: { userId: string, page?: number, size?: number, status?: string[] }, { rejectWithValue }) => {
@@ -63,7 +63,7 @@ export const registerDestinataire = createAsyncThunk(
     'clients/registerDestinataire',
     async (data: any, { rejectWithValue }) => {
         try {
-            // Using v3 as seen in ClientDestinataireController
+            
             const response = await client.post('../v3/clients/register/destinataire', data);
             return response.data;
         } catch (err: unknown) {

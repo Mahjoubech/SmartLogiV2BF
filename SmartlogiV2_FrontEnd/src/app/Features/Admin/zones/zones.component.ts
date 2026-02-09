@@ -28,7 +28,7 @@ export class ZonesComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    // Fetch zones and managers in parallel
+    
     const zonesObs = this.zoneService.getAllZones();
     const managersObs = this.adminService.getAllManagers(0, 100);
 
@@ -82,7 +82,7 @@ export class ZonesComponent implements OnInit {
              console.error('Assignment failed', err);
              const msg = err.error || 'Erreur lors de l\'assignation. Vérifiez que l\'utilisateur a le rôle MANAGER.';
              Swal.fire('Erreur', msg, 'error');
-             // Reset selection
+             
              zone.newManagerId = null;
           }
         });

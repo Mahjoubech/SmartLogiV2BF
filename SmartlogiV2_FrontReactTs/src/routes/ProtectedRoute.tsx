@@ -13,14 +13,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
     const location = useLocation();
 
     if (!isAuthenticated) {
-        // Redirect to login while saving the attempted URL
+        
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     if (allowedRoles && user && !allowedRoles.includes(user.role.name)) {
-        // Role mismatch - Redirect to home or unauthorized page
-        // For now, redirecting to home/dashboard based on role could be better, 
-        // but simplest is just "unauthorized" or back to login.
+        
+        
+        
         return <Navigate to="/unauthorized" replace />;
     }
 

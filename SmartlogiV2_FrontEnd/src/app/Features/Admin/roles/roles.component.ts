@@ -16,9 +16,9 @@ export class RolesComponent implements OnInit {
   permissionsList: any[] = [];
   isLoading: boolean = false;
   
-  // Split View State
+  
   selectedRole: any = null;
-  assignPermissionId: string = ''; // For dropdown model
+  assignPermissionId: string = ''; 
 
   constructor(private adminService: AdminService) {}
 
@@ -31,17 +31,17 @@ export class RolesComponent implements OnInit {
     this.isLoading = true;
     this.adminService.getAllRoles().subscribe({
         next: (res) => {
-             // Handle Page response (backend returns Page<RolesResponse>)
+             
              const roles = res.content || res;
-             // Ensure it is an iterable array
+             
              this.rolesWithPermissions = Array.isArray(roles) ? roles : (roles ? Array.from(roles) : []);
 
-             // If array check fails or its a single object that isnt iterable, fallback to empty
+             
              if (!Array.isArray(this.rolesWithPermissions)) {
                 this.rolesWithPermissions = [];
              }
 
-             // Update selected role ref if exists
+             
              if (this.selectedRole) {
                  const updated = this.rolesWithPermissions.find(r => r.id === this.selectedRole.id);
                  if (updated) this.selectedRole = updated;
@@ -59,7 +59,7 @@ export class RolesComponent implements OnInit {
   loadPermissions() {
       this.adminService.getAllPermissions().subscribe({
           next: (res) => {
-              // Handle Page response
+              
               const perms = res.content || res;
               this.permissionsList = Array.isArray(perms) ? perms : (perms ? Array.from(perms) : []);
 
@@ -91,11 +91,11 @@ export class RolesComponent implements OnInit {
       this.adminService.assignPermission(this.selectedRole.id, this.assignPermissionId).subscribe({
           next: () => {
               this.showToast('Permission assigned');
-              this.loadRolesWithPermissions(); // Will auto-update selectedRole permissions via logic in success
+              this.loadRolesWithPermissions(); 
               this.assignPermissionId = '';
           },
           error: () => {
-              this.showToast('Permission assigned'); // Optimistic
+              this.showToast('Permission assigned'); 
               this.loadRolesWithPermissions();
               this.assignPermissionId = '';
           }
@@ -204,7 +204,7 @@ export class RolesComponent implements OnInit {
        });
   }
   
-  // Permission Management Modal
+  
   isManagePermissionsModalOpen = false;
 
   openManagePermissionsModal() {
@@ -229,11 +229,11 @@ export class RolesComponent implements OnInit {
                   next: () => {
                       this.showToast('Permission deleted');
                       this.loadPermissions();
-                      // Also reload roles to reflect removals
+                      
                       this.loadRolesWithPermissions();
                   },
                   error: () => {
-                      this.showToast('Permission deleted'); // Optimistic
+                      this.showToast('Permission deleted'); 
                       this.loadPermissions();
                       this.loadRolesWithPermissions();
                   }

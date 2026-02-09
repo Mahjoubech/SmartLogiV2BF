@@ -33,7 +33,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, switchToLogin })
         e.preventDefault();
         
         if (formData.password !== formData.confirmPassword) {
-            // Ideally handle with a toast or error state
+            
             return;
         }
 

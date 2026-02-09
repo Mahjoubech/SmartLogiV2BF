@@ -40,7 +40,7 @@ const ClientRegisterPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden font-sans">
-            {/* Cinematic Background */}
+            {}
             <div 
                 className="absolute inset-0 bg-cover bg-center z-0"
                 style={{ backgroundImage: "url('/assets/images/hero-bg.png')" }}
@@ -48,10 +48,10 @@ const ClientRegisterPage: React.FC = () => {
                  <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
             </div>
 
-            {/* Glassmorphism Card */}
+            {}
             <div className="relative z-10 w-full max-w-5xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in-95 duration-500 m-4">
                 
-                {/* Visual Side (Left) */}
+                {}
                 <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-orange-600/90 to-amber-700/90 p-12 flex-col justify-between text-white relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                     <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-orange-400 rounded-full mix-blend-overlay blur-3xl opacity-50"></div>
@@ -80,7 +80,7 @@ const ClientRegisterPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Form Side (Right) */}
+                {}
                 <div className="w-full md:w-7/12 bg-white/95 p-8 md:p-12">
                      <div className="flex justify-between items-center mb-8">
                         <div>

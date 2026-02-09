@@ -53,7 +53,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
     return (
         <div className="bg-white border border-stone-200 rounded-3xl p-8 max-w-4xl w-full shadow-sm relative overflow-hidden flex flex-col md:flex-row gap-8 mx-auto">
              
-             {/* Left Panel: User Info */}
+             {}
              <div className="flex-1">
                 <div className="flex items-center gap-4 mb-8">
                     <div className="w-20 h-20 rounded-full bg-orange-100 border-2 border-orange-200 flex items-center justify-center text-3xl shadow-sm text-orange-600 font-bold uppercase">
@@ -87,7 +87,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
                 </div>
              </div>
 
-             {/* Right Panel: Change Password */}
+             {}
              <div className="flex-1 border-t md:border-t-0 md:border-l border-stone-200 pt-8 md:pt-0 md:pl-8">
                 <h3 className="text-lg font-bold text-slate-900 mb-6">Sécurité</h3>
                 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
-// import { initFlowbite } from 'flowbite';
+
 import { CommonModule } from '@angular/common';
 import { LoadingScreenComponent } from './Shared/components/loading-screen/loading-screen.component';
 import { AuthService } from './Core/services/auth.service';
@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
         this.isLoading = true;
       }
       if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
-        // Keep loader visible for 3 seconds as requested
+        
         setTimeout(() => {
           this.isLoading = false;
         }, 2000);

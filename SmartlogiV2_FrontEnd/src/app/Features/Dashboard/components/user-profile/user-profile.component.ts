@@ -108,7 +108,7 @@ import { AuthResponse } from '../../../../Core/api/models/auth-response';
 export class UserProfileComponent {
   @Input({ required: true }) user!: AuthResponse | null;
   @Output() logout = new EventEmitter<void>();
-  @Output() profileClick = new EventEmitter<void>(); // New event for clicking the profile part
+  @Output() profileClick = new EventEmitter<void>(); 
 
   getInitials(user: AuthResponse): string {
     const first = user.prenom ? user.prenom.charAt(0).toUpperCase() : '';

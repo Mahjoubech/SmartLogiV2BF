@@ -1,7 +1,7 @@
 <div
   class="p-6 md:p-10 min-h-screen bg-slate-950 text-white relative overflow-hidden"
 >
-  <!-- Header -->
+  
   <div
     class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center z-10 relative gap-4"
   >
@@ -13,7 +13,7 @@
     </div>
 
     <div class="flex items-center gap-4">
-      <!-- Tab Navigation -->
+      
       <div class="flex items-center gap-4">
         <div class="flex bg-white/5 p-1 rounded-xl border border-white/10">
           <button
@@ -34,7 +34,7 @@
           </button>
         </div>
 
-        <!-- Shipment Filter (Only visible when shipments tab is active) -->
+        
         <div
           *ngIf="activeTab === 'shipments'"
           class="flex bg-white/5 p-1 rounded-xl border border-white/10"
@@ -80,7 +80,7 @@
         </div>
       </div>
 
-      <!-- User Actions -->
+      
       <div class="flex items-center gap-2 pl-4 border-l border-white/10">
         <button
           title="Profile"
@@ -123,7 +123,7 @@
     </div>
   </div>
 
-  <!-- Stats Widgets -->
+  
   <div
     *ngIf="activeTab === 'shipments'"
     class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
@@ -193,19 +193,19 @@
     </div>
   </div>
 
-  <!-- SHIPMENTS VIEW -->
+  
   <div
     *ngIf="activeTab === 'shipments'"
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 z-10 relative"
   >
-    <!-- Loading State -->
+    
     <div *ngIf="isLoading" class="col-span-full flex justify-center py-20">
       <div
         class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"
       ></div>
     </div>
 
-    <!-- Colis Card -->
+    
     <div
       *ngFor="let colis of colisList"
       (click)="onSelectColis(colis)"
@@ -314,7 +314,7 @@
       </div>
     </div>
 
-    <!-- Empty State -->
+    
     <div
       *ngIf="!isLoading && colisList.length === 0"
       class="col-span-full text-center py-20 text-slate-500"
@@ -323,7 +323,7 @@
     </div>
   </div>
 
-  <!-- PERSONNEL VIEW -->
+  
   <div *ngIf="activeTab === 'personnel'" class="z-10 relative">
     <div class="flex justify-end mb-6">
       <button
@@ -350,14 +350,14 @@
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
     >
-      <!-- Loading State -->
+      
       <div *ngIf="isLoading" class="col-span-full flex justify-center py-20">
         <div
           class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"
         ></div>
       </div>
 
-      <!-- Livreur Card -->
+      
       <div
         *ngFor="let livreur of livreurList"
         class="bg-[#0f172a] border border-white/5 rounded-2xl p-6 relative group hover:border-cyan-500/30 transition-all"
@@ -411,7 +411,7 @@
         </div>
       </div>
 
-      <!-- Empty State -->
+      
       <div
         *ngIf="!isLoading && livreurList.length === 0"
         class="col-span-full text-center py-20 text-slate-500"
@@ -421,18 +421,18 @@
     </div>
   </div>
 
-  <!-- Assignment Panel (Already implemented, kept same) -->
+  
   <div
     *ngIf="selectedColis"
     class="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm"
     (click)="closePanel()"
   >
-    <!-- ... existing content ... -->
+    
     <div
       class="w-full max-w-lg bg-[#050b14] h-full shadow-2xl border-l border-white/10 p-8 flex flex-col no-click"
       (click)="$event.stopPropagation()"
     >
-      <!-- ... -->
+      
       <div
         class="flex justify-between items-center mb-8 border-b border-white/10 pb-6"
       >
@@ -513,7 +513,7 @@
     </div>
   </div>
 
-  <!-- Tracking Modal -->
+  
   <div
     *ngIf="isTrackingModalOpen"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
@@ -573,7 +573,7 @@
     </div>
   </div>
 
-  <!-- Create Livreur Modal -->
+  
   <div
     *ngIf="isLivreurModalOpen"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"

@@ -3,13 +3,13 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import type { User } from '../../auth/authSlice';
 
 const LivreurDirectory: React.FC = () => {
-    const dispatch = useAppDispatch(); // Although not dispatching actions here yet, might need for block/unblock later
+    const dispatch = useAppDispatch(); 
     const { users, parcels } = useAppSelector(state => state.admin);
     const [searchTerm, setSearchTerm] = useState('');
 
     const livreurs = users.data.filter(u => u.role?.name === 'LIVREUR');
     
-    // Filter
+    
     const filteredLivreurs = livreurs.filter(l => 
         l.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
         l.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -48,7 +48,7 @@ const LivreurDirectory: React.FC = () => {
                             <th className="px-6 py-4 text-center">Assigned</th>
                             <th className="px-6 py-4 text-center">Delivered</th>
                             <th className="px-6 py-4">Status</th>
-                            {/* <th className="px-6 py-4 text-right">Actions</th> */}
+                            {}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -67,7 +67,7 @@ const LivreurDirectory: React.FC = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="text-slate-500 font-mono text-xs mb-1">{livreur.email}</div>
-                                        {/* Assuming telephone is not on User interface yet, but might be added */}
+                                        {}
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className="inline-block px-3 py-1 rounded-lg bg-blue-50 text-blue-600 font-bold text-xs border border-blue-100">

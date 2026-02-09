@@ -23,7 +23,7 @@ const RolesPermissions: React.FC = () => {
 
     const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
 
-    // Form States
+    
     const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
     const [newRoleName, setNewRoleName] = useState('');
     
@@ -34,7 +34,7 @@ const RolesPermissions: React.FC = () => {
     const [isAssignOpen, setIsAssignOpen] = useState(false);
     const [selectedPermIdToAssign, setSelectedPermIdToAssign] = useState('');
 
-    // --- Actions ---
+    
 
     const handleCreateRole = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -82,14 +82,14 @@ const RolesPermissions: React.FC = () => {
         }
     };
 
-    // Derived state for display
+    
     const currentRole = roles.data.find(r => r.id === selectedRole?.id) || selectedRole;
     
     const availablePermissions = currentRole ? permissions.data.filter(p => !currentRole.permissions?.some(rp => rp.id === p.id)) : [];
 
     return (
         <div className="space-y-6 animate-fadeIn h-full flex flex-col">
-            {/* Header */}
+            {}
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-black text-slate-900">Roles & Permissions Management</h2>
                 <div className="flex gap-3">
@@ -114,9 +114,9 @@ const RolesPermissions: React.FC = () => {
                 </div>
             </div>
 
-            {/* Content */}
+            {}
             <div className="flex flex-1 gap-6 overflow-hidden h-full">
-                {/* Roles Sidebar */}
+                {}
                 <div className="w-1/3 bg-white border border-slate-200 rounded-2xl flex flex-col h-full shadow-sm">
                     <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-2xl">
                         <h3 className="text-lg font-bold text-slate-900">Roles</h3>
@@ -143,7 +143,7 @@ const RolesPermissions: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Permissions Detail */}
+                {}
                 <div className="w-2/3 bg-white border border-slate-200 rounded-2xl flex flex-col h-full overflow-hidden shadow-sm">
                     {currentRole ? (
                         <>
@@ -199,9 +199,9 @@ const RolesPermissions: React.FC = () => {
                 </div>
             </div>
 
-            {/* Modals */}
+            {}
             
-            {/* Manage Permissions Modal - "The Pop Up" */}
+            {}
             {isManagePermsOpen && (
                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn" onClick={() => setIsManagePermsOpen(false)}>
                     <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl h-[80vh] flex flex-col shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
@@ -248,7 +248,7 @@ const RolesPermissions: React.FC = () => {
                  </div>
             )}
 
-            {/* Create Role Modal */}
+            {}
             {isCreateRoleOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn" onClick={() => setIsCreateRoleOpen(false)}>
                     <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -271,7 +271,7 @@ const RolesPermissions: React.FC = () => {
                 </div>
             )}
 
-            {/* Create Permission Modal */}
+            {}
             {isCreatePermOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn" onClick={() => setIsCreatePermOpen(false)}>
                     <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -294,7 +294,7 @@ const RolesPermissions: React.FC = () => {
                 </div>
             )}
 
-            {/* Assign Permission Modal */}
+            {}
             {isAssignOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn" onClick={() => setIsAssignOpen(false)}>
                     <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-6 shadow-2xl" onClick={e => e.stopPropagation()}>

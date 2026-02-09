@@ -25,7 +25,7 @@ export class StaffLoginComponent {
         this.loginForm = this.fb.group({
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]],
-            role: ['MANAGER', Validators.required] // Default to MANAGER
+            role: ['MANAGER', Validators.required] 
         });
     }
 
@@ -44,10 +44,10 @@ export class StaffLoginComponent {
             next: (res) => {
                 this.isLoading = false;
 
-                // Strict Role Check based on Selection
+                
                 if (res.role?.name !== role) {
                     this.errorMessage = `Access Denied: You are not authorized as a ${role}.`;
-                    // Optional: Logout immediately if we want to rely strictly on this portal
+                    
                     this.authService.logout();
                     return;
                 }
@@ -57,7 +57,7 @@ export class StaffLoginComponent {
                 } else if (res.role?.name === 'LIVREUR') {
                     this.router.navigate(['/livreur-dashboard']);
                 } else {
-                    // Should not happen due to check above, but fallback
+                    
                     this.errorMessage = 'Invalid role configuration.';
                 }
             },

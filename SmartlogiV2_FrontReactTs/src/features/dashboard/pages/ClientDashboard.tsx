@@ -17,25 +17,25 @@ const ClientDashboard = () => {
     const parcels = useAppSelector(selectAllColis);
     const { totalElements, totalPages, isLoading } = useAppSelector(state => state.colis);
     
-    // UI State
+    
     const [activeTab, setActiveTab] = useState<'MANIFEST' | 'NEW_MISSION' | 'STATISTICS' | 'DELIVERED' | 'PROFILE'>('MANIFEST');
     const [searchText, setSearchText] = useState('');
     const [page, setPage] = useState(0);
     const [activeColisId, setActiveColisId] = useState<string | null>(null);
-    const pageSize = 6; // Grid 3x2
+    const pageSize = 6; 
 
-    // State for notifications
+    
     const [lastSeenDate, setLastSeenDate] = useState<Date>(() => {
         const stored = localStorage.getItem('lastHistoryCheck');
         return stored ? new Date(stored) : new Date(0);
     });
-    // This state preserves the cutoff date for highlights properly during the session
+    
     const [highlightCutoff] = useState<Date>(() => {
          const stored = localStorage.getItem('lastHistoryCheck');
          return stored ? new Date(stored) : new Date(0);
     });
     
-    // Calculate latest history date
+    
     const allHistory = parcels.flatMap(p => p.historique || []).map(h => new Date(h.dateChangement));
     const latestHistoryDate = allHistory.length > 0 ? new Date(Math.max(...allHistory.map(d => d.getTime()))) : new Date(0);
     const hasNewHistory = latestHistoryDate.getTime() > lastSeenDate.getTime();
@@ -46,9 +46,9 @@ const ClientDashboard = () => {
             if (activeTab === 'MANIFEST') {
                 statuses = ['CREE', 'COLLECTE', 'EN_TRANSIT', 'EN_STOCK'];
             } else if (activeTab === 'DELIVERED') {
-                statuses = undefined; // Fetch ALL history
+                statuses = undefined; 
             } else if (activeTab === 'STATISTICS') {
-                statuses = undefined; // Fetch ALL for stats
+                statuses = undefined; 
             }
 
             const size = activeTab === 'STATISTICS' ? 100 : pageSize;
@@ -65,14 +65,14 @@ const ClientDashboard = () => {
             localStorage.setItem('lastHistoryCheck', new Date().toISOString());
             setLastSeenDate(new Date()); 
             
-            // Note: highlightCutoff remains at its old value for this render cycle so items stay highlighted.
-            // If we wanted to clear highlights on CLICKING the ITEM, we handle that in the item click.
+            
+            
         }
         setActiveTab(tab);
         setPage(0);
     };
 
-    // ... existing handleLogout ...
+    
     const handleLogout = () => {
         dispatch(logout());
         navigate('/login');
@@ -85,8 +85,8 @@ const ClientDashboard = () => {
         }
     };
 
-    // ... existing filters ...
-    // Filter Logic (Client-side search only)
+    
+    
     const filteredParcels = parcels.filter(p => {
         if (!searchText) return true;
         
@@ -96,15 +96,15 @@ const ClientDashboard = () => {
             p.villeDestination?.toLowerCase().includes(searchLower);
     });
     
-    // ... existing stats ...
+    
     const stats = {
         total: totalElements || parcels.length,
-        delivered: parcels.filter(c => c.statut === 'LIVRE').length, // Approximation for current view
+        delivered: parcels.filter(c => c.statut === 'LIVRE').length, 
         transit: parcels.filter(c => c.statut === 'EN_TRANSIT' || c.statut === 'COLLECTE').length,
         weight: parcels.reduce((acc, c) => acc + (c.poids || 0), 0)
     };
 
-    // Helper to check if a specific item is new relative to the session cutoff
+    
     const isItemNew = (dateStr: string) => {
         return new Date(dateStr).getTime() > highlightCutoff.getTime();
     };
@@ -112,11 +112,11 @@ const ClientDashboard = () => {
     return (
         <div className="font-sans text-slate-900 bg-[#f8fafc] min-h-screen pb-20 selection:bg-orange-500/20">
             
-            {/* Sticky Pro Navbar */}
+            {}
             <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                     
-                    {/* Brand Logo */}
+                    {}
                     <div className="flex items-center gap-3 group cursor-pointer" onClick={() => handleTabChange('MANIFEST')}>
                         <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30 group-hover:scale-105 transition duration-300">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -127,7 +127,7 @@ const ClientDashboard = () => {
                         </div>
                     </div>
 
-                    {/* Desktop Navigation */}
+                    {}
                     <div className="hidden md:flex bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/60 backdrop-blur-sm">
                         {(['MANIFEST', 'NEW_MISSION', 'DELIVERED', 'STATISTICS'] as const).map((tabId) => {
                             const labels = { MANIFEST: 'Dashboard', NEW_MISSION: 'Nouveau', DELIVERED: 'Historique', STATISTICS: 'Stats' };
@@ -155,7 +155,7 @@ const ClientDashboard = () => {
 
 
 
-                    {/* User Profile Trigger */}
+                    {}
                     <div className="hidden md:flex items-center gap-4 pl-6 border-l border-slate-200">
                         <div className="text-right">
                             <div className="text-sm font-bold text-slate-900">{user?.prenom}</div>
@@ -166,7 +166,7 @@ const ClientDashboard = () => {
                         </button>
                     </div>
 
-                    {/* Mobile Menu Toggle */}
+                    {}
                     <div className="md:hidden">
                         <button className="p-2 text-slate-600 bg-slate-50 rounded-lg">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -175,7 +175,7 @@ const ClientDashboard = () => {
                 </div>
             </nav>
 
-            {/* Mobile Bottom Nav */}
+            {}
             <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-200 p-2 flex justify-around z-50 text-[10px] font-medium safe-pb">
                  <button onClick={() => setActiveTab('MANIFEST')} className={`p-2 rounded-xl flex flex-col items-center gap-1 ${activeTab === 'MANIFEST' ? 'text-orange-600' : 'text-slate-400'}`}>
                     <span className="text-xl">📦</span> Accueil
@@ -188,10 +188,10 @@ const ClientDashboard = () => {
                 </button>
             </div>
 
-            {/* Main Content */}
+            {}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fadeIn">
                 
-                {/* Header Section */}
+                {}
                 {(activeTab === 'MANIFEST' || activeTab === 'DELIVERED') && (
                     <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
                         <div className="w-full">
@@ -204,7 +204,7 @@ const ClientDashboard = () => {
                              </p>
                         </div>
                         
-                        {/* Search Bar */}
+                        {}
                         <div className="w-full md:w-auto relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-orange-500 transition-colors duration-300">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -220,7 +220,7 @@ const ClientDashboard = () => {
                     </div>
                 )}
 
-                {/* Content Area */}
+                {}
                 <div className="min-h-[60vh] relative">
                     {isLoading && (activeTab === 'MANIFEST' || activeTab === 'DELIVERED') && (
                          <div className="absolute inset-0 bg-white/50 z-20 flex justify-center pt-20 backdrop-blur-sm rounded-3xl">
@@ -228,7 +228,7 @@ const ClientDashboard = () => {
                          </div>
                     )}
                     
-                    {/* MANIFEST & DELIVERED GRID */}
+                    {}
                     {(activeTab === 'MANIFEST' || activeTab === 'DELIVERED') && (
                         <>
                              {filteredParcels.length === 0 && !isLoading ? (
@@ -255,7 +255,7 @@ const ClientDashboard = () => {
                                                     (p.historique || []).map(h => ({
                                                         ...h,
                                                         parcelId: p.id,
-                                                        parcelCode: p.id.split('-')[0].toUpperCase(), // Short code
+                                                        parcelCode: p.id.split('-')[0].toUpperCase(), 
                                                         destinataire: p.destinataire ? `${p.destinataire.nom} ${p.destinataire.prenom}` : 'Inconnu'
                                                     }))
                                                 ).sort((a, b) => new Date(b.dateChangement).getTime() - new Date(a.dateChangement).getTime());
@@ -324,7 +324,7 @@ const ClientDashboard = () => {
                                         </div>
                                     )}
 
-                                    {/* Pagination Controls */}
+                                    {}
                                     {totalPages > 1 && (
                                         <div className="mt-12 flex justify-center items-center gap-4">
                                             <button 
@@ -355,7 +355,7 @@ const ClientDashboard = () => {
                         </>
                     )}
 
-                    {/* NEW MISSION WIZARD */}
+                    {}
                     {activeTab === 'NEW_MISSION' && (
                         <div className="animate-fadeIn max-w-5xl mx-auto">
                              <div className="mb-10 text-center">
@@ -366,7 +366,7 @@ const ClientDashboard = () => {
                         </div>
                     )}
 
-                    {/* STATISTICS */}
+                    {}
                     {activeTab === 'STATISTICS' && (
                         <div className="animate-fadeIn">
                              <div className="mb-10">
@@ -381,11 +381,11 @@ const ClientDashboard = () => {
                                 <StatTile icon="⚖️" value={stats.weight.toFixed(1)} unit="kg" label="Volume Est." color="text-orange-600" bg="bg-white" />
                             </div>
 
-                             {/* Chart Placeholders */}
-                            {/* Charts Section */}
+                             {}
+                            {}
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 
-                                {/* Activity Chart (Bar) */}
+                                {}
                                 <div className="lg:col-span-2 bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
                                     <div className="flex justify-between items-center mb-8">
                                         <div>
@@ -405,14 +405,14 @@ const ClientDashboard = () => {
                                                 return d;
                                             });
 
-                                            // Mock data calculation based on history dates or creation dates
-                                            // Ideally we'd use parcel.dateCreation or history events
+                                            
+                                            
                                             const getDataForDay = (date: Date) => {
                                                 const dateStr = date.toISOString().split('T')[0];
                                                 return parcels.filter(p => p.dateCreation.startsWith(dateStr)).length;
                                             };
                                             
-                                            const maxVal = Math.max(...last7Days.map(d => getDataForDay(d)), 5); // Minimum scale of 5
+                                            const maxVal = Math.max(...last7Days.map(d => getDataForDay(d)), 5); 
 
                                             return last7Days.map((date, i) => {
                                                 const val = getDataForDay(date);
@@ -441,7 +441,7 @@ const ClientDashboard = () => {
                                     </div>
                                 </div>
 
-                                {/* Status Distribution (Donut-like using CSS conic-gradient or simple list) */}
+                                {}
                                 <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm flex flex-col">
                                     <h3 className="text-xl font-bold text-slate-900 mb-6">État du Réseau</h3>
                                     
@@ -478,7 +478,7 @@ const ClientDashboard = () => {
                         </div>
                     )}
 
-                    {/* PROFILE */}
+                    {}
                     {activeTab === 'PROFILE' && (
                         <div className="animate-fadeIn mt-4 max-w-3xl mx-auto">
                             <UserProfile user={user} onLogout={handleLogout} />
@@ -488,7 +488,7 @@ const ClientDashboard = () => {
                 </div>
             </main>
             
-            {/* History/Details Modal */}
+            {}
             {activeColisId && parcels.find(p => p.id === activeColisId) && (
                 <ParcelDetailsModal 
                     parcel={parcels.find(p => p.id === activeColisId)!} 
@@ -499,14 +499,14 @@ const ClientDashboard = () => {
     );
 };
 
-// --- Sub Components ---
+
 
 const ParcelDetailsModal = ({ parcel, onClose }: { parcel: Colis, onClose: () => void }) => {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-fadeIn p-4" onClick={onClose}>
             <div className="bg-white rounded-[2.5rem] max-w-2xl w-full shadow-2xl animate-scaleIn relative overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
                 
-                {/* Header */}
+                {}
                 <div className="bg-slate-50 border-b border-slate-100 p-8 flex justify-between items-start">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
@@ -522,10 +522,10 @@ const ParcelDetailsModal = ({ parcel, onClose }: { parcel: Colis, onClose: () =>
                     </button>
                 </div>
 
-                {/* Scrollable Content */}
+                {}
                 <div className="overflow-y-auto p-8 custom-scrollbar space-y-8">
                     
-                    {/* Route Info */}
+                    {}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                             <span className="text-[10px] uppercase text-slate-400 font-bold tracking-widest block mb-1">Expéditeur</span>
@@ -542,7 +542,7 @@ const ParcelDetailsModal = ({ parcel, onClose }: { parcel: Colis, onClose: () =>
                         </div>
                     </div>
 
-                    {/* Timeline */}
+                    {}
                     <div>
                         <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                             <span>📅</span> Suivi & Messages
@@ -577,7 +577,7 @@ const ParcelDetailsModal = ({ parcel, onClose }: { parcel: Colis, onClose: () =>
                         </div>
                     </div>
 
-                    {/* Products */}
+                    {}
                     {parcel.produits && parcel.produits.length > 0 && (
                         <div>
                             <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -641,7 +641,7 @@ const ColisCard = ({ parcel, onOpenHistory }: { parcel: Colis, onOpenHistory: ()
     return (
         <div onClick={onOpenHistory} className="bg-white border border-slate-100 rounded-[2rem] p-7 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition duration-500 group relative overflow-hidden flex flex-col h-full ring-1 ring-slate-100 hover:ring-orange-100 cursor-pointer">
             
-            {/* Top Row: Date & Status */}
+            {}
             <div className="flex justify-between items-start mb-6 z-10">
                  <div className="flex flex-col">
                     <span className="text-[10px] uppercase text-slate-400 font-bold tracking-widest mb-1">Créé le</span>
@@ -657,7 +657,7 @@ const ColisCard = ({ parcel, onOpenHistory }: { parcel: Colis, onOpenHistory: ()
                 </span>
             </div>
 
-            {/* Middle: Recipient Info */}
+            {}
             <div className="mb-8 z-10">
                 <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 text-xl shadow-sm">
@@ -669,7 +669,7 @@ const ColisCard = ({ parcel, onOpenHistory }: { parcel: Colis, onOpenHistory: ()
                     </div>
                 </div>
                 
-                {/* Visual Progress Bar */}
+                {}
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                      <div className="flex justify-between text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">
                         <span>Origine</span>
@@ -685,7 +685,7 @@ const ColisCard = ({ parcel, onOpenHistory }: { parcel: Colis, onOpenHistory: ()
                 </div>
             </div>
 
-            {/* Bottom: Metrics */}
+            {}
             <div className="mt-auto grid grid-cols-2 gap-4 border-t border-slate-100 pt-6">
                 <div>
                      <span className="text-[10px] uppercase text-slate-400 font-bold tracking-widest block mb-1">Poids</span>

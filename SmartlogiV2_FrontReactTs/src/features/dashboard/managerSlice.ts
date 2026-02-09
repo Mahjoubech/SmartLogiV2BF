@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import managerService, { type DashboardStats, type Livreur, type PaginatedResponse, type Zone } from './managerService'; // Added Zone
+import managerService, { type DashboardStats, type Livreur, type PaginatedResponse, type Zone } from './managerService'; 
 import { type Colis } from '../parcels/colisSlice';
 
 interface HelperState {
@@ -18,7 +18,7 @@ interface ManagerState {
     statsState: HelperState;
     colis: PageState<Colis>;
     livreurs: PageState<Livreur>;
-    zones: Zone[]; // Add zones state
+    zones: Zone[]; 
     eligibleLivreurs: Livreur[];
     eligibleState: HelperState;
 }
@@ -40,12 +40,12 @@ const initialState: ManagerState = {
         loading: false,
         error: null,
     },
-    zones: [], // Initialize zones
+    zones: [], 
     eligibleLivreurs: [],
     eligibleState: { loading: false, error: null },
 };
 
-// --- Thunks ---
+
 
 export const fetchDashboardStats = createAsyncThunk(
     'manager/fetchDashboardStats',
@@ -159,13 +159,13 @@ const managerSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        // Stats
+        
         builder.addCase(fetchDashboardStats.fulfilled, (state, action) => {
             state.stats = action.payload;
             state.statsState.loading = false;
         });
 
-        // Colis
+        
         builder.addCase(fetchColis.pending, (state) => {
             state.colis.loading = true;
         })
@@ -180,7 +180,7 @@ const managerSlice = createSlice({
              state.colis.error = action.payload as string;
         });
 
-        // Livreurs
+        
         builder.addCase(fetchLivreurs.pending, (state) => {
             state.livreurs.loading = true;
         })
@@ -199,12 +199,12 @@ const managerSlice = createSlice({
              state.livreurs.error = action.payload as string;
         });
         
-        // Zones
+        
         builder.addCase(fetchZones.fulfilled, (state, action) => {
             state.zones = action.payload;
         });
 
-        // Eligible Livreurs
+        
         builder.addCase(fetchEligibleLivreurs.pending, (state) => {
             state.eligibleState.loading = true;
             state.eligibleLivreurs = [];
@@ -218,9 +218,9 @@ const managerSlice = createSlice({
             state.eligibleState.error = action.payload as string;
         });
         
-        // Assign Livreur
+        
         builder.addCase(assignLivreur.fulfilled, (state, action) => {
-             // Optimistic handling potentially
+             
         });
     }
 });

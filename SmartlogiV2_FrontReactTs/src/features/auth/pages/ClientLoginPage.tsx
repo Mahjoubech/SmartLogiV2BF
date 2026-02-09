@@ -28,11 +28,11 @@ const ClientLoginPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex bg-stone-50 overflow-hidden font-sans">
-            {/* Left Brand Panel */}
+            {}
             <div className="hidden lg:flex lg:w-1/2 bg-amber-950 relative justify-center items-center overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-900/30 to-transparent opacity-70"></div>
                 
-                {/* Abstract Route Lines */}
+                {}
                 <div className="absolute top-0 left-0 w-full h-full opacity-10">
                     <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                         <path d="M0 100 C 20 0 50 0 100 100 Z" fill="none" stroke="white" strokeWidth="0.5" />
@@ -55,7 +55,7 @@ const ClientLoginPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Right Form Panel */}
+            {}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
                 <div className="w-full max-w-md">
                      <div className="text-center lg:text-left mb-10">

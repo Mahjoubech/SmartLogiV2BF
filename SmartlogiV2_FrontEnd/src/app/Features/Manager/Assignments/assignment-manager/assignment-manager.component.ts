@@ -14,21 +14,21 @@ import { finalize, forkJoin } from 'rxjs';
 })
 export class AssignmentManagerComponent implements OnInit {
   
-  // Data from Backend
+  
   unassignedParcels: any[] = [];
   couriers: any[] = [];
   isLoading = false;
   isAssigning = false;
   
-  // Filtering
+  
   searchTermParcels = '';
   searchTermCouriers = '';
   
-  // Selection
+  
   selectedParcels: Set<string> = new Set();
   selectedCourierId: string | null = null;
 
-  // Status Modal
+  
   statusPopup = {
     show: false,
     type: 'success' as 'success' | 'error',
@@ -61,7 +61,7 @@ export class AssignmentManagerComponent implements OnInit {
       );
     }
     
-    // Sort compatible zones to the top if a parcel is selected
+    
     if (this.selectedParcels.size > 0) {
       return [...list].sort((a, b) => {
         const aComp = this.isZoneCompatible(a);
@@ -81,14 +81,14 @@ export class AssignmentManagerComponent implements OnInit {
   loadData() {
     this.isLoading = true;
     
-    // Concurrently fetch available parcels and couriers
+    
     forkJoin({
         parcels: this.colisService.getAvailableColis(0, 50),
         livreurs: this.livreurService.getAllLivreurs(0, 50)
     }).pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (data) => {
-            // Check structure as APIs might return direct array or Page object
+            
             this.unassignedParcels = data.parcels?.content || (Array.isArray(data.parcels) ? data.parcels : []);
             this.couriers = data.livreurs?.content || (Array.isArray(data.livreurs) ? data.livreurs : []);
             console.log('[AssignmentManager] Loaded Data:', { parcels: this.unassignedParcels.length, couriers: this.couriers.length });
@@ -115,7 +115,7 @@ export class AssignmentManagerComponent implements OnInit {
   assignParcels() {
     if (!this.selectedCourierId || this.selectedParcels.size === 0) return;
     
-    // Check compatibility for all selected parcels
+    
     const courier = this.couriers.find(c => String(c.id) === this.selectedCourierId);
     const selectedParcelObjs = this.unassignedParcels.filter(p => this.selectedParcels.has(String(p.id)));
     
@@ -186,14 +186,14 @@ export class AssignmentManagerComponent implements OnInit {
 
   getWeightProgress(courier: any): number {
     const current = courier.assignedColisCount || 0;
-    const max = 3; // Limit defined in backend (Max 3 parcels)
+    const max = 3; 
     return Math.min((current / max) * 100, 100);
   }
 
   isZoneCompatible(courier: any): boolean {
     if (this.selectedParcels.size === 0) return true;
     
-    // Check if ALL selected parcels are compatible with this courier
+    
     const selectedParcelObjs = this.unassignedParcels.filter(p => this.selectedParcels.has(p.id));
     
     return selectedParcelObjs.every(p => {

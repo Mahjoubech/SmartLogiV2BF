@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
   isDetailOpen: boolean = false;
   activeTab: 'MANIFEST' | 'NEW_MISSION' | 'STATISTICS' | 'DELIVERED' | 'PROFILE' = 'MANIFEST';
 
-  // Pagination State
+  
   currentPage: number = 1;
   itemsPerPage: number = 3;
 
@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
         }
         return of([]);
       }),
-      // Tap to calculate stats
+      
       map((colis: ColisResponse[]) => {
         this.calculateStats(colis);
         return colis;
@@ -105,10 +105,10 @@ export class DashboardComponent implements OnInit {
 
   setTab(tab: 'MANIFEST' | 'NEW_MISSION' | 'STATISTICS' | 'DELIVERED' | 'PROFILE') {
     this.activeTab = tab;
-    this.currentPage = 1; // Reset to page 1 when tab changes
+    this.currentPage = 1; 
   }
 
-  // Helper for pagination
+  
   changePage(page: number) {
     this.currentPage = page;
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -160,7 +160,7 @@ export class DashboardComponent implements OnInit {
     if (tab === 'MANIFEST') {
       return !isDelivered;
     }
-    return true; // Fallback
+    return true; 
   }
 
   onChangePassword() {

@@ -24,7 +24,7 @@ const AppRoutes: React.FC = () => {
     return (
         <Router>
             <Routes>
-                {/* Public Routes */}
+                {}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<HomePage />} />
                 <Route path="/register" element={<ClientRegisterPage />} />
@@ -32,24 +32,24 @@ const AppRoutes: React.FC = () => {
                 <Route path="/staff-login" element={<StaffLoginPage />} />
                 <Route path="/admin-login" element={<AdminLoginPage />} />
                 
-                {/* Protected Client Routes */}
+                {}
                  <Route element={<ProtectedRoute allowedRoles={['CLIENT']} />}>
                     <Route element={<DashboardLayout />}>
                         <Route path="/dashboard" element={<ClientDashboard />} />
                     </Route>
                 </Route>
                 
-                {/* Manager Routes */}
+                {}
                  <Route element={<ProtectedRoute allowedRoles={['MANAGER']} />}>
                     <Route path="/manager-dashboard" element={<ManagerDashboard />} />
                 </Route>
 
-                {/* Driver Routes */}
+                {}
                  <Route element={<ProtectedRoute allowedRoles={['LIVREUR']} />}>
                     <Route path="/livreur-dashboard" element={<LivreurDashboard />} />
                 </Route>
 
-                {/* Admin Routes */}
+                {}
                 <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                     <Route path="/admin-dashboard" element={<AdminDashboard />}>
                         <Route index element={<Navigate to="overview" replace />} />
@@ -61,7 +61,7 @@ const AppRoutes: React.FC = () => {
                     </Route>
                 </Route>
 
-                {/* Catch All */}
+                {}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Router>

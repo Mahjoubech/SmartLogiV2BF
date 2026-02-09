@@ -2,9 +2,9 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../Core/services/admin.service';
 import { Chart, registerables } from 'chart.js';
-// @ts-ignore
+
 import { jsPDF } from 'jspdf';
-// @ts-ignore
+
 import autoTable from 'jspdf-autotable';
 
 @Component({
@@ -25,7 +25,7 @@ export class OverviewComponent implements OnInit, AfterViewInit {
   topLivreurs: any[] = [];
   topManagers: any[] = [];
 
-  // Manager Details Modal
+  
   isManagerDetailsModalOpen = false;
   selectedManager: any = null;
 
@@ -68,10 +68,10 @@ export class OverviewComponent implements OnInit, AfterViewInit {
                 
                 this.stats.blockedUsers = users.filter((u: any) => !u.accountNonLocked).length;
 
-                // Mock Performance Data for Top Lists
+                
                 this.topLivreurs = livreurs.map((l: any) => ({
                     ...l,
-                    livreColis: Math.floor(Math.random() * 500) + 50 // Mock Data
+                    livreColis: Math.floor(Math.random() * 500) + 50 
                 }))
                 .sort((a: any, b: any) => b.livreColis - a.livreColis)
                 .slice(0, 5);
@@ -91,7 +91,7 @@ export class OverviewComponent implements OnInit, AfterViewInit {
                     return {
                         ...m,
                         managedZones: zoneCount,
-                        mockZones: zones, // Attached mock details
+                        mockZones: zones, 
                         totalParcels: zones.reduce((acc, z) => acc + z.parcels, 0)
                     };
                 })
@@ -109,7 +109,7 @@ export class OverviewComponent implements OnInit, AfterViewInit {
     const ctx = document.getElementById('userChart') as HTMLCanvasElement;
     if (!ctx) return;
 
-    // simplistic destroy check
+    
     const existingChart = Chart.getChart(ctx);
     if (existingChart) existingChart.destroy();
 
@@ -164,18 +164,18 @@ export class OverviewComponent implements OnInit, AfterViewInit {
         const doc = new jsPDF();
         const manager = this.selectedManager;
 
-        // Title
+        
         doc.setFontSize(20);
         doc.text('Manager Zone Report', 14, 20);
         
-        // Manager Info
+        
         doc.setFontSize(12);
         doc.text(`Manager: ${manager.nom} ${manager.prenom}`, 14, 30);
         doc.text(`Email: ${manager.email}`, 14, 36);
         doc.text(`Phone: ${manager.telephone || 'N/A'}`, 14, 42);
         doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 48);
 
-        // Zones Table
+        
         const zones = manager.mockZones || [];
         const tableData = zones.map((z: any) => [
             z.name,
@@ -183,13 +183,13 @@ export class OverviewComponent implements OnInit, AfterViewInit {
             z.parcels
         ]);
         
-        // Use autoTable imported function
+        
         autoTable(doc, {
             startY: 55,
             head: [['Zone Name', 'Status', 'Parcels Volume']],
             body: tableData,
             theme: 'grid',
-            headStyles: { fillColor: [6, 182, 212] }, // cyan-500
+            headStyles: { fillColor: [6, 182, 212] }, 
         });
 
         doc.save(`report_${manager.nom}_${manager.prenom}.pdf`);

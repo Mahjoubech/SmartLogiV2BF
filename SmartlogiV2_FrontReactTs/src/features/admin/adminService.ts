@@ -1,7 +1,7 @@
 import client from '../../api/client';
 import type { User } from '../auth/authSlice';
 
-// --- Interfaces ---
+
 
 export interface ManagerData {
   id?: string;
@@ -9,17 +9,17 @@ export interface ManagerData {
   prenom: string;
   email: string;
   telephone?: string;
-  password?: string; // Only for creation
+  password?: string; 
 }
 
 export interface RoleData {
-  id?: string; // number in backend but treating as string/ID
+  id?: string; 
   name: string;
   permissions?: Permission[];
 }
 
 export interface Permission {
-  id: string; // number in backend
+  id: string; 
   name: string;
 }
 
@@ -31,14 +31,14 @@ export interface PaginatedResponse<T> {
   number: number;
 }
 
-// --- Service Functions ---
+
 
 const ADMIN_URL = 'http://localhost:8080/api/admin';
 
 const adminService = {
-  // Users Management
+  
   getAllUsers: async (page = 0, size = 10) => {
-    // Override baseURL by providing absolute URL
+    
     const response = await client.get<PaginatedResponse<User>>(`${ADMIN_URL}/users/all`, {
       params: { page, size }
     });
@@ -55,7 +55,7 @@ const adminService = {
     return response.data;
   },
 
-  // Managers Management
+  
   getAllManagers: async (page = 0, size = 10) => {
     const response = await client.get<PaginatedResponse<ManagerData>>(`${ADMIN_URL}/manager/all`, {
       params: { page, size }
@@ -78,7 +78,7 @@ const adminService = {
     return response.data;
   },
 
-  // Role Management
+  
   getAllRoles: async (page = 0, size = 100) => {
     const response = await client.get<PaginatedResponse<RoleData>>(`${ADMIN_URL}/roles/all`, {
       params: { page, size }
@@ -101,7 +101,7 @@ const adminService = {
     return response.data;
   },
 
-  // Permission Management
+  
   getAllPermissions: async (page = 0, size = 100) => {
     const response = await client.get<PaginatedResponse<Permission>>(`${ADMIN_URL}/permission/all`, {
       params: { page, size }
@@ -129,9 +129,9 @@ const adminService = {
     return response.data;
   },
 
-  // Parcel Management (For Admin View)
+  
   getAllParcels: async (page = 0, size = 1000) => {
-    // Fetch large size to calculate stats client-side for now
+    
     const response = await client.get<PaginatedResponse<any>>('/colis', {
       params: { page, size }
     });

@@ -28,18 +28,18 @@
   animation: spin-slow 3s linear infinite;
 }
 
-/* Glassmorphism background blur */
+
 .glass-effect {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* Card hover glow */
+
 .group\/card:hover {
   box-shadow: 0 0 40px rgba(34, 211, 238, 0.05);
 }
 
-/* Status indicator pulse */
+
 .status-pulse {
   box-shadow: 0 0 10px currentColor;
   animation: pulse-glow 2s infinite;
@@ -60,7 +60,7 @@
   }
 }
 
-/* Scrollable area fading edge */
+
 .flex-1.overflow-y-auto {
   mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent 100%);

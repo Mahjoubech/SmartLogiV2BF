@@ -1,9 +1,9 @@
 <div class="min-h-screen bg-slate-950 flex flex-col lg:flex-row">
     
-    <!-- Left Panel: Security Visuals -->
+    
     <div class="lg:w-1/2 bg-[#050b14] relative overflow-hidden flex flex-col justify-between p-12 border-b lg:border-b-0 lg:border-r border-white/5">
         
-        <!-- Background Grid -->
+        
         <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px;"></div>
         
         <div class="relative z-10">
@@ -32,11 +32,11 @@
             </div>
         </div>
 
-        <!-- Decorative Circle -->
+        
         <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full border-[30px] border-white/5 opacity-50"></div>
     </div>
 
-    <!-- Right Panel: Login Form -->
+    
     <div class="lg:w-1/2 flex items-center justify-center p-8 lg:p-16 relative">
         <div class="w-full max-w-md">
             
@@ -47,7 +47,7 @@
 
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
                 
-                <!-- Role Selector (Cards) -->
+                
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <label class="cursor-pointer group relative">
                         <input type="radio" formControlName="role" value="MANAGER" class="peer sr-only">
@@ -68,7 +68,7 @@
                     </label>
                 </div>
 
-                <!-- Inputs -->
+                
                 <div class="space-y-4">
                     <div class="group">
                         <label class="block text-[10px] uppercase text-slate-500 font-bold mb-2 tracking-widest group-focus-within:text-cyan-400 transition-colors">Internal ID</label>
@@ -91,13 +91,13 @@
                     </div>
                 </div>
 
-                <!-- Error Message -->
+                
                 <div *ngIf="errorMessage" class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3">
                     <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     <span class="text-red-400 text-xs leading-relaxed">{{ errorMessage }}</span>
                 </div>
 
-                <!-- Submit Button -->
+                
                 <button 
                     type="submit" 
                     [disabled]="isLoading || loginForm.invalid"

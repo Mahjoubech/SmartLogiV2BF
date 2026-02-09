@@ -25,7 +25,7 @@ const AdminLoginPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex bg-stone-50 overflow-hidden font-sans">
-             {/* Left Brand Panel - Admin Variant */}
+             {}
              <div className="hidden lg:flex lg:w-1/2 bg-black relative justify-center items-center overflow-hidden">
                 <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0),rgba(234,88,12,0.1))]"></div>
                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#ea580c 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
@@ -36,12 +36,12 @@ const AdminLoginPage: React.FC = () => {
                      </div>
                      <h2 className="text-4xl font-black text-white tracking-tight mb-4">Admin Command</h2>
                      <p className="text-stone-500 font-mono text-sm leading-relaxed max-w-md mx-auto">
-                        SYSTEM_ACCESS_LEVEL_1 // RESTRICTED
+                        SYSTEM_ACCESS_LEVEL_1 
                      </p>
                 </div>
             </div>
 
-             {/* Right Form Panel */}
+             {}
              <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
                 <div className="w-full max-w-md">
                     <div className="text-center mb-10">

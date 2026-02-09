@@ -47,7 +47,7 @@ export const routes: Routes = [
             { path: 'roles', loadComponent: () => import('./Features/Admin/roles/roles.component').then(m => m.RolesComponent) }
         ]
     },
-    // Leaving old route redirect for backward compatibility/safety if needed, or just remove it.
+    
     { path: 'admin-dashboard', redirectTo: 'admin/overview', pathMatch: 'full' },
     
     { path: 'tracking-concept', loadComponent: () => import('./Features/Home/tracking-concept/tracking-concept.component').then(m => m.TrackingConceptComponent) },

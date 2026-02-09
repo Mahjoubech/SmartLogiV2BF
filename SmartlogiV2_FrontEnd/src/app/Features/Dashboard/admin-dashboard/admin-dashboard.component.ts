@@ -19,20 +19,20 @@ Chart.register(...registerables);
 export class AdminDashboardComponent implements OnInit {
   activeTab: 'stats' | 'clients' | 'managers' | 'roles' = 'stats';
   
-  // Data Lists
-  allClients: any[] = []; // Store full list for filtering
+  
+  allClients: any[] = []; 
   clientsList: any[] = [];
   managersList: any[] = [];
   rolesList: any[] = [];
   
-  // Search & Filter
+  
   searchTerm: string = '';
 
-  // User Info
+  
   currentUser: any = null;
   tokenExpiration: Date | null = null;
   
-  // Stats
+  
   stats = {
     totalUsers: 0,
     totalClients: 0,
@@ -40,16 +40,16 @@ export class AdminDashboardComponent implements OnInit {
     blockedUsers: 0
   };
 
-  // Forms
+  
   managerForm: FormGroup;
   
-  // Modal States
+  
   isManagerModalOpen = false;
   isEditing = false;
   selectedManagerId: string | null = null;
   isLoading = false;
 
-  // Chart
+  
   public userChart: any;
 
   constructor(
@@ -102,7 +102,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadData() {
-    this.loadUsers(); // Separates clients and managers internally
+    this.loadUsers(); 
     this.loadRoles();
   }
 
@@ -111,11 +111,11 @@ export class AdminDashboardComponent implements OnInit {
       next: (data) => {
         const allUsers = data.content;
         
-        // Filter Clients (Role CLIENT)
+        
         this.clientsList = allUsers.filter((u: any) => u.role?.name === 'CLIENT');
         
-        // Managers usually come from specific endpoint but checking here too just in case
-        // But we will use the specific getAllManagers for detailed info
+        
+        
         this.loadManagers(); 
         
         this.stats.totalUsers = allUsers.length;
@@ -139,7 +139,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // Permissions Data
+  
   permissionsList: any[] = [];
   selectedRole: any = null;
   activeSubTab: 'roles' | 'permissions' = 'roles';
@@ -164,7 +164,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // --- Permission CRUD (New) ---
+  
   createPermission() {
     Swal.fire({
       title: 'Create New Permission',
@@ -217,7 +217,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // --- Role CRUD ---
+  
   createRole() {
     Swal.fire({
       title: 'Create New Role',
@@ -290,7 +290,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // --- Permission Assignment (Table View) ---
+  
   onSelectRole(role: any) {
     this.selectedRole = { ...role };
   }
@@ -308,13 +308,13 @@ export class AdminDashboardComponent implements OnInit {
       
       this.adminService.assignPermission(this.selectedRole.id, permissionId).subscribe({
           next: (updatedRole) => {
-             // Update local state by forcing a refresh or mimicking output
-             // Since assignPermission returns AssignResponse which has Role info usually...
-             // Let's reload roles to be safe/simple
+             
+             
+             
              this.loadRoles();
              
-             // Manually update selectedRole for instant UI feedback (if possible)
-             // Ideally we find the permission in list and add it
+             
+             
              const perm = this.permissionsList.find(p => p.id === permissionId);
              if (perm) {
                 if(!this.selectedRole.permissions) this.selectedRole.permissions = [];
@@ -345,7 +345,7 @@ export class AdminDashboardComponent implements OnInit {
               this.adminService.unassignPermission(this.selectedRole.id, permission.id).subscribe({
                   next: () => {
                       this.loadRoles();
-                      // Instant UI update
+                      
                       this.selectedRole.permissions = this.selectedRole.permissions.filter((p: any) => p.id !== permission.id);
                       
                       Swal.fire({ title: 'Removed', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#0f172a', color: '#f8fafc' });
@@ -399,12 +399,12 @@ export class AdminDashboardComponent implements OnInit {
           data: [
             this.stats.totalClients,
             this.stats.activeManagers,
-            this.stats.totalUsers - (this.stats.totalClients + this.stats.activeManagers) // Rough estimate of others
+            this.stats.totalUsers - (this.stats.totalClients + this.stats.activeManagers) 
           ],
           backgroundColor: [
-            '#06b6d4', // Cyan (Clients)
-            '#8b5cf6', // Violet (Managers)
-            '#22c55e'  // Green (Livreurs/Others)
+            '#06b6d4', 
+            '#8b5cf6', 
+            '#22c55e'  
           ],
           borderWidth: 0,
           hoverOffset: 4
@@ -441,7 +441,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // --- Actions ---
+  
 
   editClient(client: any) {
     Swal.fire({
@@ -473,7 +473,7 @@ export class AdminDashboardComponent implements OnInit {
       inputPlaceholder: 'Select a role'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Placeholder for API call
+        
         console.log('Role update requested:', result.value);
         Swal.fire({
           title: 'Request Sent',
@@ -494,7 +494,7 @@ export class AdminDashboardComponent implements OnInit {
       text: `Do you really want to ${action} access for ${user.prenom} ${user.nom}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: block ? '#ef4444' : '#22c55e', // Red for block, Green for unblock
+      confirmButtonColor: block ? '#ef4444' : '#22c55e', 
       cancelButtonColor: '#334155',
       confirmButtonText: `Yes, ${action} user`,
       background: '#0f172a',
@@ -554,7 +554,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // Manager CRUD
+  
   openManagerModal() {
     this.isEditing = false;
     this.selectedManagerId = null;

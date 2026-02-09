@@ -21,8 +21,8 @@ export class LayoutComponent {
     this.currentUser = this.authService.currentUserValue;
     const token = this.authService.getToken();
     if (token) {
-        // Simple mock expiration for now or decode token if needed
-        // this.tokenExpiration = ...
+        
+        
     }
   }
 

@@ -19,7 +19,7 @@ const AdminDashboard: React.FC = () => {
         dispatch(fetchAllParcels({}));
     }, [dispatch]);
 
-    // Track scroll for header effect
+    
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         setScrolled(e.currentTarget.scrollTop > 20);
     };
@@ -42,7 +42,7 @@ const AdminDashboard: React.FC = () => {
 
     return (
         <div className="flex h-screen bg-[#f8fafc] text-slate-900 overflow-hidden font-sans selection:bg-orange-500/20">
-            {/* Sidebar */}
+            {}
             <aside className="w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[4px_0_24px_-4px_rgba(0,0,0,0.02)] z-30 transition-all duration-300">
                 <div className="h-20 flex items-center px-8 border-b border-slate-100/50">
                     <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/admin-dashboard')}>
@@ -70,7 +70,7 @@ const AdminDashboard: React.FC = () => {
                                     : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:pl-5'
                                 }`}
                             >
-                                 {/* Active Glow */}
+                                 {}
                                  {isActive && (
                                     <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-20 pointer-events-none" />
                                 )}
@@ -80,7 +80,7 @@ const AdminDashboard: React.FC = () => {
                                 </svg>
                                 <span className="relative">{item.label}</span>
                                 
-                                {/* Active Indicator Dot */}
+                                {}
                                 {isActive && (
                                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500 ml-auto shadow-[0_0_8px_rgba(249,115,22,0.6)]"></div>
                                 )}
@@ -105,12 +105,12 @@ const AdminDashboard: React.FC = () => {
                 </div>
             </aside>
 
-            {/* Main Content */}
+            {}
             <main className="flex-1 flex flex-col overflow-hidden bg-[#f8fafc] relative">
-                {/* Background Pattern */}
+                {}
                 <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#1e293b 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
-                {/* Header */}
+                {}
                 <header className={`h-20 flex items-center justify-between px-8 z-20 sticky top-0 transition-all duration-500 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200/50' : 'bg-transparent'}`}>
                     <div className="flex flex-col justify-center">
                         <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
@@ -148,7 +148,7 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </header>
 
-                {/* Content Area */}
+                {}
                 <div 
                     className="flex-1 overflow-y-auto p-8 custom-scrollbar scroll-smooth"
                     onScroll={handleScroll}

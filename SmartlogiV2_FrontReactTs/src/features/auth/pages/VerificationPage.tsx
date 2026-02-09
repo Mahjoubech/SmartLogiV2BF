@@ -33,7 +33,7 @@ const VerificationPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden font-sans">
-             {/* Cinematic Background */}
+             {}
              <div 
                 className="absolute inset-0 bg-cover bg-center z-0"
                 style={{ backgroundImage: "url('/assets/images/hero-bg.png')" }}
@@ -41,7 +41,7 @@ const VerificationPage: React.FC = () => {
                  <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
             </div>
 
-            {/* Glassmorphism Card */}
+            {}
             <div className="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 md:p-12 animate-in fade-in zoom-in-95 duration-500">
                 <div className="text-center mb-8">
                      <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-500/20 rounded-full mb-6 border border-orange-500/30">

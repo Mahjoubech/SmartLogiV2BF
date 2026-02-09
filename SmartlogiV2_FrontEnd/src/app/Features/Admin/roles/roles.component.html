@@ -1,5 +1,5 @@
 <div class="p-6 h-[calc(100vh-64px)] overflow-hidden flex flex-col">
-  <!-- Header -->
+  
   <div class="flex justify-between items-center mb-6">
     <div>
       <h2 class="text-2xl font-bold text-white">Roles & Permissions</h2>
@@ -31,7 +31,7 @@
   </div>
 
   <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
-    <!-- Left Panel: Roles List -->
+    
     <div
       class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-xl flex flex-col overflow-hidden"
     >
@@ -98,12 +98,12 @@
       </div>
     </div>
 
-    <!-- Right Panel: Permissions Detail -->
+    
     <div
       class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-xl flex flex-col overflow-hidden relative"
     >
       <div *ngIf="selectedRole" class="flex flex-col h-full">
-        <!-- Detail Header -->
+        
         <div
           class="p-6 border-b border-slate-800 bg-slate-900/50 flex justify-between items-start"
         >
@@ -170,7 +170,7 @@
           </div>
         </div>
 
-        <!-- Permissions Grid -->
+        
         <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
           <div
             *ngIf="
@@ -225,7 +225,7 @@
         </div>
       </div>
 
-      <!-- Empty State (No Role Selected) -->
+      
       <div
         *ngIf="!selectedRole"
         class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-slate-900/50 backdrop-blur-sm z-0"
@@ -255,7 +255,7 @@
   </div>
 </div>
 
-<!-- Manage Permissions Modal -->
+
 <div
   *ngIf="isManagePermissionsModalOpen"
   class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"

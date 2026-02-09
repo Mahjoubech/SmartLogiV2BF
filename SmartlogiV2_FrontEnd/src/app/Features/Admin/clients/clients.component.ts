@@ -31,7 +31,7 @@ export class ClientsComponent implements OnInit {
     this.isLoading = true;
     this.adminService.getAllUsers(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
-        // Handle both Page<T> and List<T>
+        
         if (response.content) {
              this.usersList = response.content;
              this.totalElements = response.totalElements;
@@ -103,9 +103,9 @@ export class ClientsComponent implements OnInit {
               this.loadUsers();
             },
             error: (err) => {
-               // If text response is not handled correctly by service, this might still fire on success?
-               // But we fixed service.
-               this.showToast('Action completed', 'success'); // Optimistic success if error is parsing
+               
+               
+               this.showToast('Action completed', 'success'); 
                this.loadUsers();
             } 
           });

@@ -31,13 +31,13 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // Check for token in URL (Social Login Redirect)
+        
         this.route.queryParams.subscribe(params => {
             const token = params['token'];
             if (token) {
                 console.log('Token found in URL, decoding payload...');
                 try {
-                    // Decode JWT Payload (Base64)
+                    
                     const payloadBase64 = token.split('.')[1];
                     const payloadJson = atob(payloadBase64);
                     const payload = JSON.parse(payloadJson);

@@ -7,12 +7,12 @@ import { LivreurService } from '../../../Core/services/livreur.service';
 
 import { Router } from '@angular/router';
 
-import { FormsModule } from '@angular/forms'; // Add Import
+import { FormsModule } from '@angular/forms'; 
 
 @Component({
     selector: 'app-livreur-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule], // Add FormsModule
+    imports: [CommonModule, FormsModule], 
     templateUrl: './livreur-dashboard.component.html',
     styleUrl: './livreur-dashboard.component.css'
 })
@@ -23,7 +23,7 @@ export class LivreurDashboardComponent implements OnInit {
     isLoading = false;
     isNotificationsModalOpen = false;
 
-    // UI State
+    
     currentFilter: 'ALL' | 'TO_COLLECT' | 'TO_DELIVER' | 'HISTORY' = 'ALL';
     currentSort: 'DATE' | 'PRIORITY' | 'ZONE' = 'DATE';
 
@@ -35,7 +35,7 @@ export class LivreurDashboardComponent implements OnInit {
         private router: Router
     ) { }
 
-    // --- Computed Properties ---
+    
 
     get currentDate(): Date {
         return new Date();
@@ -67,13 +67,13 @@ export class LivreurDashboardComponent implements OnInit {
                 list = this.assignedColis.filter(c => c.status === 'LIVRE' || c.status === 'ANNULE');
                 break;
             default:
-                list = [...this.assignedColis]; // Copy
+                list = [...this.assignedColis]; 
                 break;
         }
         return this.applySort(list);
     }
 
-    // --- Actions ---
+    
 
     selectedColis: any = null;
     updateComment: string = '';
@@ -81,7 +81,7 @@ export class LivreurDashboardComponent implements OnInit {
 
     selectColis(colis: any) {
         this.selectedColis = colis;
-        this.newStatus = colis.status; // Default to current
+        this.newStatus = colis.status; 
         this.updateComment = '';
     }
 
@@ -93,13 +93,13 @@ export class LivreurDashboardComponent implements OnInit {
 
     submitStatusUpdate() {
         if (!this.selectedColis || !this.newStatus) return;
-        if (this.newStatus === this.selectedColis.status) return; // No change
+        if (this.newStatus === this.selectedColis.status) return; 
 
         if (!confirm(`Confirmer le changement de statut vers ${this.newStatus} ?`)) return;
 
         this.colisService.updateStatus(this.selectedColis.id, this.newStatus, this.updateComment).subscribe({
             next: (updated) => {
-                this.loadAssignedColis(); // Reload list
+                this.loadAssignedColis(); 
                 this.closeColisDetails();
             },
             error: (err) => console.error('Error updating status', err)
@@ -122,7 +122,7 @@ export class LivreurDashboardComponent implements OnInit {
             } else if (this.currentSort === 'ZONE') {
                 return (a.zone?.nom || '').localeCompare(b.zone?.nom || '');
             } else {
-                // DATE default
+                
                 return new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime();
             }
         });
@@ -177,12 +177,12 @@ export class LivreurDashboardComponent implements OnInit {
         this.colisService.getMyAssignedColis(0, 100).subscribe({
             next: (data: any) => {
                 const content = data.content || [];
-                // Map backend 'statut' (French) to frontend 'status' (English convention in this component)
+                
                 this.assignedColis = content.map((c: any) => ({
                     ...c,
-                    status: c.status || c.statut // Handle both cases
+                    status: c.status || c.statut 
                 }));
-                // Sort by current sort preference implied in applySort later
+                
                 this.isLoading = false;
             },
             error: (err: any) => {
@@ -205,7 +205,7 @@ export class LivreurDashboardComponent implements OnInit {
 
         this.colisService.updateStatus(colis.id, newStatus).subscribe({
             next: (updated) => {
-                this.loadAssignedColis(); // Reload list
+                this.loadAssignedColis(); 
             },
             error: (err) => console.error('Error updating status', err)
         });
@@ -215,9 +215,9 @@ export class LivreurDashboardComponent implements OnInit {
         if (!currentStatus) return [];
         const status = currentStatus.toUpperCase();
 
-        if (status === 'CREE') return ['COLLECTE']; // Allow picking up new assignments
+        if (status === 'CREE') return ['COLLECTE']; 
         if (status === 'COLLECTE') return ['EN_STOCK'];
-        if (status === 'EN_STOCK') return ['EN_TRANSIT']; // Allow manual pick up from stock
+        if (status === 'EN_STOCK') return ['EN_TRANSIT']; 
         if (status === 'EN_TRANSIT') return ['LIVRE', 'ANNULE', 'EN_STOCK'];
 
         return [];
