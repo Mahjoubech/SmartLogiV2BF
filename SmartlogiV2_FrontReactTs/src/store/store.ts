@@ -3,6 +3,7 @@ import authReducer from '../features/auth/authSlice';
 import colisReducer from '../features/parcels/colisSlice';
 import adminReducer from '../features/admin/adminSlice';
 import managerReducer from '../features/dashboard/managerSlice';
+import livreurReducer from '../features/dashboard/livreurSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     colis: colisReducer,
     admin: adminReducer,
     manager: managerReducer,
+    livreur: livreurReducer,
   },
 });
 
